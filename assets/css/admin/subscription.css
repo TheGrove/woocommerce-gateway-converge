@@ -1,0 +1,36 @@
+div.wgc_related_items p{
+    padding-right: 12px;
+}
+div.wgc_related_items table{
+    width: 100%;
+    background: #fff;
+    border-collapse: collapse;
+}
+div.wgc_related_items table th:first-child,
+div.wgc_related_items table td:first-child{
+    padding-right: 12px;
+    text-align: left;
+}
+div.wgc_related_items table th,
+div.wgc_related_items table td{
+    text-align: right;
+    padding: 8px;
+}
+
+div.wgc_converge_subscription_details table td{
+    text-align: left;
+    padding: 8px;
+}
+
+div.wgc_related_items th.text_left{
+    text-align: left;
+}
+
+div.wgc_related_items td.text_left{
+    text-align: left;
+    padding: 8px;
+}
+
+.wgc_sync_container{
+    display: none;
+}

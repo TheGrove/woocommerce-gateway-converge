@@ -1,0 +1,29 @@
+#wgc-payment-gateway label {
+    font-weight: 400;
+    display: inline;
+}
+
+#wgc-payment-gateway .save-for-later-use {
+    margin-left: 25px;
+    margin-top: 5px;
+}
+
+#wgc-payment-gateway #wgc-payment-gateway-fields{
+    padding-bottom: 1em;
+}
+
+#wgc-payment-gateway #wgc-payment-gateway-fields div > input {
+    margin: 0 8px 0 0;
+}
+
+#wgc-payment-gateway .save-for-later-use-message {
+    margin-top: 5px;
+}
+
+#wgc-payment-gateway .red{
+    color: red;
+}
+
+#wc-elavon-converge-gateway-cc-form{
+    display: none;
+}

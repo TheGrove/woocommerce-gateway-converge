@@ -1,0 +1,118 @@
+{
+    "packages": [
+        {
+            "name": "elavon/converge2-php-sdk",
+            "version": "1.9.0",
+            "version_normalized": "1.9.0.0",
+            "source": {
+                "type": "git",
+                "url": "ssh://git@gitlab.us.bank-dns.com:2222/CSC/converge2phpsdk.git",
+                "reference": "c3bec5e2d580691c0710cfb2fd4c1aec9eaef05e"
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-openssl": "*",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "justinrainbow/json-schema": "^5.2",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4 || ^7.0",
+                "vlucas/phpdotenv": "^4.1"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "Guzzle 6 can be used as HTTP Client"
+            },
+            "time": "2023-09-27T12:38:36+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Elavon\\Converge2\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Elavon\\Converge2\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Elavon"
+                }
+            ],
+            "description": "Elavon Converge 2 PHP SDK",
+            "keywords": [
+                "api",
+                "converge",
+                "elavon",
+                "payment processing"
+            ],
+            "install-path": "../elavon/converge2-php-sdk"
+        },
+        {
+            "name": "league/iso3166",
+            "version": "4.3.1",
+            "version_normalized": "4.3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/iso3166.git",
+                "reference": "11703e0313f34920add11c0228f0dd43ebd10f9a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://artifactory.us.bank-dns.com/artifactory/api/composer/phpcomposer-package/vcs-dists/zip/thephpleague/iso3166/11703e0313f34920add11c0228f0dd43ebd10f9a",
+                "reference": "11703e0313f34920add11c0228f0dd43ebd10f9a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "time": "2023-09-11T07:59:36+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "League\\ISO3166\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com"
+                }
+            ],
+            "description": "ISO 3166-1 PHP Library",
+            "homepage": "https://github.com/thephpleague/iso3166",
+            "keywords": [
+                "3166",
+                "3166-1",
+                "ISO 3166",
+                "countries",
+                "iso",
+                "library"
+            ],
+            "install-path": "../league/iso3166"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

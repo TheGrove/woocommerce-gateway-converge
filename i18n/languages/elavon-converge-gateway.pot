@@ -1,0 +1,536 @@
+# Copyright (C) 2020 Elavon
+# This file is distributed under the same license as the WooCommerce Elavon Converge EU Gateway plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Elavon Converge EU Gateway 1.10.6\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-gateway-converge\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2020-03-23T06:33:40-04:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.1.0\n"
+"X-Domain: elavon-converge-gateway\n"
+
+#. Plugin Name of the plugin
+msgid "WooCommerce Elavon Converge EU Gateway"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://developer-eu.elavon.com/docs/plugins"
+msgstr ""
+
+#. Description of the plugin
+msgid "Receive credit card payments using Elavon Converge EU Gateway."
+msgstr ""
+
+#. Author of the plugin
+msgid "Elavon"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://www.elavon.com"
+msgstr ""
+
+#: templates/checkout/payment-method.php:3
+msgid "Your browser is not supported or the browser version is outdated. In order to enjoy the full shopping experience, we recommend using the latest version of Chrome, Firefox or Safari."
+msgstr ""
+
+#: templates/checkout/payment-method.php:38
+msgid "Use new card"
+msgstr ""
+
+#: templates/checkout/payment-method.php:46
+msgid "Save for later use"
+msgstr ""
+
+#: woocommerce-gateway-converge.php:91
+msgid "Settings"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-admin-order-actions.php:63
+msgid "Void Transaction"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-admin-order-actions.php:79
+msgid "Capture Authorized Transaction"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:64
+msgid "Could not create shopper."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:82
+msgid "Failed shopper update."
+msgstr ""
+
+#. translators: %1$s: amount, %2$s: transaction id
+#: includes/class-wc-gateway-converge-api.php:147
+msgid "Authorized %1$s Transaction id: %2$s"
+msgstr ""
+
+#. translators: %1$s: amount, %2$s: transaction id
+#: includes/class-wc-gateway-converge-api.php:152
+#: includes/class-wc-gateway-converge-api.php:344
+msgid "Captured %1$s Transaction id: %2$s"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:166
+msgid "Invalid transaction."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:212
+msgid "Could not create order on Converge."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:246
+msgid "Could not create payment session."
+msgstr ""
+
+#. translators: %1$s: amount, %2$s: transaction id
+#: includes/class-wc-gateway-converge-api.php:272
+msgid "Voided %1$s Transaction id: %2$s"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:277
+msgid "There was an error processing the void."
+msgstr ""
+
+#. translators: %s: transaction status
+#: includes/class-wc-gateway-converge-api.php:290
+msgid "Cannot refund a transaction that has the %s status."
+msgstr ""
+
+#. translators: %1$s: currency code, %2$s: amount
+#: includes/class-wc-gateway-converge-api.php:308
+msgid "Order was successfully refunded in the amount of %1$s%2$s."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:315
+msgid "There was an error processing the refund."
+msgstr ""
+
+#. translators: %s: error message
+#: includes/class-wc-gateway-converge-api.php:321
+msgid "There was an error processing the refund. %s."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:349
+msgid "There was an error processing the capture."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:433
+msgid "Failed hosted card retrieval."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:453
+msgid "Failed hosted card update."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:485
+msgid "There was an error creating the stored card."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:490
+msgid "The credit card number could not be saved because the stored card already exists."
+msgstr ""
+
+#: includes/class-wc-gateway-converge-api.php:492
+msgid "The credit card number could not be saved."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:15
+msgid "Enable/Disable"
+msgstr ""
+
+#. translators: %1$s: payment gateway title, already translated
+#: includes/settings-converge-payment-gateway.php:18
+msgid "Enable %1$s"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:23
+msgid "Environment"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:26
+msgid "Choose environment."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:29
+msgid "Sandbox"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:30
+msgid "Production"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:35
+#: includes/validation/class-wc-validation-message.php:48
+msgid "Title"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:37
+msgid "Payment method title that the customer will see during checkout."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:45
+msgid "Debug Log"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:47
+msgid "Enable logging"
+msgstr ""
+
+#. translators: %s: URL
+#: includes/settings-converge-payment-gateway.php:50
+msgid "Log Converge events inside %s . Use only for development purposes."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:53
+#: includes/validation/class-wc-validation-message.php:52
+msgid "Processor Account Id"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:56
+msgid "The processor account ID is used to identify the Merchant when connecting to Converge."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:64
+msgid "Merchant Name"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:66
+msgid "The Merchant Name represents the Merchant \"Doing Business As\" (DBA) name and is automatically filled based on the Processor Account Id."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:74
+msgid "Merchant Alias"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:76
+msgid "The merchant alias is an unique ID that acts as a username for authentication."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:83
+msgid "Public Key"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:85
+msgid "The public key for your account, provided by Converge."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:93
+msgid "Secret Key"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:95
+msgid "The secret key for your account, provided by Converge."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:102
+msgid "Payment Action"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:105
+msgid "Choose whether you wish to capture funds immediately or authorize payment only."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:109
+msgid "Authorize and Immediate Capture"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:110
+msgid "Authorize and Delayed Capture"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:115
+msgid "Integration Option"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:118
+msgid "Choose the integration option."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:121
+msgid "HPP (PCI SAQ A)"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:122
+msgid "Lightbox (PCI SAQ A)"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:126
+msgid "Enable Saved Payment Methods"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:128
+msgid "If enabled, the already saved payment methods and a checkbox for saving new payment methods will be available on the checkout page."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:132
+#: includes/validation/class-wc-validation-message.php:49
+msgid "Save For Later Use Message"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:135
+msgid "This message will be displayed to the shopper next to the Save for later use option."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:138
+msgid "By placing your order, you agree with your card details being saved."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:142
+msgid "Converge Email"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:145
+msgid "Choose if Converge should send emails to the customer."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:148
+#: includes/settings-converge-payment-gateway.php:202
+msgid "No"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:149
+#: includes/settings-converge-payment-gateway.php:203
+msgid "Yes"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:153
+msgid "License Code"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:160
+msgid "Dynamic Descriptor Settings"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:162
+msgid "Your dynamic descriptor settings affect what appears on your customer's credit card statement."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:165
+#: includes/validation/class-wc-validation-message.php:50
+msgid "Name"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:167
+msgid "The value in the business name field of a customer's statement."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:174
+#: includes/validation/class-wc-validation-message.php:47
+msgid "Phone"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:176
+msgid "The value in the phone number field of a customer's statement."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:183
+#: includes/validation/class-wc-validation-message.php:51
+msgid "URL"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:185
+msgid "The value in the URL/web address field of a customer's statement."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:192
+msgid "Proxy Settings"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:194
+msgid "If your system uses a proxy server to establish the connection between WooCommerce and Converge, set API Uses Proxy to “Yes” and complete the Proxy Host and Proxy Port fields."
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:197
+msgid "API Uses Proxy"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:207
+msgid "Proxy Host"
+msgstr ""
+
+#: includes/settings-converge-payment-gateway.php:214
+msgid "Proxy Port"
+msgstr ""
+
+#. translators: %1$s: payment gateway title, already translated
+#: includes/class-wc-gateway-converge.php:52
+msgid "Receive credit card payments using %1$s."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:65
+msgid "Pay securely using Elavon Converge."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:86
+msgid "SANDBOX ENABLED. You can use sandbox testing accounts only."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:135
+msgid "If you change the account, the stored shoppers and cards will be deleted. Are you sure you want to do this?"
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:303
+msgid "Payment rejected due to 3D Secure."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:467
+msgid "There was an error processing your payment."
+msgstr ""
+
+#. translators: %s: order id
+#: includes/class-wc-gateway-converge.php:487
+msgid "Order %s does not contain a transaction id."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:631
+msgid "The configuration fields could not be validated due to unsuccessful connection to the Converge API."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:652
+msgid "Invalid public key or merchant alias."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:666
+msgid "Invalid secret key or merchant alias."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:695
+msgid "The Processor Account Id could not be validated due to unsuccessful connection to the Converge API."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:697
+msgid "Invalid processor account id."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:747
+msgid "Your order could not be placed. Please try again later."
+msgstr ""
+
+#. translators: %1$s: number
+#: includes/class-wc-gateway-converge.php:759
+msgid "The number of cart items should be less than or equal to %1$s (including shipping and tax items)."
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:911
+msgid "Plugin version: %1$s"
+msgstr ""
+
+#: includes/class-wc-gateway-converge.php:911
+msgid "API SDK version: %1$s"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-order-wrapper.php:101
+msgid "Tax"
+msgstr ""
+
+#. translators: %s: order shipping method
+#: includes/class-wc-gateway-converge-order-wrapper.php:106
+#: includes/class-wc-gateway-converge-order-wrapper.php:164
+msgid "Shipping via %s"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-order-wrapper.php:310
+msgid "Item"
+msgstr ""
+
+#. translators: %1$s: already translated field name
+#: includes/validation/class-wc-validation-message.php:23
+msgid "The field %1$s is required."
+msgstr ""
+
+#. translators: %1$s: already translated field name, %2$s: a number
+#: includes/validation/class-wc-validation-message.php:26
+msgid "The field %1$s cannot be longer than %2$s characters."
+msgstr ""
+
+#. translators: %1$s: already translated field name, %2$s: a list of special characters
+#: includes/validation/class-wc-validation-message.php:29
+msgid "The field %1$s does not allow the following special characters: %2$s"
+msgstr ""
+
+#. translators: %1$s: already translated field name, %2$s: a list of special characters
+#: includes/validation/class-wc-validation-message.php:32
+msgid "The field %1$s allows only these special characters: %2$s including space."
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:36
+msgid "Billing Address"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:37
+msgid "Shipping Address"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:38
+msgid "Full name (First name and Last name)"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:39
+msgid "First name"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:40
+msgid "Last name"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:41
+msgid "Company name"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:42
+msgid "Street address 1"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:43
+msgid "Street address 2"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:44
+msgid "Town / City"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:45
+msgid "State / County"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:46
+msgid "Postcode / ZIP"
+msgstr ""
+
+#: includes/validation/class-wc-validation-message.php:53
+msgid "Order notes"
+msgstr ""
+
+#. translators: %1$s: credit card brand, %2$s: last 4 digits, %3$s: expiry month 4: expiry year
+#: includes/class-wc-payment-token-gateway-converge-storedcard.php:55
+msgid "%1$s ending in %2$s <span class=\"red\">(expired %3$s/%4$s)</span>"
+msgstr ""
+
+#. translators: %1$s: credit card brand, %2$s: last 4 digits, %3$s: expiry month 4: expiry year
+#: includes/class-wc-payment-token-gateway-converge-storedcard.php:58
+msgid "%1$s ending in %2$s (expires %3$s/%4$s)"
+msgstr ""
+
+#: includes/class-wc-payment-token-gateway-converge-storedcard.php:174
+msgid "Payment method cannot be deleted. Please contact the merchant."
+msgstr ""
+
+#. translators: %1$s: already translated text, %2$s: non-translatable error message.
+#: includes/functions-wc-gateway-converge.php:301
+msgid "%1$s Converge error: %2$s"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-admin-order-converge-status.php:33
+msgid "Converge Transaction Status:"
+msgstr ""
+
+#: includes/class-wc-gateway-converge-admin-order-converge-status.php:39
+msgid "Merchant Transaction Code:"
+msgstr ""

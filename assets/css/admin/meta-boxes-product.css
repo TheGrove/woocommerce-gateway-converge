@@ -1,0 +1,53 @@
+[id^=wgc_plan_introductory_rate_fields], [id^=wgc_plan_billing_frequency_fields_week_month], [id^=wgc_plan_billing_frequency_count_field_week], [id^=wgc_plan_billing_frequency_count_field_month] {
+    display: none;
+}
+
+#wgc_plan_introductory_rate_fields, #wgc_plan_billing_frequency_fields_week_month {
+    padding-left: 160px;
+}
+
+.wgc_plan_billing_ending_radio_field {
+    display: inline-block;
+}
+
+fieldset.wgc_plan_billing_ending_radio_field ul.wc-radios {
+    width: 100%;
+}
+
+#wgc_plan_ending_billing_periods {
+    width: 80%;
+    margin-bottom: 7px;
+}
+[class^="wgc_plan_ending_billing_periods_"] {
+    display: inline-block;
+    padding: 0 !important;
+}
+.woocommerce_options_panel fieldset.wgc_plan_billing_ending_radio_field{
+    padding-right: 0!important;
+}
+#wgc_plan_introductory_rate_fields span, [id^=wgc_plan_billing_frequency_fields_week_month] span{
+    margin-top: 15px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+[id^=wgc_plan_introductory_rate_fields] p.form-field, [id^=wgc_plan_billing_frequency_fields_week_month] p.form-field{
+    padding: 0!important;
+    display: inline-block;
+}
+
+[id^=wgc_plan_introductory_rate_fields_] p.form-field{
+    margin: 0;
+}
+.wgc_plan_billing_frequency_count_field{
+    width: 50px;
+}
+.wgc_plan_introductory_rate_amount_field{
+    width: 70px;
+}
+.wgc_plan_introductory_rate_billing_periods_field{
+    width: 150px;
+}
+[id^=wgc_plan_introductory_rate_fields] input, [id^=wgc_plan_billing_frequency_fields_week_month] select{
+    width: 100%!important;
+}
