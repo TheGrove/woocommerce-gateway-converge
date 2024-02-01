@@ -1,0 +1,27 @@
+{
+  "name": "woocommerce-gateway-converge",
+  "version": "1.16.0",
+  "title": "WooCommerce Elavon Converge Payment Gateway",
+  "description": "Receive credit card payments using Elavon Converge EU Gateway.",
+  "scripts": {
+    "build": "npm run build:webpack",
+    "build:webpack": "wp-scripts build client/blocks/index.js",
+    "start:webpack": "wp-scripts start client/blocks/index.js",
+    "lint:js": "wp-scripts lint-js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheGrove/woocommerce-gateway-converge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TheGrove/woocommerce-gateway-converge/issues"
+  },
+  "homepage": "https://github.com/TheGrove/woocommerce-gateway-converge#readme",
+  "devDependencies": {
+    "@woocommerce/dependency-extraction-webpack-plugin": "^2.3.0",
+    "@woocommerce/eslint-plugin": "^2.2.0",
+    "@wordpress/scripts": "^27.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.4"
+  }
+}
