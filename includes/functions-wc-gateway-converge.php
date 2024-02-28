@@ -830,6 +830,10 @@ function wgc_get_only_subscription_elements_from_cart( $cart = null ) {
 	$subscription_elements = array();
 
 	if ( ! $cart ) {
+		if ( ! WC()->cart ) {
+			return $subscription_elements;
+		}
+
 		$cart = WC()->cart->get_cart();
 	}
 
@@ -991,7 +995,7 @@ function wgc_conditional_payment_gateways( $available_gateways ) {
 
 	if ( wgc_order_from_merchant_view_has_subscription_elements() ) {
 		$hide_other_methods = true;
-	} else {
+	} elseif ( WC()->cart ) {
 		foreach ( WC()->cart->get_cart() as $cart_key => $cart_item ) {
 			if ( wgc_product_is_subscription( $cart_item['data'] ) ) {
 				$hide_other_methods = true;
