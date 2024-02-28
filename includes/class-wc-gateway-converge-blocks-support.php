@@ -82,11 +82,13 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 	 */
 	public function get_payment_method_data() {
 		return array(
-			'title'              => $this->get_setting( WGC_KEY_TITLE ),
-			'description'        => $this->get_gateway()->get_description(),
-			'supports'           => $this->get_supported_features(),
-			'showSavedCards'     => $this->should_show_saved_cards(),
-			'showSaveOption'     => $this->should_show_saved_cards(),
+			'title'                  => $this->get_setting( WGC_KEY_TITLE ),
+			'description'            => $this->get_gateway()->get_description(),
+			'supports'               => $this->get_supported_features(),
+			'showSavedCards'         => $this->should_show_saved_cards(),
+			'showSaveOption'         => $this->should_show_save_option(),
+			'hasSubscriptionInCart'  => wgc_has_subscription_elements_in_cart(),
+			'subscriptionDisclosure' => $this->get_gateway()->get_option( WGC_KEY_SUBSCRIPTIONS_DISCLOSURE_MESSAGE ) ?? '',
 		);
 	}
 
@@ -100,12 +102,22 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 	}
 
 	/**
+	 * Determine if store should show saved cards at checkout.
+	 *
+	 * @return bool True if store should show saved cards at checkout.
+	 */
+	private function should_show_saved_cards() {
+		return $this->get_gateway()->isSavePaymentMethodsEnabled() ?? false;
+	}
+
+	/**
 	 * Determine if store allows cards to be saved during checkout.
 	 *
 	 * @return bool True if merchant allows shopper to save cards during checkout.
 	 */
-	private function should_show_saved_cards() {
-		return $this->get_gateway()->isSavePaymentMethodsEnabled() ?? false;
+	private function should_show_save_option() {
+		$gateway = $this->get_gateway();
+		return ( is_user_logged_in() && $gateway->isSavePaymentMethodsEnabled() && $gateway->can_store_one_more_card() );
 	}
 
 	/**
