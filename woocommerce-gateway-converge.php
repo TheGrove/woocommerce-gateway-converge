@@ -140,6 +140,12 @@ function wgc_before_template_part( $template_name, $template_path, $located ) {
  * @return void
  */
 function wgc_woocommerce_blocks_support() {
+	if ( class_exists( 'Automattic\WooCommerce\StoreApi\StoreApi' ) && class_exists( 'Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema' ) ) {
+		require_once 'includes/class-wc-gateway-converge-extend-store-endpoint.php';
+		$extend = Automattic\WooCommerce\StoreApi\StoreApi::container()->get( Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema::class );
+		WC_Gateway_Converge_Extend_Store_Endpoint::init( $extend );
+	}
+
 	if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
 		require_once 'includes/class-wc-gateway-converge-blocks-support.php';
 		add_action(

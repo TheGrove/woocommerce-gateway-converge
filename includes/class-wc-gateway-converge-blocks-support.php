@@ -61,6 +61,15 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 				? $asset['dependencies']
 				: $dependencies;
 		}
+
+		wp_enqueue_style(
+			'wc-gateway-converge-blocks-integration',
+			plugins_url( 'build/style-index.css', WGC_MAIN_FILE ),
+			array(),
+			$version,
+			'all'
+		);
+
 		wp_register_script(
 			'wc-gateway-converge-blocks-integration',
 			plugins_url( 'build/index.js', WGC_MAIN_FILE ),

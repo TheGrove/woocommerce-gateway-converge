@@ -1,0 +1,31 @@
+.wgs-recurring-totals-panel {
+    .wgs-recurring-totals-panel__title {
+        font-weight: 700;
+    }
+
+    .wc-block-components-panel__button,
+	.wc-block-components-panel__button:hover,
+	.wc-block-components-panel__button:focus {
+		font-size: 0.875em;
+	}
+
+	.wc-block-components-panel__content > .wc-block-components-totals-item {
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+    .wgc-block-recurring-totals-item__label {
+        flex-grow: 1;
+        flex-basis: 0;
+    }
+    
+    .wgc-block-recurring-totals-item__value {
+        flex-grow: 1;
+        flex-basis: 0;
+    }
+}
