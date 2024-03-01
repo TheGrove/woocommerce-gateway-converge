@@ -8,6 +8,7 @@
  */
 
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
 
 class WC_Gateway_Converge_Extend_Store_Endpoint {
@@ -39,6 +40,16 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 	 * Registers the actual data into each endpoint.
 	 */
 	public static function extend_store() {
+		// Register into `cart/items`
+		self::$extend->register_endpoint_data(
+			array(
+				'endpoint'        => CartItemSchema::IDENTIFIER,
+				'namespace'       => self::IDENTIFIER,
+				'data_callback'   => array( 'WC_Gateway_Converge_Extend_Store_Endpoint', 'extend_cart_item_data' ),
+				'schema_callback' => array( 'WC_Gateway_Converge_Extend_Store_Endpoint', 'extend_cart_item_schema' ),
+				'schema_type'     => ARRAY_A,
+			)
+		);
 
 		// Register into `cart`
 		self::$extend->register_endpoint_data(
@@ -49,6 +60,54 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 				'schema_callback' => array( 'WC_Gateway_Converge_Extend_Store_Endpoint', 'extend_cart_schema' ),
 				'schema_type'     => ARRAY_N,
 			)
+		);
+	}
+
+	/**
+	 * Register subscription product data into cart/items endpoint.
+	 *
+	 * @param array $cart_item Current cart item data.
+	 *
+	 * @return array $item_data Registered data or empty array if condition is not satisfied.
+	 */
+	public static function extend_cart_item_data( $cart_item ) {
+		$product = $cart_item['data'];
+		$qty     = $cart_item['quantity'] ?? 1;
+
+		$item_data = array(
+			'billing_frequency_subtotal' => '',
+			'billing_frequency_total'    => ''
+		);
+
+		if ( wgc_product_is_subscription( $product ) ) {
+			$item_data = array(
+				'billing_frequency_subtotal' => strip_tags( wgc_get_subscription_price_string( $product ) ),
+				'billing_frequency_total'    => strip_tags( wgc_get_subscription_price_string( $product, $qty ) ),
+			);
+		}
+
+		return $item_data;
+	}
+
+	/**
+	 * Register subscription product schema into cart/items endpoint.
+	 *
+	 * @return array Registered schema.
+	 */
+	public static function extend_cart_item_schema() {
+		return array(
+			'billing_frequency_subtotal' => array(
+				'description' => __( 'Billing frequency subtotal string for the subscription.', 'woocommerce-subscriptions' ),
+				'type'        => array( 'string' ),
+				'context'     => array( 'view', 'edit' ),
+				'readonly'    => true,
+			),
+			'billing_frequency_total'    => array(
+				'description' => __( 'Billing frequency total string for the subscription.', 'woocommerce-subscriptions' ),
+				'type'        => array( 'string' ),
+				'context'     => array( 'view', 'edit' ),
+				'readonly'    => true,
+			),
 		);
 	}
 

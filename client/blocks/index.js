@@ -10,6 +10,7 @@ import { ExperimentalOrderMeta } from '@woocommerce/blocks-checkout';
  */
 import { elavonConvergePaymentMethod } from './elavon-converge';
 import { SubscriptionsRecurringTotals } from './recurring-totals';
+import { registerFilters } from './filters';
 
 // Register the payment method.
 registerPaymentMethod(elavonConvergePaymentMethod);
@@ -31,3 +32,6 @@ registerPlugin('woocommerce-gateway-converge', {
 	render,
 	scope: 'woocommerce-checkout',
 });
+
+// Register the filters to modify the cart item prices.
+registerFilters();
