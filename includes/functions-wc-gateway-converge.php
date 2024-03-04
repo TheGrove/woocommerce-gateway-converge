@@ -1039,6 +1039,23 @@ function wgc_create_subscription( $args ) {
 	return $subscription;
 }
 
+function wgc_create_subscription_hpos( $args ) {
+	$order        = new WC_Order();
+	$subscription = new WC_Converge_Subscription( $order );
+
+	$subscription->set_status( 'wc-pending' );
+	$subscription->set_parent_id( $order->get_id() );
+	$subscription->set_currency( $args['order_currency'] );
+	$subscription->set_customer_id( $args['customer_user'] );
+	$subscription_id = $subscription->save();
+
+	if ( is_wp_error( $subscription_id ) || $subscription_id === 0 ) {
+		return new WP_Error( 'subscription-error', __( 'There was an error creating the subscription.', 'elavon-converge-gateway' ) );
+	}
+
+	return $subscription;
+}
+
 
 function wgc_assign_billing_and_shipping_to_subscription( $order, $subscription ) {
 

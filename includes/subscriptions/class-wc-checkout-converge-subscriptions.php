@@ -1,4 +1,6 @@
 <?php
+use Automattic\WooCommerce\Utilities\OrderUtil;
+
 defined( 'ABSPATH' ) || exit();
 
 
@@ -79,7 +81,14 @@ class WC_Checkout_Converge_Subscriptions {
 			'order_currency' => $order->get_currency(),
 			'order_note'     => $order->get_customer_note(),
 		);
-		$subscription         = wgc_create_subscription( $subscription_data );
+
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			// HPOS usage is enabled.
+			$subscription = wgc_create_subscription_hpos( $subscription_data );
+		} else {
+			// Traditional CPT-based orders are in use.
+			$subscription = wgc_create_subscription( $subscription_data );
+		}
 
 		if ( is_wp_error( $subscription ) ) {
 			throw new Exception( $subscription->get_error_message() );
