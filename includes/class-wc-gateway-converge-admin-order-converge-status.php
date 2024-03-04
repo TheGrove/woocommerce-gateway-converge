@@ -45,7 +45,7 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 			echo '<p class="form-field form-field-wide"><label for=""> ' . __( 'Converge Transaction Status:', 'elavon-converge-gateway' ) . '</label><span>' . $converge_transaction_status->getValue() . '</span></p>';
 		}
 
-		$unique_transaction_id = get_post_meta( $order_id, '_unique_transaction_id', true );
+		$unique_transaction_id = $order->get_meta( '_unique_transaction_id' );
 
 		if ( ! empty( $unique_transaction_id ) ) {
 			echo '<p class="form-field form-field-wide"><label for=""> ' . __( 'Merchant Transaction Code:', 'elavon-converge-gateway' ) . '</label><span>' . $unique_transaction_id . '</span></p>';

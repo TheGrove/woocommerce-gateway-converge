@@ -813,8 +813,8 @@ class WC_Gateway_Converge_Api {
 		$shipping_total           = (float) $subscription->get_shipping_total();
 		$initial_total_bill_count = $converge_product_plan->getInitialTotalBillCount();
 		$total_amount             = $initial_amount = $subscription->get_total();
-		$subscription_product_qty = get_post_meta( $subscription->get_id(), 'wgc_subscription_product_qty', true );
-		$coupon_type              = get_post_meta( $subscription->get_id(), 'wgc_coupon_type', true );
+		$subscription_product_qty = $subscription->get_meta( 'wgc_subscription_product_qty' );
+		$coupon_type              = $subscription->get_meta( 'wgc_coupon_type' );
 		$discount_total           = 0;
 
 		if ( "recurring" == $coupon_type ) {
@@ -942,7 +942,7 @@ class WC_Gateway_Converge_Api {
 	public function create_subscription( $subscription, $stored_card ) {
 
 		$order = $subscription->get_order();
-		$plan_id = get_post_meta($subscription->get_id(), 'wgc_plan_id', true);
+		$plan_id = $subscription->get_meta( 'wgc_plan_id' );
 		$converge_product_plan = $this->get_plan($plan_id);
 
 		if ( ! $converge_product_plan->isSuccess() ) {

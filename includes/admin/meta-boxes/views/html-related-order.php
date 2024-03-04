@@ -16,7 +16,7 @@
                     <a href="<?php echo get_edit_post_link( $order->get_id() ); ?>">#<?php echo $order->get_order_number(); ?></a>
                 </td>
                 <td>
-					<?php if ( get_post_meta( $order->get_id(), '_renewal_order', true ) ) : ?>
+					<?php if ( $order->get_meta( '_renewal_order', true ) ) : ?>
 					<?php _e( 'Renewal Order', 'elavon-converge-gateway' ) ?></td>
 				<?php else: ?>
 					<?php _e( 'Parent Order', 'elavon-converge-gateway' ) ?></td>

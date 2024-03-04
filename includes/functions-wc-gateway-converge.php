@@ -1076,8 +1076,8 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 
 	$subscriptions = array();
 
-	$is_renewal_order = get_post_meta( $order->get_id(), '_renewal_order', true );
-	$subscription_id  = get_post_meta( $order->get_id(), '_wgc_subscription_id', true );
+	$is_renewal_order = $order->get_meta( '_renewal_order', true );
+	$subscription_id  = $order->get_meta( '_wgc_subscription_id', true );
 
 	if ( $is_renewal_order && $subscription_id ) {
 
@@ -1186,7 +1186,7 @@ function wgc_copy_order_meta( $from, $to ) {
 	$results = $wpdb->get_results( $query );
 
 	foreach ( $results as $result ) {
-		update_post_meta( $to->get_id(), $result->meta_key, maybe_unserialize( $result->meta_value ) );
+		$to->update_meta_data( $result->meta_key, maybe_unserialize( $result->meta_value ) );
 	}
 }
 
@@ -1202,8 +1202,8 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 			'coupon'
 		) );
 		$renewal_order            = wc_create_order( array( 'customer_id' => $subscription->get_user_id() ) );
-		$plan_id                  = get_post_meta( $subscription->get_id(), 'wgc_plan_id', true );
-		$subscription_product_qty = get_post_meta( $subscription->get_id(), 'wgc_subscription_product_qty', true );
+		$plan_id                  = $subscription->get_meta( 'wgc_plan_id', true );
+		$subscription_product_qty = $subscription->get_meta( 'wgc_subscription_product_qty', true );
 		$subscription_product     = null;
 
 		$should_update_totals = false;
