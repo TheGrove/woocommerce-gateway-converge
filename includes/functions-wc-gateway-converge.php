@@ -1076,8 +1076,8 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 
 	$subscriptions = array();
 
-	$is_renewal_order = get_post_meta( $order->get_id(), '_renewal_order', true );
-	$subscription_id  = get_post_meta( $order->get_id(), '_wgc_subscription_id', true );
+	$is_renewal_order = $order->get_meta( '_renewal_order' );
+	$subscription_id  = $order->get_meta( '_wgc_subscription_id' );
 
 	if ( $is_renewal_order && $subscription_id ) {
 

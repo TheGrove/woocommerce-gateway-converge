@@ -1,6 +1,7 @@
 <?php
 
 use Elavon\Converge2\DataObject\TimeUnit;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -39,7 +40,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 			), 'wgc_subscription', 'normal', 'default' );
 		}
 
-		if ( 'shop_order' === $post_type ) {
+		if ( OrderUtil::is_order( $post->ID, wc_get_order_types() ) ) {
 			$order         = wc_get_order( $post->ID );
 			$subscriptions = wgc_get_subscriptions_for_order( $order );
 
