@@ -1055,11 +1055,10 @@ function wgc_create_subscription( $args ) {
 }
 
 function wgc_create_subscription_hpos( $args ) {
-	$order        = new WC_Order();
-	$subscription = new WC_Converge_Subscription( $order );
+	$subscription = new WC_Converge_Subscription();
 
 	$subscription->set_status( 'wc-pending' );
-	$subscription->set_parent_id( $order->get_id() );
+	$subscription->set_parent_id( $args['order_id'] );
 	$subscription->set_currency( $args['order_currency'] );
 	$subscription->set_customer_id( $args['customer_user'] );
 	$subscription_id = $subscription->save();
@@ -1068,7 +1067,7 @@ function wgc_create_subscription_hpos( $args ) {
 		return new WP_Error( 'subscription-error', __( 'There was an error creating the subscription.', 'elavon-converge-gateway' ) );
 	}
 
-	return $subscription;
+	return WC()->order_factory->get_order( $subscription_id );
 }
 
 
