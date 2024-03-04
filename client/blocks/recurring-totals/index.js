@@ -62,6 +62,10 @@ export const SubscriptionsRecurringTotals = (props) => {
 	const recurringTotals =
 		extensions['woocommerce-gateway-converge']?.totals || {};
 
+	if (!recurringTotals || !Object.keys(recurringTotals).length) {
+		return null;
+	}
+
 	return (
 		<div className="wgs-recurring-totals-panel">
 			<TotalsItem
