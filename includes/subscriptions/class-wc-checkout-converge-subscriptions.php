@@ -31,7 +31,11 @@ class WC_Checkout_Converge_Subscriptions {
 
 		$old_subscriptions = wgc_get_subscriptions_for_order( $order );
 		foreach ( (array) $old_subscriptions as $old_subscription ) {
-			wp_delete_post( $old_subscription->get_id(), true );
+			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+				$old_subscription->delete();
+			} else {
+				wp_delete_post( $old_subscription->get_id(), true );
+			}
 		}
 
 		if ( $order_from_merchant_view ) {

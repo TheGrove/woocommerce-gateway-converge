@@ -6,6 +6,7 @@ use Elavon\Converge2\Request\Payload\ContactDataBuilder;
 use Elavon\Converge2\Request\Payload\OrderItemDataBuilder;
 use Elavon\Converge2\Request\Payload\ShopperDataBuilder;
 use Elavon\Converge2\Request\Payload\AddressDataBuilder;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
  * Functions used by plugins
@@ -766,14 +767,28 @@ function wgc_get_subscription_related_orders( $subscription ) {
 		$subscription = wgc_get_subscription_object_by_id( $subscription );
 	}
 
-	$results = $wpdb->get_results(
-		$wpdb->prepare(
-			"SELECT ID FROM $wpdb->posts AS posts LEFT JOIN $wpdb->postmeta AS postmeta
-			ON  posts.ID = postmeta.post_id WHERE posts.post_type = 'shop_order' AND postmeta.meta_key = '_wgc_subscription_id'
-			AND postmeta.meta_value = %s",
-			$subscription->get_id()
-		)
-	);
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		// HPOS usage is enabled.
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT ID FROM $wpdb->wc_orders AS orders LEFT JOIN $wpdb->wc_orders_meta AS ordermeta
+				ON orders.ID = ordermeta.post_id WHERE orders.type = 'shop_order' AND ordermeta.meta_key = '_wgc_subscription_id'
+				AND ordermeta.meta_value = %s",
+				$subscription->get_id()
+			)
+		);
+	} else {
+		// Traditional CPT-based orders are in use.
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT ID FROM $wpdb->posts AS posts LEFT JOIN $wpdb->postmeta AS postmeta
+				ON posts.ID = postmeta.post_id WHERE posts.post_type = 'shop_order' AND postmeta.meta_key = '_wgc_subscription_id'
+				AND postmeta.meta_value = %s",
+				$subscription->get_id()
+			)
+		);
+	}
+
 	$orders  = array();
 	if ( $subscription->get_parent_id() ) {
 		$orders[] = $subscription->get_order( $subscription->get_parent_id() );
@@ -1189,21 +1204,45 @@ function wgc_force_non_logged_user_wc_session() {
 
 function wgc_get_order_by_transaction_id( $transaction_id ) {
 	global $wpdb;
+
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->wc_orders as orders INNER JOIN $wpdb->wc_orders_meta as meta ON orders.ID = meta.post_id WHERE orders.type = 'shop_order' AND meta.meta_key = '_transaction_id' AND meta.meta_value = %s", $transaction_id ) );
+	}
+
 	return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts as posts INNER JOIN $wpdb->postmeta as meta ON posts.ID = meta.post_id WHERE post_type = 'shop_order' AND meta.meta_key = '_transaction_id' AND meta.meta_value = %s", $transaction_id ) );
 }
 
-
+/**
+ * Helper function to copy order meta from one order to another.
+ *
+ * @param \WC_Order $from WooCommerce order to copy meta from.
+ * @param \WC_Order $to   WooCommerce order to copy meta to.
+ */
 function wgc_copy_order_meta( $from, $to ) {
 	global $wpdb;
-	$query   = $wpdb->prepare(
-		"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d
-			AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
-		$from->get_id()
-	);
-	$results = $wpdb->get_results( $query );
+
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$query   = $wpdb->prepare(
+			"SELECT meta_key, meta_value FROM $wpdb->wc_orders_meta WHERE id = %d
+				AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
+			$from->get_id()
+		);
+		$results = $wpdb->get_results( $query );
+	} else {
+		$query   = $wpdb->prepare(
+			"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d
+				AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
+			$from->get_id()
+		);
+		$results = $wpdb->get_results( $query );
+	}
 
 	foreach ( $results as $result ) {
-		update_post_meta( $to->get_id(), $result->meta_key, maybe_unserialize( $result->meta_value ) );
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			$to->update_meta_data( $result->meta_key, maybe_unserialize( $result->meta_value ) );
+		} else {
+			update_post_meta( $to->get_id(), $result->meta_key, maybe_unserialize( $result->meta_value ) );
+		}
 	}
 }
 
@@ -1219,8 +1258,8 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 			'coupon'
 		) );
 		$renewal_order            = wc_create_order( array( 'customer_id' => $subscription->get_user_id() ) );
-		$plan_id                  = get_post_meta( $subscription->get_id(), 'wgc_plan_id', true );
-		$subscription_product_qty = get_post_meta( $subscription->get_id(), 'wgc_subscription_product_qty', true );
+		$plan_id                  = $subscription->get_meta( 'wgc_plan_id' );
+		$subscription_product_qty = $subscription->get_meta( 'wgc_subscription_product_qty' );
 		$subscription_product     = null;
 
 		$should_update_totals = false;
