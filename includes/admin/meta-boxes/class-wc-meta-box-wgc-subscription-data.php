@@ -135,7 +135,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 				'elavon_converge_gateway',
 				array( 'subscription_name' => WGC_SUBSCRIPTION_NAME ) );
 
-		} else if ( is_admin() && $screen_id === WGC_SUBSCRIPTION_POST_TYPE ) {
+		} else if ( is_admin() && $screen_id === WGC_SUBSCRIPTION_POST_TYPE || 'woocommerce_page_wc-orders--wgc_subscription' === $screen_id ) {
 
 			wp_enqueue_script( 'wgc-subscription-details',
 				plugins_url( 'assets/js/admin/subscription-details.js', WGC_MAIN_FILE ),
