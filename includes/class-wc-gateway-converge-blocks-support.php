@@ -32,6 +32,19 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 	 */
 	public function initialize() {
 		$this->settings = get_option( 'woocommerce_' . $this->name . '_settings', array() );
+
+		add_action(
+			'woocommerce_blocks_enqueue_checkout_block_scripts_before',
+			function() {
+				add_filter( 'woocommerce_saved_payment_methods_list', array( $this, 'add_saved_payment_methods' ), 10, 2 );
+			}
+		);
+		add_action(
+			'woocommerce_blocks_enqueue_checkout_block_scripts_after',
+			function () {
+				remove_filter( 'woocommerce_saved_payment_methods_list', array( $this, 'add_saved_payment_methods' ), 10, 2 );
+			}
+		);
 	}
 
 	/**
@@ -142,5 +155,53 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 		}
 
 		return $this->gateway;
+	}
+
+	/**
+	 * Manually add Elavon Converge tokens to the saved payment methods list.
+	 * 
+	 * Elavon Converge tokens use the `gateway_converge_storedcard` token type instead of the `cc` token type.
+	 * WooCommerce Blocks doesn't know how to display the `gateway_converge_storedcard` token type,
+	 * so this converts all Elavon Converge saved cards to the standard `cc` token type
+	 * and unsets the custom `gateway_converge_storedcard` token type.
+	 *
+	 * @param array $saved_methods The saved payment methods.
+	 * @return array $saved_methods Modified saved payment methods.
+	 */
+	public function add_saved_payment_methods( $saved_methods, $customer_id ) {
+		if ( ! $this->should_show_saved_cards() ) {
+			unset( $saved_methods['gateway_converge_storedcard'] );
+			return $saved_methods;
+		}
+
+		$tokens = $this->get_gateway()->get_tokens();
+
+		if ( ! $tokens ) {
+			$tokens = array();
+		}
+
+		foreach ( $tokens as $token ) {
+			$saved_token = array(
+				'method'     => array(
+					'gateway' => WGC_PAYMENT_NAME,
+					'last4'   => esc_html( $token->get_last4() ),
+					'brand'   => esc_html( $token->get_card_scheme() ),
+				),
+				'expires'    => sprintf(
+					/* translators: %1$s Expiration month, %2$s Expiration year. */
+					esc_html__( '%1$s/%2$s', 'elavon-converge-gateway' ),
+					$token->get_expiry_month(),
+					substr( $token->get_expiry_year(), - 2 )
+				),
+				'is_default' => $token->is_default(),
+				'actions'    => array(),
+				'tokenId'    => $token->get_id(),
+			);
+			
+			$saved_methods['cc'][] = $saved_token;
+		}
+
+		unset( $saved_methods['gateway_converge_storedcard'] );
+		return $saved_methods;
 	}
 }
