@@ -35,3 +35,16 @@ registerPlugin('woocommerce-gateway-converge', {
 
 // Register the filters to modify the cart item prices.
 registerFilters();
+
+// Save Timezone Cookie.
+if (
+	typeof navigator !== 'undefined' &&
+	// eslint-disable-next-line no-undef
+	navigator.cookieEnabled &&
+	typeof Intl !== 'undefined'
+) {
+	document.cookie =
+		'wgc_timezone=' +
+		Intl.DateTimeFormat()?.resolvedOptions().timeZone +
+		';path=/';
+}
