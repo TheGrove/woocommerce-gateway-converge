@@ -994,14 +994,28 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		$validator = new WC_Checkout_Input_Validator();
 		$validator->validate( $data );
 	
-		foreach ( $validator->getErrorMessages() as $error_message ) {
+		// Add errors to the response.
+		$errors = $validator->getErrorMessages();
+		foreach ( $errors as $error_message ) {
 			wc_add_notice( $error_message, 'error' );
+		}
+		
+		if ( ! empty( $errors ) ) {
+			return;
 		}
 
 		// Validate Converge connection.
 		if ( ! $this->getC2ApiService()->canConnect() ) {
 			wgc_log('Converge is down.');
 			wc_add_notice( __( 'Your order could not be placed. Please try again later.', 'elavon-converge-gateway' ), 'error' );
+			return;
+		}
+
+		// Validate number of line items.
+		try{
+			$this->validate_number_line_items( $order, null );
+		} catch (\Exception $e) {
+			wc_add_notice( $e->getMessage(), 'error' );
 		}
 	}
 
