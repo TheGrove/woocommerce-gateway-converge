@@ -771,9 +771,9 @@ function wgc_get_subscription_related_orders( $subscription ) {
 		// HPOS usage is enabled.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT orders.ID FROM {$wpdb->prefix}wc_orders AS orders LEFT JOIN {$wpdb->prefix}wc_orders_meta AS ordermeta
-				ON orders.ID = ordermeta.order_id WHERE orders.type = 'shop_order' AND ordermeta.meta_key = '_wgc_subscription_id'
-				AND ordermeta.meta_value = %s",
+				"SELECT orders.parent_order_id FROM {$wpdb->prefix}wc_orders AS orders
+				WHERE orders.type = 'shop_order'
+				AND orders.ID = %s",
 				$subscription->get_id()
 			)
 		);
@@ -1206,7 +1206,7 @@ function wgc_get_order_by_transaction_id( $transaction_id ) {
 	global $wpdb;
 
 	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-		return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}wc_orders as orders INNER JOIN {$wpdb->prefix}wc_orders_meta as meta ON orders.ID = meta.post_id WHERE orders.type = 'shop_order' AND meta.meta_key = '_transaction_id' AND meta.meta_value = %s", $transaction_id ) );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}wc_orders as orders WHERE orders.type = 'shop_order' AND orders.transaction_id = %s", $transaction_id ) );
 	}
 
 	return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts as posts INNER JOIN $wpdb->postmeta as meta ON posts.ID = meta.post_id WHERE post_type = 'shop_order' AND meta.meta_key = '_transaction_id' AND meta.meta_value = %s", $transaction_id ) );
