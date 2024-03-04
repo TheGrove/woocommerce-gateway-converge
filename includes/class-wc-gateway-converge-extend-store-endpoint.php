@@ -122,20 +122,10 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 			return array();
 		}
 
-		$recurring_totals_elements = wgc_get_recurring_totals_elements();
-
+		$recurring_totals_elements = wgc_get_recurring_totals_for_blocks();
 
 		return array(
-			'totals' => array_map(
-				function( $item ) {
-					if ( is_array( $item ) ) {
-						return array_map( 'strip_tags', $item );
-					} else {
-						return strip_tags( $item );
-					}
-				},
-				$recurring_totals_elements
-			)
+			'totals' => $recurring_totals_elements
 		);
 	}
 

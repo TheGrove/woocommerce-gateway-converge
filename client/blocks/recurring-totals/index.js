@@ -31,12 +31,13 @@ const RecurringTotalItem = ({ type, items }) => {
 	const total = items?.map((item, index) => {
 		return (
 			<TotalsWrapper key={`${type}-${index}`}>
-				<div className="wc-block-components-totals-item">
+				<div className="wc-block-components-totals-item wgc-block-recurring-totals-item">
 					<span className="wgc-block-recurring-totals-item__label">
-						{index === 0 ? label : ' '}
+						{index === 0 ? label : ''}
 					</span>
 					<span className="wgc-block-recurring-totals-item__value">
-						{decodeEntities(item)}
+						<strong>{decodeEntities(item.price)} </strong>
+						{decodeEntities(item.frequency)}
 					</span>
 				</div>
 			</TotalsWrapper>
