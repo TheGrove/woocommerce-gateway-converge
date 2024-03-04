@@ -13,7 +13,7 @@ class WC_Converge_Subscription extends WC_Order {
 	 */
 	public $order;
 
-	public function __construct( $order ) {
+	public function __construct( $order = 0 ) {
 		parent::__construct( $order );
 
 		$this->order = wc_get_order( $this->get_parent_id() );

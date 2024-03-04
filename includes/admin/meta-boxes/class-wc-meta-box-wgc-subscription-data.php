@@ -25,23 +25,29 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	}
 
 	public static function add_meta_boxes( $post_type, $post ) {
-		if ( 'wgc_subscription' === $post_type ) {
+		if ( 'wgc_subscription' === $post_type || 'woocommerce_page_wc-orders--wgc_subscription' === $post_type ) {
 			add_meta_box( 'wgc-converge-subscription-details', __( 'Converge Subscription Details', 'elavon-converge-gateway' ), array(
 				__CLASS__,
 				'converge_subscription_details_view'
-			), 'wgc_subscription', 'normal', 'default' );
+			), array( 'wgc_subscription', 'woocommerce_page_wc-orders--wgc_subscription' ), 'normal', 'default' );
 			add_meta_box( 'wgc-related-order', __( 'Related Orders', 'elavon-converge-gateway' ), array(
 				__CLASS__,
 				'related_order_view'
-			), 'wgc_subscription', 'normal', 'default' );
+			), array( 'wgc_subscription', 'woocommerce_page_wc-orders--wgc_subscription' ), 'normal', 'default' );
 			add_meta_box( 'wgc-transaction-history', __( 'Transaction History', 'elavon-converge-gateway' ), array(
 				__CLASS__,
 				'transaction_history_view'
-			), 'wgc_subscription', 'normal', 'default' );
+			), array( 'wgc_subscription', 'woocommerce_page_wc-orders--wgc_subscription' ), 'normal', 'default' );
 		}
 
-		if ( OrderUtil::is_order( $post->ID, wc_get_order_types() ) ) {
-			$order         = wc_get_order( $post->ID );
+		if ( $post instanceof \WC_Order ) {
+			$order_id = $post->get_id();
+		} else {
+			$order_id = $post->ID;
+		}
+
+		if ( OrderUtil::is_order( $order_id, wc_get_order_types() ) ) {
+			$order         = wc_get_order( $order_id );
 			$subscriptions = wgc_get_subscriptions_for_order( $order );
 
 			if ( is_array( $subscriptions ) && count( $subscriptions ) > 0 ) {
@@ -62,9 +68,10 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	}
 
 	public static function converge_subscription_details_view($post) {
-		$subscription = wgc_get_subscription_object_by_id($post->ID);
+		$order_id            = $post instanceof \WC_Order ? $post->get_id() : $post->ID;
+		$subscription        = wgc_get_subscription_object_by_id($order_id);
 		$subscription_txn_id = $subscription->get_transaction_id();
-		$response = wgc_get_gateway()->get_converge_api()->get_subscription($subscription_txn_id);
+		$response            = wgc_get_gateway()->get_converge_api()->get_subscription($subscription_txn_id);
 
 		if ($response && $response->isSuccess()) {
 			$converge_subscription = $response->getData();
@@ -75,8 +82,9 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	}
 
 	public static function transaction_history_view($post) {
-		$subscription = wgc_get_subscription_object_by_id($post->ID);
-		$response = wgc_get_gateway()->get_converge_api()->get_subscription_transactions($subscription);
+		$order_id     = $post instanceof \WC_Order ? $post->get_id() : $post->ID;
+		$subscription = wgc_get_subscription_object_by_id($order_id);
+		$response     = wgc_get_gateway()->get_converge_api()->get_subscription_transactions($subscription);
 
 		$has_errors = FALSE;
 		$transactions = array();
@@ -91,7 +99,8 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	}
 
 	public static function related_order_view($post) {
-		$orders = wgc_get_subscription_related_orders($post->ID);
+		$order_id = $post instanceof \WC_Order ? $post->get_id() : $post->ID;
+		$orders   = wgc_get_subscription_related_orders( $order_id );
 
 		include 'views/html-related-order.php';
 	}
