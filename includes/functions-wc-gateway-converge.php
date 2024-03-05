@@ -1127,7 +1127,8 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 	}
 
 	foreach ( $orders as $current_order ) {
-		$subscriptions[] = wgc_get_subscription_object_by_id( $current_order->get_id() );
+		$order_id        = $current_order instanceof WC_Order ? $current_order->get_id() : $current_order->ID;
+		$subscriptions[] = wgc_get_subscription_object_by_id( $order_id );
 	}
 
 	return $subscriptions;
