@@ -41,6 +41,11 @@ if ( ! wgc_is_woocommerce_active() ) {
 	return;
 }
 
+if ( version_compare( phpversion(), '7.4', '<' ) ) {
+	add_action( 'admin_notices', 'elavon_converge_gateway_php_version_admin_notice' );
+	return;
+}
+
 define( 'WGC_VERSION', '1.16.0' );
 define( 'WGC_PAYMENT_NAME', "elavon-converge-gateway" );
 define( 'WGC_MAIN_FILE', __FILE__ );
@@ -56,7 +61,6 @@ include_once 'includes/validation/class-wc-validation-message.php';
 include_once 'includes/validation/class-wc-checkout-input-validator.php';
 include_once 'includes/validation/class-wc-config-validator.php';
 include_once 'includes/class-wc-gateway-converge-response-log-handler.php';
-
 
 add_action( 'plugins_loaded', 'init_woocommerce_gateway_converge' );
 add_filter( 'woocommerce_payment_gateways', 'add_gateway_class_to_payment_methods' );
@@ -98,10 +102,6 @@ function elavon_converge_gateway_php_version_admin_notice() {
 }
 
 function woocommerce_init(){
-	if ( version_compare( phpversion(), '7.4', '<' ) ) {
-		add_action( 'admin_notices', 'elavon_converge_gateway_php_version_admin_notice' );
-		return;
-	}
 
 	// Fix the issues related to WP Sessions that only works for logged in users
 	wgc_force_non_logged_user_wc_session();
