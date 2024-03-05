@@ -3,8 +3,7 @@ name: ESLint
 on:
   pull_request:
     branches:
-      - develop
-      - enhancement/*
+      - main
 
 jobs:
   changed:
