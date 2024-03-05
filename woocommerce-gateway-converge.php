@@ -78,7 +78,30 @@ function init_woocommerce_gateway_converge() {
 	require_once 'includes/class-wc-payment-token-gateway-converge-storedcard.php';
 }
 
+/**
+ * Show admin notice when PHP version is lower than required.
+ */
+function elavon_converge_gateway_php_version_admin_notice() {
+	?>
+	<div class="notice notice-error">
+		<p>
+			<?php
+			printf(
+				/* translators: %s: required PHP version */
+				esc_html__( 'The Woocommerce Elavon Converge EU Gateway plugin requires PHP %s. Please contact your host to update your PHP version.', 'elavon-converge-gateway' ),
+				'7.4 or +'
+			);
+			?>
+		</p>
+	</div>
+	<?php
+}
+
 function woocommerce_init(){
+	if ( version_compare( phpversion(), '7.4', '<' ) ) {
+		add_action( 'admin_notices', 'elavon_converge_gateway_php_version_admin_notice' );
+		return;
+	}
 
 	// Fix the issues related to WP Sessions that only works for logged in users
 	wgc_force_non_logged_user_wc_session();
@@ -133,4 +156,3 @@ function wgc_before_template_part( $template_name, $template_path, $located ) {
 		woocommerce_output_all_notices();
 	}
 }
-
