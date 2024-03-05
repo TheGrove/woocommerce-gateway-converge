@@ -53,5 +53,3 @@ jQuery(function ($) {
 		$('#elavon-converge-gateway-card-cvc').prop('required', prop);
 	}
 });
-
-
