@@ -10,7 +10,7 @@ use Elavon\Converge2\Request\Payload\Validation\Constraint\Required;
 class WC_Validation_Message implements ViolationRendererInterface {
 
 	protected $error_messages = array();
-	protected $field_labels = array();
+	protected $field_labels   = array();
 	protected $fix_labels;
 
 	public function __construct( $fix_labels = true ) {
@@ -32,8 +32,10 @@ class WC_Validation_Message implements ViolationRendererInterface {
 				__( 'The field %1$s does not allow the following special characters: %2$s', 'elavon-converge-gateway' ),
 			PhoneSafeString::ID =>
 			/* translators: %1$s: already translated field name, %2$s: a list of special characters */
-				__( 'The field %1$s allows only these special characters: %2$s including space.',
-					'elavon-converge-gateway' ),
+				__(
+					'The field %1$s allows only these special characters: %2$s including space.',
+					'elavon-converge-gateway'
+				),
 		);
 	}
 
@@ -41,8 +43,10 @@ class WC_Validation_Message implements ViolationRendererInterface {
 		$this->field_labels = array(
 			'billing'                                => __( 'Billing Address', 'elavon-converge-gateway' ),
 			'shipping'                               => __( 'Shipping Address', 'elavon-converge-gateway' ),
-			'full_name'                              => __( 'Full name (First name and Last name)',
-				'elavon-converge-gateway' ),
+			'full_name'                              => __(
+				'Full name (First name and Last name)',
+				'elavon-converge-gateway'
+			),
 			'first_name'                             => __( 'First name', 'elavon-converge-gateway' ),
 			'last_name'                              => __( 'Last name', 'elavon-converge-gateway' ),
 			'company'                                => __( 'Company name', 'elavon-converge-gateway' ),
@@ -57,8 +61,10 @@ class WC_Validation_Message implements ViolationRendererInterface {
 			WGC_KEY_NAME                             => __( 'Name', 'elavon-converge-gateway' ),
 			WGC_KEY_URL                              => __( 'URL', 'elavon-converge-gateway' ),
 			WGC_KEY_PROCESSOR_ACCOUNT_ID             => __( 'Processor Account Id', 'elavon-converge-gateway' ),
-			WGC_KEY_SUBSCRIPTIONS_DISCLOSURE_MESSAGE => __( 'Disclosure Message for Subscriptions',
-				'elavon-converge-gateway' ),
+			WGC_KEY_SUBSCRIPTIONS_DISCLOSURE_MESSAGE => __(
+				'Disclosure Message for Subscriptions',
+				'elavon-converge-gateway'
+			),
 			'order_comments'                         => __( 'Order notes', 'elavon-converge-gateway' ),
 		);
 	}

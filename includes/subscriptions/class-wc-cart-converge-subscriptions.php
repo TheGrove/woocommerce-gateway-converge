@@ -7,7 +7,7 @@ class WC_Cart_Converge_Subscriptions {
 	 * @var bool
 	 */
 	private $wgc_recurring_total_calculation = false;
-	
+
 	public function __construct() {
 		add_filter( 'woocommerce_add_to_cart_handler', array( $this, 'add_to_cart_handler' ), 10, 2 );
 		add_filter( 'woocommerce_cart_product_price', array( $this, 'cart_product_price' ), 10, 2 );
@@ -18,12 +18,11 @@ class WC_Cart_Converge_Subscriptions {
 		add_action( 'woocommerce_cart_needs_payment', array( $this, 'cart_needs_payment' ), 10, 2 );
 		add_filter( 'woocommerce_order_formatted_line_subtotal', array( $this, 'order_product_price' ), 10, 3 );
 		add_action( 'woocommerce_after_calculate_totals', array( $this, 'add_subscription_data' ), 20 );
-
 	}
 
 	public function cart_product_price( $price, $product ) {
 		if ( wgc_product_is_subscription( $product ) ) {
-			$price = wgc_get_product_price_html( $product, $price);
+			$price = wgc_get_product_price_html( $product, $price );
 		}
 
 		return $price;
@@ -38,7 +37,7 @@ class WC_Cart_Converge_Subscriptions {
 	}
 
 	public function display_recurring_totals_form() {
-		echo get_recurring_totals_form('cart');
+		echo get_recurring_totals_form( 'cart' );
 	}
 
 	public function cart_needs_payment( $needs_payment, $cart ) {
@@ -86,7 +85,7 @@ class WC_Cart_Converge_Subscriptions {
 
 			if ( wgc_product_is_subscription( $cart_item['data'] ) ) {
 				$subscription_groups[] = $cart_key;
-				$index ++;
+				++$index;
 			}
 		}
 		foreach ( $subscription_groups as $recurring_cart_key => $subscription_group ) {
@@ -108,7 +107,6 @@ class WC_Cart_Converge_Subscriptions {
 		}
 
 		$this->wgc_recurring_total_calculation = false;
-
 	}
 }
 

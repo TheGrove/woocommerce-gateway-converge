@@ -8,9 +8,11 @@ class WGC_Form_Handler {
 	}
 
 	public static function change_payment_method() {
-		if ( isset( $_POST['wgc_change_method_nonce'] ) && wp_verify_nonce( $_POST['wgc_change_method_nonce'],
-				'change-payment-method' ) ) {
-			$subscription = wc_get_order( wc_clean( $_POST['wgc_subscription_id'] ) );
+		if ( isset( $_POST['wgc_change_method_nonce'] ) && wp_verify_nonce(
+			$_POST['wgc_change_method_nonce'],
+			'change-payment-method'
+		) ) {
+			$subscription   = wc_get_order( wc_clean( $_POST['wgc_subscription_id'] ) );
 			$payment_method = $_POST['payment_method'];
 
 			/** @var WC_Gateway_Converge $gateway */
@@ -20,9 +22,13 @@ class WGC_Form_Handler {
 				return;
 			} else {
 				wc_add_notice( __( 'Your payment method has been updated.', 'elavon-converge-gateway' ), 'success' );
-				wp_safe_redirect( wc_get_endpoint_url( 'view-converge-subscription',
-					$subscription->get_id(),
-					wc_get_page_permalink( 'myaccount' ) ) );
+				wp_safe_redirect(
+					wc_get_endpoint_url(
+						'view-converge-subscription',
+						$subscription->get_id(),
+						wc_get_page_permalink( 'myaccount' )
+					)
+				);
 				exit();
 			}
 		}

@@ -45,7 +45,7 @@ class WC_Product_Converge_Subscription extends WC_Product_Simple {
 	}
 
 	public function get_price_html( $deprecated = '' ) {
-		return  wgc_get_product_price_html( $this, parent::get_price_html( $deprecated ) );
+		return wgc_get_product_price_html( $this, parent::get_price_html( $deprecated ) );
 	}
 
 	public function is_on_sale( $context = 'view' ) {
@@ -128,6 +128,6 @@ class WC_Product_Converge_Subscription extends WC_Product_Simple {
 		return $this->get_prop( 'wgc_plan_id' );
 	}
 	public function has_plan_introductory_rate() {
-		return "yes" === $this->get_wgc_plan_introductory_rate();
+		return 'yes' === $this->get_wgc_plan_introductory_rate();
 	}
 }

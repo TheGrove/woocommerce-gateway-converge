@@ -44,9 +44,9 @@ class WC_Product_Converge_Subscription_Variation extends WC_Product_Variation {
 	}
 
 	public function get_price_html( $deprecated = '' ) {
-		return  wgc_get_product_price_html( $this, parent::get_price_html( $deprecated ) );
+		return wgc_get_product_price_html( $this, parent::get_price_html( $deprecated ) );
 	}
-	
+
 	public function get_price( $context = 'view' ) {
 
 		$rate_billing_periods     = $this->get_wgc_plan_introductory_rate_billing_periods();
@@ -153,7 +153,7 @@ class WC_Product_Converge_Subscription_Variation extends WC_Product_Variation {
 	}
 
 	public function has_plan_introductory_rate() {
-		return "yes" === $this->get_wgc_plan_introductory_rate();
+		return 'yes' === $this->get_wgc_plan_introductory_rate();
 	}
 }
 WC_Product_Converge_Subscription_Variation::init();

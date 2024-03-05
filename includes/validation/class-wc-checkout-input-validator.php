@@ -10,18 +10,18 @@ class WC_Checkout_Input_Validator extends DataValidator {
 	public function __construct() {
 		parent::__construct();
 
-		$this->setViolationRenderer(new WC_Validation_Message());
+		$this->setViolationRenderer( new WC_Validation_Message() );
 
 		$converge_schema = Converge2Schema::getInstance();
 
-		$common_max_length_constraint = new MaxLength($converge_schema->getCommonMaxLength());
+		$common_max_length_constraint = new MaxLength( $converge_schema->getCommonMaxLength() );
 		$basic_safe_string_constraint = new BasicSafeString();
 		$phone_safe_string_constraint = new PhoneSafeString();
 
-		foreach (array(
+		foreach ( array(
 			'billing',
 			'shipping',
-		) as $group) {
+		) as $group ) {
 			foreach (
 				array(
 					'first_name',
@@ -41,7 +41,7 @@ class WC_Checkout_Input_Validator extends DataValidator {
 					'address_2',
 					'city',
 					'state',
-					'postcode'
+					'postcode',
 				) as $field
 			) {
 				$field = $group . '_' . $field;
@@ -61,6 +61,6 @@ class WC_Checkout_Input_Validator extends DataValidator {
 		}
 
 		$field = 'order_comments';
-		$this->maxLength($converge_schema->getShopperReferenceMaxLength(), $field);
+		$this->maxLength( $converge_schema->getShopperReferenceMaxLength(), $field );
 	}
 }

@@ -45,7 +45,7 @@ class WC_Plan_Validator extends DataValidator {
 class IntroductoryRateBillingPeriods extends AbstractConstraint {
 	const ID = 'IntroductoryRateBillingPeriods';
 
-	protected $id = self::ID;
+	protected $id                   = self::ID;
 	protected $errorMessageTemplate = 'The number of billing periods after a subscription ends must exceed the number of introductory rate billing periods.';
 	protected $introductoryRateBillingPeriods;
 

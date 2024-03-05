@@ -5,10 +5,13 @@ defined( 'ABSPATH' ) || exit();
 class WGC_Admin_Subscription_Listing {
 
 	public function __construct() {
-		add_action( 'manage_' . WGC_SUBSCRIPTION_POST_TYPE . '_posts_custom_column', array(
-			$this,
-			'subscription_custom_column'
-		) );
+		add_action(
+			'manage_' . WGC_SUBSCRIPTION_POST_TYPE . '_posts_custom_column',
+			array(
+				$this,
+				'subscription_custom_column',
+			)
+		);
 		add_filter( 'manage_' . WGC_SUBSCRIPTION_POST_TYPE . '_posts_columns', array( $this, 'subscription_columns' ) );
 	}
 

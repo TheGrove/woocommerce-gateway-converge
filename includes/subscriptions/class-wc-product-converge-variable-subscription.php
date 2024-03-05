@@ -113,10 +113,10 @@ class WC_Product_Converge_Variable_Subscription extends WC_Product_Variable {
 				}
 			}
 
-			$product->{"set_min_subscription_price"}( $min_price_type );
-			$product->{"set_max_subscription_price"}( $max_price_type );
-			$product->{"set_min_subscription_price_variation_id"}( $min_price_type_variation_id );
-			$product->{"set_max_subscription_price_variation_id"}( $max_price_type_variation_id );
+			$product->{'set_min_subscription_price'}( $min_price_type );
+			$product->{'set_max_subscription_price'}( $max_price_type );
+			$product->{'set_min_subscription_price_variation_id'}( $min_price_type_variation_id );
+			$product->{'set_max_subscription_price_variation_id'}( $max_price_type_variation_id );
 			$product->save();
 		}
 	}

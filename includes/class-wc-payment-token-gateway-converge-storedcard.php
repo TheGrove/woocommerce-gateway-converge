@@ -3,7 +3,7 @@
 use Elavon\Converge2\DataObject\Resource\StoredCardInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit (); // Exit if accessed directly.
+	exit(); // Exit if accessed directly.
 }
 
 class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
@@ -32,16 +32,16 @@ class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
 
 	public function get_expiry_date() {
 		$expiry_date = new DateTime( $this->get_expiry_year() . '-' . $this->get_expiry_month() );
-		$expiry_date->modify('first day of next month');
-		$expiry_date->modify('-1 second');
+		$expiry_date->modify( 'first day of next month' );
+		$expiry_date->modify( '-1 second' );
 		return $expiry_date;
 	}
 
 	public function is_expired() {
-		$now = new DateTime( 'now', new \DateTimeZone( 'UTC' ));
-		$expiry_date = $this->get_expiry_date() ;
+		$now         = new DateTime( 'now', new \DateTimeZone( 'UTC' ) );
+		$expiry_date = $this->get_expiry_date();
 
-		if ( $now  > $expiry_date ) {
+		if ( $now > $expiry_date ) {
 			return true;
 		} else {
 			return false;
@@ -138,8 +138,7 @@ class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
 	public function get_token( $context = 'view' ) {
 		$token = parent::get_token( $context );
 
-		return
-			wgc_get_payment_name() == $context
+		return wgc_get_payment_name() == $context
 				? $this->encryption->decryptCredential( $token )
 				: $token;
 	}
@@ -156,7 +155,7 @@ class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
 	public function delete( $force_delete = false ) {
 		$stored_card         = $this->get_token( wgc_get_payment_name() );
 		$deleted_on_converge = wgc_get_gateway()->delete_stored_card( $stored_card );
-		
+
 		if ( $deleted_on_converge ) {
 			$parent_result = parent::delete( $force_delete );
 			if ( $this->get_is_default() ) {
@@ -178,5 +177,4 @@ class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
 			exit();
 		}
 	}
-
 }

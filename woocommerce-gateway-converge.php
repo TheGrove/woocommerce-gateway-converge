@@ -33,26 +33,26 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'WGC_DIR_PATH', plugin_dir_path( __FILE__ ) );
 
 // WC active check
-require_once( WGC_DIR_PATH . 'includes/functions-wc-gateway-converge.php' );
+require_once WGC_DIR_PATH . 'includes/functions-wc-gateway-converge.php';
 if ( ! wgc_is_woocommerce_active() ) {
 	return;
 }
 
 define( 'WGC_VERSION', '1.16.0' );
-define( 'WGC_PAYMENT_NAME', "elavon-converge-gateway" );
+define( 'WGC_PAYMENT_NAME', 'elavon-converge-gateway' );
 define( 'WGC_MAIN_FILE', __FILE__ );
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-include_once 'includes/settings-constants-converge-payment-gateway.php';
-include_once 'includes/class-wc-gateway-converge-order-wrapper.php';
-include_once 'includes/class-wc-gateway-converge-api.php';
-include_once 'includes/class-wc-gateway-converge-admin-order-actions.php';
-include_once 'includes/class-wc-gateway-converge-admin-order-converge-status.php';
-include_once 'includes/validation/class-wc-validation-message.php';
-include_once 'includes/validation/class-wc-checkout-input-validator.php';
-include_once 'includes/validation/class-wc-config-validator.php';
-include_once 'includes/class-wc-gateway-converge-response-log-handler.php';
+require_once 'includes/settings-constants-converge-payment-gateway.php';
+require_once 'includes/class-wc-gateway-converge-order-wrapper.php';
+require_once 'includes/class-wc-gateway-converge-api.php';
+require_once 'includes/class-wc-gateway-converge-admin-order-actions.php';
+require_once 'includes/class-wc-gateway-converge-admin-order-converge-status.php';
+require_once 'includes/validation/class-wc-validation-message.php';
+require_once 'includes/validation/class-wc-checkout-input-validator.php';
+require_once 'includes/validation/class-wc-config-validator.php';
+require_once 'includes/class-wc-gateway-converge-response-log-handler.php';
 
 
 add_action( 'plugins_loaded', 'init_woocommerce_gateway_converge' );
@@ -75,14 +75,14 @@ function init_woocommerce_gateway_converge() {
 	require_once 'includes/class-wc-payment-token-gateway-converge-storedcard.php';
 }
 
-function woocommerce_init(){
+function woocommerce_init() {
 
 	// Fix the issues related to WP Sessions that only works for logged in users
 	wgc_force_non_logged_user_wc_session();
 
 	if ( wgc_subscriptions_active() ) {
 
-		add_filter('woocommerce_available_payment_gateways', 'wgc_conditional_payment_gateways');
+		add_filter( 'woocommerce_available_payment_gateways', 'wgc_conditional_payment_gateways' );
 
 		if ( is_admin() ) {
 			include_once 'includes/validation/class-wc-subscription-validation-message.php';
@@ -130,4 +130,3 @@ function wgc_before_template_part( $template_name, $template_path, $located ) {
 		woocommerce_output_all_notices();
 	}
 }
-

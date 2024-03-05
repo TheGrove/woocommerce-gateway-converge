@@ -66,7 +66,7 @@ class WC_Converge_Subscription extends WC_Order {
 		return $order_item_totals;
 	}
 	public function get_line_subtotal_shipping( $item, $inc_tax = false, $round = true ) {
-		$subtotal = parent::get_line_subtotal( $item, $inc_tax, $round );
+		$subtotal      = parent::get_line_subtotal( $item, $inc_tax, $round );
 			$subtotal += (float) $this->get_shipping_total();
 
 		return $subtotal;
@@ -92,9 +92,11 @@ class WC_Converge_Subscription extends WC_Order {
 		$product  = $item->get_product();
 		$quantity = $item->get_quantity();
 		if ( wgc_product_is_subscription( $product ) ) {
-			$subtotal = sprintf( "%s %s",
+			$subtotal = sprintf(
+				'%s %s',
 				$subtotal,
-				wgc_get_subscription_price_string( $product, $quantity, (float) $this->get_shipping_total() ) );
+				wgc_get_subscription_price_string( $product, $quantity, (float) $this->get_shipping_total() )
+			);
 		}
 
 		return $subtotal;

@@ -53,11 +53,11 @@ class WC_Gateway_Converge_Order_Wrapper {
 	 * Get the Converge request URL for an order.
 	 *
 	 * @param string Converge 2 payment session id
-	 * @param bool $sandbox Whether to use sandbox mode or not.
+	 * @param bool                                 $sandbox Whether to use sandbox mode or not.
 	 *
 	 * @return string
 	 */
-	public function get_request_url( $payment_session_id, $hpp_url) {
+	public function get_request_url( $payment_session_id, $hpp_url ) {
 
 		$this->endpoint = $hpp_url;
 		$converge_args  = array(
@@ -145,7 +145,7 @@ class WC_Gateway_Converge_Order_Wrapper {
 	 * Get shipping cost line item args for converge request.
 	 *
 	 * @param WC_Order $order Order object.
-	 * @param bool $force_one_line_item Whether one line item was forced by validation or URL length.
+	 * @param bool     $force_one_line_item Whether one line item was forced by validation or URL length.
 	 *
 	 * @return array
 	 */
@@ -171,7 +171,7 @@ class WC_Gateway_Converge_Order_Wrapper {
 	 * Get line item args for converge request.
 	 *
 	 * @param WC_Order $order Order object.
-	 * @param bool $force_one_line_item Create only one item for this order.
+	 * @param bool     $force_one_line_item Create only one item for this order.
 	 *
 	 * @return array
 	 */
@@ -201,7 +201,7 @@ class WC_Gateway_Converge_Order_Wrapper {
 	/**
 	 * Get order item names as a string.
 	 *
-	 * @param WC_Order $order Order object.
+	 * @param WC_Order      $order Order object.
 	 * @param WC_Order_Item $item Order item object.
 	 *
 	 * @return string
@@ -210,7 +210,8 @@ class WC_Gateway_Converge_Order_Wrapper {
 		$item_name = $item->get_name();
 		$item_meta = strip_tags(
 			wc_display_item_meta(
-				$item, array(
+				$item,
+				array(
 					'before'    => '',
 					'separator' => ', ',
 					'after'     => '',
@@ -257,10 +258,10 @@ class WC_Gateway_Converge_Order_Wrapper {
 		// Products.
 		foreach ( $order->get_items( array( 'line_item', 'fee' ) ) as $item ) {
 			if ( 'fee' === $item['type'] ) {
-				$item_line_total  = wgc_number_format( $item['line_total'] );
+				$item_line_total   = wgc_number_format( $item['line_total'] );
 				$calculated_total += $item_line_total;
 			} else {
-				$item_line_total  = wgc_number_format( $order->get_item_subtotal( $item, false ) );
+				$item_line_total   = wgc_number_format( $order->get_item_subtotal( $item, false ) );
 				$calculated_total += $item_line_total * $item->get_quantity();
 			}
 
@@ -299,27 +300,32 @@ class WC_Gateway_Converge_Order_Wrapper {
 	 * Add Converge Line Item.
 	 *
 	 * @param string $item_name Item name.
-	 * @param int $quantity Item quantity.
-	 * @param float $amount Amount.
+	 * @param int    $quantity Item quantity.
+	 * @param float  $amount Amount.
 	 * @param string $item_number Item number.
 	 */
 	protected function add_line_item( $item_name, $quantity = 1, $amount = 0.0, $item_number = '' ) {
 
 		$item = apply_filters(
-			'woocommerce_converge_line_item', array(
-			'item_name'   => html_entity_decode( wc_trim_string( $item_name ? $item_name : __( 'Item', 'elavon-converge-gateway' ), 127 ), ENT_NOQUOTES, 'UTF-8' ),
-			'quantity'    => (int) $quantity,
-			'amount'      => wc_float_to_string( (float) $amount ),
-			'item_number' => $item_number,
-		), $item_name, $quantity, $amount, $item_number
+			'woocommerce_converge_line_item',
+			array(
+				'item_name'   => html_entity_decode( wc_trim_string( $item_name ? $item_name : __( 'Item', 'elavon-converge-gateway' ), 127 ), ENT_NOQUOTES, 'UTF-8' ),
+				'quantity'    => (int) $quantity,
+				'amount'      => wc_float_to_string( (float) $amount ),
+				'item_number' => $item_number,
+			),
+			$item_name,
+			$quantity,
+			$amount,
+			$item_number
 		);
 
-		$this->line_items['cart'][] = [
+		$this->line_items['cart'][] = array(
 			'item_name'   => $item['item_name'],
 			'quantity'    => $item['quantity'],
 			'amount'      => $item['amount'],
 			'item_number' => $item['item_number'],
-		];
+		);
 	}
 
 
@@ -333,8 +339,8 @@ class WC_Gateway_Converge_Order_Wrapper {
 			WGC_KEY_VENDOR_ID          => WGC_KEY_VENDOR_ID_VALUE,
 			WGC_KEY_VENDOR_APP_NAME    => WGC_KEY_VENDOR_APP_NAME_VALUE,
 			WGC_KEY_VENDOR_APP_VERSION => WGC_KEY_VENDOR_APP_VERSION_VALUE,
-			WGC_KEY_PHP_VERSION		   => PHP_VERSION,
-			WGC_KEY_WC_VERSION		   => WC_VERSION,
+			WGC_KEY_PHP_VERSION        => PHP_VERSION,
+			WGC_KEY_WC_VERSION         => WC_VERSION,
 		);
 
 		if ( $order ) {

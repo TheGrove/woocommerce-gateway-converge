@@ -15,8 +15,10 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'product_data_tabs' ) );
 		add_action( 'woocommerce_product_options_general_product_data', array( __CLASS__, 'output_general_data' ) );
 		add_action( 'woocommerce_product_after_variable_attributes', array( __CLASS__, 'output_variation_data' ), 10, 3 );
-		add_action( 'woocommerce_process_product_meta_converge-subscription',
-			array( __CLASS__, 'save_subscription_data' ) );
+		add_action(
+			'woocommerce_process_product_meta_converge-subscription',
+			array( __CLASS__, 'save_subscription_data' )
+		);
 		add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'save_variation_data' ), 10, 2 );
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 		add_action( 'init', array( __CLASS__, 'action_init' ) );
@@ -25,18 +27,39 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 
 	public static function add_meta_boxes( $post_type, $post ) {
 		if ( 'wgc_subscription' === $post_type ) {
-			add_meta_box( 'wgc-converge-subscription-details', __( 'Converge Subscription Details', 'elavon-converge-gateway' ), array(
-				__CLASS__,
-				'converge_subscription_details_view'
-			), 'wgc_subscription', 'normal', 'default' );
-			add_meta_box( 'wgc-related-order', __( 'Related Orders', 'elavon-converge-gateway' ), array(
-				__CLASS__,
-				'related_order_view'
-			), 'wgc_subscription', 'normal', 'default' );
-			add_meta_box( 'wgc-transaction-history', __( 'Transaction History', 'elavon-converge-gateway' ), array(
-				__CLASS__,
-				'transaction_history_view'
-			), 'wgc_subscription', 'normal', 'default' );
+			add_meta_box(
+				'wgc-converge-subscription-details',
+				__( 'Converge Subscription Details', 'elavon-converge-gateway' ),
+				array(
+					__CLASS__,
+					'converge_subscription_details_view',
+				),
+				'wgc_subscription',
+				'normal',
+				'default'
+			);
+			add_meta_box(
+				'wgc-related-order',
+				__( 'Related Orders', 'elavon-converge-gateway' ),
+				array(
+					__CLASS__,
+					'related_order_view',
+				),
+				'wgc_subscription',
+				'normal',
+				'default'
+			);
+			add_meta_box(
+				'wgc-transaction-history',
+				__( 'Transaction History', 'elavon-converge-gateway' ),
+				array(
+					__CLASS__,
+					'transaction_history_view',
+				),
+				'wgc_subscription',
+				'normal',
+				'default'
+			);
 		}
 
 		if ( 'shop_order' === $post_type ) {
@@ -44,10 +67,17 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 			$subscriptions = wgc_get_subscriptions_for_order( $order );
 
 			if ( is_array( $subscriptions ) && count( $subscriptions ) > 0 ) {
-				add_meta_box( 'wgc-related-subscriptions', __( 'Related Subscriptions', 'elavon-converge-gateway' ), array(
-					__CLASS__,
-					'related_subscriptions_view'
-				), 'shop_order', 'normal', 'default' );
+				add_meta_box(
+					'wgc-related-subscriptions',
+					__( 'Related Subscriptions', 'elavon-converge-gateway' ),
+					array(
+						__CLASS__,
+						'related_subscriptions_view',
+					),
+					'shop_order',
+					'normal',
+					'default'
+				);
 			}
 		}
 	}
@@ -60,37 +90,37 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		include 'views/html-related-subscriptions.php';
 	}
 
-	public static function converge_subscription_details_view($post) {
-		$subscription = wgc_get_subscription_object_by_id($post->ID);
+	public static function converge_subscription_details_view( $post ) {
+		$subscription        = wgc_get_subscription_object_by_id( $post->ID );
 		$subscription_txn_id = $subscription->get_transaction_id();
-		$response = wgc_get_gateway()->get_converge_api()->get_subscription($subscription_txn_id);
+		$response            = wgc_get_gateway()->get_converge_api()->get_subscription( $subscription_txn_id );
 
-		if ($response && $response->isSuccess()) {
+		if ( $response && $response->isSuccess() ) {
 			$converge_subscription = $response->getData();
 			include 'views/html-converge-subscription-details.php';
 		} else {
-			echo _e('There is no Converge Subscription added for this subscription.', 'elavon-converge-gateway');
+			echo _e( 'There is no Converge Subscription added for this subscription.', 'elavon-converge-gateway' );
 		}
 	}
 
-	public static function transaction_history_view($post) {
-		$subscription = wgc_get_subscription_object_by_id($post->ID);
-		$response = wgc_get_gateway()->get_converge_api()->get_subscription_transactions($subscription);
+	public static function transaction_history_view( $post ) {
+		$subscription = wgc_get_subscription_object_by_id( $post->ID );
+		$response     = wgc_get_gateway()->get_converge_api()->get_subscription_transactions( $subscription );
 
-		$has_errors = FALSE;
+		$has_errors   = false;
 		$transactions = array();
 
-		if ($response && $response->isSuccess()) {
+		if ( $response && $response->isSuccess() ) {
 			$transactions = $response->getItems();
 		} else {
-			$has_errors = TRUE;
+			$has_errors = true;
 		}
 
 		include 'views/html-transaction-history.php';
 	}
 
-	public static function related_order_view($post) {
-		$orders = wgc_get_subscription_related_orders($post->ID);
+	public static function related_order_view( $post ) {
+		$orders = wgc_get_subscription_related_orders( $post->ID );
 
 		include 'views/html-related-order.php';
 	}
@@ -114,24 +144,32 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 
 		if ( $screen_id === 'product' ) {
 
-			wp_enqueue_style( 'wgc-meta-boxes-product',
-				plugins_url( 'assets/css/admin/meta-boxes-product.css', WGC_MAIN_FILE ) );
-			wp_enqueue_script( 'wgc-meta-boxes-product',
+			wp_enqueue_style(
+				'wgc-meta-boxes-product',
+				plugins_url( 'assets/css/admin/meta-boxes-product.css', WGC_MAIN_FILE )
+			);
+			wp_enqueue_script(
+				'wgc-meta-boxes-product',
 				plugins_url( 'assets/js/admin/meta-boxes-product.js', WGC_MAIN_FILE ),
 				array(),
 				false,
-				true );
-			wp_localize_script( 'wgc-meta-boxes-product',
+				true
+			);
+			wp_localize_script(
+				'wgc-meta-boxes-product',
 				'elavon_converge_gateway',
-				array( 'subscription_name' => WGC_SUBSCRIPTION_NAME ) );
+				array( 'subscription_name' => WGC_SUBSCRIPTION_NAME )
+			);
 
-		} else if ( is_admin() && $screen_id === WGC_SUBSCRIPTION_POST_TYPE ) {
+		} elseif ( is_admin() && $screen_id === WGC_SUBSCRIPTION_POST_TYPE ) {
 
-			wp_enqueue_script( 'wgc-subscription-details',
+			wp_enqueue_script(
+				'wgc-subscription-details',
 				plugins_url( 'assets/js/admin/subscription-details.js', WGC_MAIN_FILE ),
 				array(),
 				false,
-				true );
+				true
+			);
 		}
 	}
 
@@ -139,7 +177,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		return array_merge(
 			$product_types,
 			array(
-				'converge-subscription'          => __( 'Converge subscription', 'elavon-converge-gateway' ),
+				'converge-subscription'        => __( 'Converge subscription', 'elavon-converge-gateway' ),
 				WGC_VARIABLE_SUBSCRIPTION_NAME => __( 'Converge variable subscription', 'elavon-payment-gateway' ),
 			)
 		);
@@ -182,20 +220,24 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		if ( $error_messages = $validator->getErrorMessages() ) {
 			WC()->session->set( 'wgc_admin_notices', $error_messages );
 		} else {
-		    $properties = self::get_plan_properties_from_valid_data($values_to_validate);
-			
-			$product = new WC_Product_Converge_Subscription($product_id);
+			$properties = self::get_plan_properties_from_valid_data( $values_to_validate );
+
+			$product = new WC_Product_Converge_Subscription( $product_id );
 			$product->set_props( $properties );
 			if ( empty( $product->get_changes() ) ) {
 				return;
 			}
 
 			$connection_error = function () {
-				WC()->session->set( 'wgc_admin_notices',
+				WC()->session->set(
+					'wgc_admin_notices',
 					array(
-						__( 'The subscription details could not be saved due to Converge connection error. Please try again later.',
-							'elavon-converge-gateway' ),
-					) );
+						__(
+							'The subscription details could not be saved due to Converge connection error. Please try again later.',
+							'elavon-converge-gateway'
+						),
+					)
+				);
 			};
 
 			if ( $product_plan = $product->get_wgc_plan_id() ) {
@@ -204,11 +246,15 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 			$plan_response = wgc_get_gateway()->get_converge_api()->create_product_plan( $product_id, $properties );
 
 			if ( ! $plan_response->isSuccess() ) {
-				WC()->session->set( 'wgc_admin_notices',
+				WC()->session->set(
+					'wgc_admin_notices',
 					array(
-						__( 'The subscription details could not be saved due to Converge error. Please try again later.',
-							'elavon-converge-gateway' ),
-					) );
+						__(
+							'The subscription details could not be saved due to Converge error. Please try again later.',
+							'elavon-converge-gateway'
+						),
+					)
+				);
 
 				return;
 			} else {
@@ -221,14 +267,14 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	public static function save_variation_data( $variation_id, $i ) {
 		if ( WGC_VARIABLE_SUBSCRIPTION_NAME === $_POST['product-type'] ) {
 			$values_to_validate = array(
-				'wgc_plan_price'                             => null,
-				'wgc_plan_introductory_rate'                 => null,
-				'wgc_plan_introductory_rate_amount'          => null,
+				'wgc_plan_price'                    => null,
+				'wgc_plan_introductory_rate'        => null,
+				'wgc_plan_introductory_rate_amount' => null,
 				'wgc_plan_introductory_rate_billing_periods' => null,
-				'wgc_plan_billing_frequency'                 => null,
-				'wgc_plan_billing_frequency_count'           => null,
-				'wgc_plan_billing_ending'                    => null,
-				'wgc_plan_ending_billing_periods'            => null,
+				'wgc_plan_billing_frequency'        => null,
+				'wgc_plan_billing_frequency_count'  => null,
+				'wgc_plan_billing_ending'           => null,
+				'wgc_plan_ending_billing_periods'   => null,
 			);
 
 			foreach ( array_keys( $values_to_validate ) as $field_name ) {
@@ -256,15 +302,17 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 					self::display_error( $error_message );
 				}
 			} else {
-				$properties = self::get_plan_properties_from_valid_data($values_to_validate);
-				$variation = new WC_Product_Converge_Subscription_Variation( $variation_id );
+				$properties = self::get_plan_properties_from_valid_data( $values_to_validate );
+				$variation  = new WC_Product_Converge_Subscription_Variation( $variation_id );
 				$variation->set_props( $properties );
 
 				if ( $product_plan = $variation->get_wgc_plan_id() ) {
 					wgc_get_gateway()->delete_plan( $product_plan );
 				}
-				$plan_response = wgc_get_gateway()->get_converge_api()->create_product_plan( $variation->get_parent_id(),
-					$properties );
+				$plan_response = wgc_get_gateway()->get_converge_api()->create_product_plan(
+					$variation->get_parent_id(),
+					$properties
+				);
 				if ( ! $plan_response->isSuccess() ) {
 					self::display_error( 'The subscription details could not be saved due to Converge error. Please try again later.' );
 
@@ -287,7 +335,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	}
 
 	public static function product_data_tabs( $tabs ) {
-		$tabs['inventory']['class'][] = 'show_if_converge-subscription';
+		$tabs['inventory']['class'][]  = 'show_if_converge-subscription';
 		$tabs['inventory']['class'][]  = 'show_if_converge-variable-subscription';
 		$tabs['variations']['class'][] = 'show_if_converge-variable-subscription';
 		return $tabs;
@@ -298,17 +346,17 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 			WC()->initialize_session();
 		}
 
-		if (is_admin()){
-			add_action('wp_ajax_wgc_create_order_ajax_action', 'wgc_create_order_ajax_action');
-			add_action('wp_ajax_wgc_sync_subscription_ajax_action', 'wgc_sync_subscription_ajax_action');
+		if ( is_admin() ) {
+			add_action( 'wp_ajax_wgc_create_order_ajax_action', 'wgc_create_order_ajax_action' );
+			add_action( 'wp_ajax_wgc_sync_subscription_ajax_action', 'wgc_sync_subscription_ajax_action' );
 		}
 
-		if (isset($_POST['action'])) {
-		    if ($_POST['action'] == 'wgc_create_order_ajax_action'){
-			    self::wgc_create_order_ajax_action();
-            }
+		if ( isset( $_POST['action'] ) ) {
+			if ( $_POST['action'] == 'wgc_create_order_ajax_action' ) {
+				self::wgc_create_order_ajax_action();
+			}
 
-			if ($_POST['action'] == 'wgc_sync_subscription_ajax_action'){
+			if ( $_POST['action'] == 'wgc_sync_subscription_ajax_action' ) {
 				self::wgc_sync_subscription_ajax_action();
 			}
 		}
@@ -322,7 +370,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 			'message' => '',
 		);
 
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], "wgc_new_order_txn_nonce" ) ) {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'wgc_new_order_txn_nonce' ) ) {
 			$response['message'] = __( 'Invalid request. Nonce validation failed.', 'elavon-converge-gateway' );
 			die( json_encode( $response ) );
 		}
@@ -340,7 +388,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		$new_order_transaction_id = trim( $_POST['new_order_transaction_id'] );
 		$subscription             = wgc_get_subscription_object_by_id( $_POST['subscription_id'] );
 
-		$order_id = wgc_get_order_by_transaction_id($new_order_transaction_id);
+		$order_id = wgc_get_order_by_transaction_id( $new_order_transaction_id );
 
 		if ( $order_id ) {
 			$response['message'] = '';
@@ -391,21 +439,21 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 					$subscription->set_status( $corresponding_status );
 					$subscription->save();
 				} else {
-					$display =  true;
+					$display = true;
 				}
 			}
 		}
 
-		echo json_encode(array('display'=> $display));
+		echo json_encode( array( 'display' => $display ) );
 
 		exit;
 	}
 
 	public static function display_error( $admin_notice ) {
 		?>
-        <div class="notice is-dismissible notice-error wgc-notice">
-            <p><?php _e( $admin_notice, 'elavon-converge-gateway' ); ?></p>
-        </div>
+		<div class="notice is-dismissible notice-error wgc-notice">
+			<p><?php _e( $admin_notice, 'elavon-converge-gateway' ); ?></p>
+		</div>
 		<?php
 	}
 

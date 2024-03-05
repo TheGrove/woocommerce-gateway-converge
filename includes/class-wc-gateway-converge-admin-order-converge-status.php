@@ -4,10 +4,13 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 
 	public function __construct() {
 
-		add_action( 'woocommerce_admin_order_data_after_order_details', array(
-			$this,
-			'output_status'
-		) );
+		add_action(
+			'woocommerce_admin_order_data_after_order_details',
+			array(
+				$this,
+				'output_status',
+			)
+		);
 	}
 
 	/**
@@ -29,7 +32,7 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 
 		?>
 
-        <div class="form-field form-field-wide wgc_sync_container">
+		<div class="form-field form-field-wide wgc_sync_container">
 			<div class="notice inline notice-warning">
 				<p><?php _e( 'The subscription status is not updated. ', 'elavon-converge-gateway' ); ?>
 					<a class="wgc_sync" href=""><?php _e( 'Sync with Converge now.', 'elavon-converge-gateway' ); ?></a>
@@ -50,9 +53,7 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 		if ( ! empty( $unique_transaction_id ) ) {
 			echo '<p class="form-field form-field-wide"><label for=""> ' . __( 'Merchant Transaction Code:', 'elavon-converge-gateway' ) . '</label><span>' . $unique_transaction_id . '</span></p>';
 		}
-
 	}
-
 }
 
-new WC_Gateway_Converge_Admin_Order_Converge_Status;
+new WC_Gateway_Converge_Admin_Order_Converge_Status();
