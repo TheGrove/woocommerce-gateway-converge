@@ -138,7 +138,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			wp_localize_script( 'woocommerce', 'elavon_converge_gateway', $params );
 		}
 
-		if ( WGC_SUBSCRIPTION_POST_TYPE == $screen_id || "shop_order" == $screen_id || 'woocommerce_page_wc-orders--wgc_subscription' === $screen_id ) {
+		if ( WGC_SUBSCRIPTION_POST_TYPE == $screen_id || "shop_order" == $screen_id || 'woocommerce_page_wc-orders--wgc_subscription' === $screen_id || 'woocommerce_page_wc-orders' === $screen_id ) {
 			wp_enqueue_style( 'wgc_admin_subscription', plugins_url( 'assets/css/admin/subscription.css', WGC_MAIN_FILE ) );
 		}
 	}

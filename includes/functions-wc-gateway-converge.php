@@ -787,6 +787,10 @@ function wgc_get_subscription_related_orders( $subscription ) {
 }
 
 function wgc_get_subscription_object_by_id( $id ) {
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		return new WC_Converge_Subscription( $id );
+	}
+
 	return WC()->order_factory->get_order( $id );
 }
 
@@ -1123,8 +1127,7 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 	}
 
 	foreach ( $orders as $current_order ) {
-		$subscription_id = $current_order->save();
-		$subscriptions[] = wgc_get_subscription_object_by_id( $subscription_id );
+		$subscriptions[] = wgc_get_subscription_object_by_id( $current_order->get_id() );
 	}
 
 	return $subscriptions;
