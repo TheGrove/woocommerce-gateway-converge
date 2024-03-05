@@ -35,9 +35,9 @@ woocommerce_wp_checkbox(
 	)
 );
 ?>
-	<div id="wgc_plan_introductory_rate_fields_<?php echo $loop; ?>">
+	<div id="wgc_plan_introductory_rate_fields_<?php echo esc_attr( $loop ); ?>">
 		<span class="wgc_plan_introductory_rate_fields_text">
-			<?php echo __( 'Bill', 'elavon-converge-gateway' ); ?>
+			<?php echo esc_html__( 'Bill', 'elavon-converge-gateway' ); ?>
 		</span>
 		<?php
 		woocommerce_wp_text_input(
@@ -57,7 +57,7 @@ woocommerce_wp_checkbox(
 		);
 		?>
 		<span class="wgc_plan_introductory_rate_fields_text">
-			<?php echo __( 'for the first', 'elavon-converge-gateway' ); ?>
+			<?php echo esc_html__( 'for the first', 'elavon-converge-gateway' ); ?>
 		</span>
 		<?php
 		woocommerce_wp_text_input(
@@ -74,7 +74,7 @@ woocommerce_wp_checkbox(
 		);
 		?>
 		<span class="wgc_plan_introductory_rate_fields_text">
-			<?php echo __( 'billing periods', 'elavon-converge-gateway' ); ?>
+			<?php echo esc_html__( 'billing periods', 'elavon-converge-gateway' ); ?>
 		</span>
 	</div>
 
@@ -95,9 +95,9 @@ woocommerce_wp_checkbox(
 			)
 		);
 		?>
-		<div id="wgc_plan_billing_frequency_fields_week_month_<?php echo $loop; ?>">
+		<div id="wgc_plan_billing_frequency_fields_week_month_<?php echo esc_attr( $loop ); ?>">
 		<span class="wgc_plan_billing_frequency_count_fields_text">
-			<?php echo __( 'Every', 'elavon-converge-gateway' ); ?>
+			<?php echo esc_html__( 'Every', 'elavon-converge-gateway' ); ?>
 		</span>
 		<?php
 			woocommerce_wp_select(
@@ -111,10 +111,10 @@ woocommerce_wp_checkbox(
 			);
 			?>
 			<span class="wgc_plan_billing_frequency_count_field_week">
-				<?php echo __( 'week(s)', 'elavon-converge-gateway' ); ?>
+				<?php echo esc_html__( 'week(s)', 'elavon-converge-gateway' ); ?>
 			</span>
 			<span class="wgc_plan_billing_frequency_count_field_month">
-				<?php echo __( 'month(s)', 'elavon-converge-gateway' ); ?>
+				<?php echo esc_html__( 'month(s)', 'elavon-converge-gateway' ); ?>
 			</span>
 		</div>
 	</div>
