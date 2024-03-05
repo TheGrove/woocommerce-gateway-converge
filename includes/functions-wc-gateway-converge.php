@@ -973,7 +973,7 @@ function wgc_get_recurring_totals_for_blocks() {
 	$discount_total = 0;
 
 	$coupon_type = wgc_get_coupon_type( $cart );
-	if ( "recurring" == $coupon_type && $cart->get_cart_discount_total() > 0 ) {
+	if ( 'recurring' == $coupon_type && $cart->get_cart_discount_total() > 0 ) {
 		$discount_total = $cart->get_cart_discount_total();
 	}
 
@@ -1006,10 +1006,10 @@ function wgc_get_recurring_totals_for_blocks() {
 			$total                          += $shipping_total;
 		}
 
-		$shipping_tax                = WC()->cart->get_shipping_tax();
+		$shipping_tax          = WC()->cart->get_shipping_tax();
 		$total_additional_tax = 0;
 		if ( isset( WC()->cart->wgc_recurring_carts[ $cart_key ] ) ) {
-			$cart_tax                    = WC()->cart->wgc_recurring_carts[ $cart_key ]->get_taxes_total();
+			$cart_tax = WC()->cart->wgc_recurring_carts[ $cart_key ]->get_taxes_total();
 			if ($cart_tax > 0){
 				$product_additional_tax      = wgc_calculate_additional_payments_tax( $cart_element['data']);
 				$recurring_totals['taxes'][] = array(

@@ -1012,9 +1012,9 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		}
 
 		// Validate number of line items.
-		try{
+		try {
 			$this->validate_number_line_items( $order, null );
-		} catch (\Exception $e) {
+		} catch ( \Exception $e ) {
 			wc_add_notice( $e->getMessage(), 'error' );
 		}
 	}

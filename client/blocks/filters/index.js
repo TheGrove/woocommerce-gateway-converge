@@ -27,7 +27,7 @@ const modifyCartItemPrice = (pricePlaceholder, extensions) => {
 /**
  * This is the filter integration API, it uses registerCheckoutFilters
  * to register its filters, each filter is a key: function pair.
- * The key the filter name, and the function is the filter.
+ * The key is the filter name, and the function is the filter.
  *
  * Each filter function is passed the previous (or default) value in that filter
  * as the first parameter, the second parameter is a object of 3PD registered data.

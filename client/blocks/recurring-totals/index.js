@@ -47,11 +47,11 @@ const RecurringTotalItem = ({ type, items }) => {
 };
 
 /**
- * This component is responsible for rending recurring totals.
+ * This component is responsible for rendering recurring totals.
  * It has to be the highest level item directly inside the SlotFill
  * to receive properties passed from Cart and Checkout.
  *
- * extensions is data registered into `/cart` endpoint.
+ * extensions is data registered into the `/cart` endpoint.
  *
  * @param {Object} props            Passed props from SlotFill to this component.
  * @param {Object} props.extensions data registered into `/cart` endpoint.

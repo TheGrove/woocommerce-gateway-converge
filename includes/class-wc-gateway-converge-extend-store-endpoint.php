@@ -32,7 +32,7 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 	 * @param ExtendSchema $extend_rest_api An instance of the ExtendSchema class.
 	 */
 	public static function init( ExtendSchema $extend_rest_api ) {
-		self::$extend         = $extend_rest_api;
+		self::$extend = $extend_rest_api;
 		self::extend_store();
 	}
 
