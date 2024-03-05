@@ -141,37 +141,37 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 		}
 
 		return array(
-			'totals'              => array(
+			'totals' => array(
 				'description' => __( 'Recurring total', 'elavon-converge-gateway' ),
 				'type'        => 'object',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 				'properties'  => array(
-					'subtotal'                 => array(
+					'subtotal' => array(
 						'description' => __( 'Recurring subtotal of subscription items in the cart.', 'elavon-converge-gateway' ),
 						'type'        => 'string',
 						'context'     => array( 'view', 'edit' ),
 						'readonly'    => true,
 					),
-					'discount'             => array(
+					'discount' => array(
 						'description' => __( 'Recurring discount on subscription items.', 'elavon-converge-gateway' ),
 						'type'        => 'string',
 						'context'     => array( 'view', 'edit' ),
 						'readonly'    => true,
 					),
-					'shipping'                  => array(
+					'shipping' => array(
 						'description' => __( 'Recurring shipping charges', 'elavon-converge-gateway' ),
 						'type'        => 'string',
 						'context'     => array( 'view', 'edit' ),
 						'readonly'    => true,
 					),
-					'taxes'              => array(
+					'taxes'    => array(
 						'description' => __( 'Recurring tax on subscription items', 'elavon-converge-gateway' ),
 						'type'        => 'string',
 						'context'     => array( 'view', 'edit' ),
 						'readonly'    => true,
 					),
-					'total'              => array(
+					'total'    => array(
 						'description' => __( 'Recurring total of subscription items in the cart.', 'elavon-converge-gateway' ),
 						'type'        => 'string',
 						'context'     => array( 'view', 'edit' ),

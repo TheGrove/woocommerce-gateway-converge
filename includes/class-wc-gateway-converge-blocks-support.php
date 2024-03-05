@@ -151,7 +151,7 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 	private function get_gateway() {
 		if ( empty( $this->gateway ) ) {
 			$payment_gateways = WC()->payment_gateways->payment_gateways();
-			$this->gateway = $payment_gateways[ $this->name ];
+			$this->gateway    = $payment_gateways[ $this->name ];
 		}
 
 		return $this->gateway;
