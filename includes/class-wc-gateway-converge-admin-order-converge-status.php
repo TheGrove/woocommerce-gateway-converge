@@ -45,13 +45,13 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 		$converge_transaction_status = wgc_get_order_transaction_state( $order );
 
 		if ( ! empty( $converge_transaction_status ) ) {
-			echo '<p class="form-field form-field-wide"><label for=""> ' . __( 'Converge Transaction Status:', 'elavon-converge-gateway' ) . '</label><span>' . $converge_transaction_status->getValue() . '</span></p>';
+			echo wp_kses_post( '<p class="form-field form-field-wide"><label for=""> ' . __( 'Converge Transaction Status:', 'elavon-converge-gateway' ) . '</label><span>' . $converge_transaction_status->getValue() . '</span></p>' );
 		}
 
 		$unique_transaction_id = get_post_meta( $order_id, '_unique_transaction_id', true );
 
 		if ( ! empty( $unique_transaction_id ) ) {
-			echo '<p class="form-field form-field-wide"><label for=""> ' . __( 'Merchant Transaction Code:', 'elavon-converge-gateway' ) . '</label><span>' . $unique_transaction_id . '</span></p>';
+			echo wp_kses_post( '<p class="form-field form-field-wide"><label for=""> ' . __( 'Merchant Transaction Code:', 'elavon-converge-gateway' ) . '</label><span>' . $unique_transaction_id . '</span></p>' );
 		}
 	}
 }
