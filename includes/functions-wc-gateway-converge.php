@@ -952,8 +952,8 @@ function wgc_get_recurring_totals_elements() {
 /**
  * Prepare recurring totals for display in the cart and checkout blocks.
  *
- * @return array An array of recurring totals.
  * @since x.x.x
+ * @return array An array of recurring totals.
  */
 function wgc_get_recurring_totals_for_blocks() {
 	$recurring_totals = array();

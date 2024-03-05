@@ -963,26 +963,24 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		$shipping_address = $request->get_param( 'shipping_address' );
 	
 		// Prepare data for validation.
-		$data = array();
-		foreach (array(
-			'billing',
-			'shipping',
-		) as $group) {
-			foreach (
-				array(
-					'first_name',
-					'last_name',
-					'company',
-					'address_1',
-					'address_2',
-					'city',
-					'state',
-					'postcode',
-					'phone',
-				) as $field
-			) {
-				$key     = $group . '_' . $field;
-				$address = 'billing' === $group ? $billing_address : $shipping_address;
+		$data   = array();
+		$groups = array( 'billing', 'shipping' );
+		$fields = array(
+			'first_name',
+			'last_name',
+			'company',
+			'address_1',
+			'address_2',
+			'city',
+			'state',
+			'postcode',
+			'phone',
+		);
+
+		foreach ( $groups as $group) {
+			foreach ( $fields as $field ) {
+				$key          = $group . '_' . $field;
+				$address      = 'billing' === $group ? $billing_address : $shipping_address;
 				$data[ $key ] = isset( $address[ $field ] ) ? wc_clean( wp_unslash( $address[ $field ] ) ) : '';
 			}
 		}

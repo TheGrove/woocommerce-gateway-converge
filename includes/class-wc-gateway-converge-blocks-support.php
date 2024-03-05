@@ -187,12 +187,7 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 					'last4'   => esc_html( $token->get_last4() ),
 					'brand'   => esc_html( $token->get_card_scheme() ),
 				),
-				'expires'    => sprintf(
-					/* translators: %1$s Expiration month, %2$s Expiration year. */
-					esc_html__( '%1$s/%2$s', 'elavon-converge-gateway' ),
-					$token->get_expiry_month(),
-					substr( $token->get_expiry_year(), - 2 )
-				),
+				'expires'    => esc_html( $token->get_expiry_month() . '/' . substr( $token->get_expiry_year(), - 2 ) ),
 				'is_default' => $token->is_default(),
 				'actions'    => array(),
 				'tokenId'    => $token->get_id(),
