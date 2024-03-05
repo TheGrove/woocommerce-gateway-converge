@@ -38,22 +38,32 @@ class WGC_Admin_Subscription_Listing {
 		switch ( $column ) {
 			case 'subscription':
 				if ( empty( $user ) ) {
-					printf( '<a href="%s"><strong>#%s</strong></a>', get_edit_post_link( $post->ID ), $post->ID );
+					printf( '<a href="%s"><strong>#%s</strong></a>', esc_url( get_edit_post_link( $post->ID ) ), esc_html( post->ID ) );
 				} else {
-					printf( '<a href="%s"><strong>#%s</strong></a> %s <a href="%s">%s %s</a>', get_edit_post_link( $post->ID ), $subscription->get_id(), __( 'for', 'elavon-converge-gateway' ), get_edit_user_link( $user->ID ), $user->user_firstname, $user->user_lastname );
+					printf(
+						'<a href="%s"><strong>#%s</strong></a> %s <a href="%s">%s %s</a>',
+						esc_url( get_edit_post_link( $post->ID ) ),
+						esc_html( $subscription->get_id() ),
+						esc_html__( 'for', 'elavon-converge-gateway' ),
+						esc_url( get_edit_user_link( $user->ID ) ),
+						esc_html( $user->user_firstname ),
+						esc_html( $user->user_lastname )
+					);
 				}
 				break;
 			case 'order':
-				printf( '<a href="%s"><strong>#%s</strong></a>', get_edit_post_link( $subscription->get_parent_id() ), $subscription->get_parent_id() );
+				printf( '<a href="%s"><strong>#%s</strong></a>', esc_url( get_edit_post_link( $subscription->get_parent_id() ) ), esc_html( $subscription->get_parent_id() ) );
+				
 				break;
 			case 'items':
 				foreach ( $subscription->get_items() as $item_id => $item ) {
 					$product = wc_get_product( $item['product_id'] );
-					printf( '<div class="order-item"><a href="%s">%s</a></div>', get_edit_post_link( $item['product_id'] ), $product ? $product->get_title() : '' );
+					printf( '<div class="order-item"><a href="%s">%s</a></div>', esc_url( get_edit_post_link( $item['product_id'] ) ), $product ? esc_html( $product->get_title() ) : '' );
 				}
 				break;
 			case 'total':
-				echo wc_price( $subscription->get_total() );
+				echo esc_html( wc_price( $subscription->get_total() ) );
+
 				break;
 		}
 	}
