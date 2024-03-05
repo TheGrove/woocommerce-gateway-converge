@@ -991,7 +991,7 @@ function wgc_conditional_payment_gateways( $available_gateways ) {
 
 	if ( wgc_order_from_merchant_view_has_subscription_elements() ) {
 		$hide_other_methods = true;
-	} else {
+	} else if ( WC()->cart ) {
 		foreach ( WC()->cart->get_cart() as $cart_key => $cart_item ) {
 			if ( wgc_product_is_subscription( $cart_item['data'] ) ) {
 				$hide_other_methods = true;
