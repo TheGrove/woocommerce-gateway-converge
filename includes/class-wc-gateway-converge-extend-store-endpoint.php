@@ -11,6 +11,11 @@ use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartItemSchema;
 use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
 
+/**
+ * WC_Gateway_Converge_Extend_Store_Endpoint class
+ *
+ * A class to extend the store public API with Converge subscription related data
+ */
 class WC_Gateway_Converge_Extend_Store_Endpoint {
 	/**
 	 * Stores Rest Extending instance.
@@ -40,7 +45,7 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 	 * Registers the actual data into each endpoint.
 	 */
 	public static function extend_store() {
-		// Register into `cart/items`
+		// Register into `cart/items`.
 		self::$extend->register_endpoint_data(
 			array(
 				'endpoint'        => CartItemSchema::IDENTIFIER,
@@ -51,7 +56,7 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 			)
 		);
 
-		// Register into `cart`
+		// Register into `cart`.
 		self::$extend->register_endpoint_data(
 			array(
 				'endpoint'        => CartSchema::IDENTIFIER,
@@ -76,13 +81,13 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 
 		$item_data = array(
 			'billing_frequency_subtotal' => '',
-			'billing_frequency_total'    => ''
+			'billing_frequency_total'    => '',
 		);
 
 		if ( wgc_product_is_subscription( $product ) ) {
 			$item_data = array(
-				'billing_frequency_subtotal' => strip_tags( wgc_get_subscription_price_string( $product ) ),
-				'billing_frequency_total'    => strip_tags( wgc_get_subscription_price_string( $product, $qty ) ),
+				'billing_frequency_subtotal' => wp_strip_all_tags( wgc_get_subscription_price_string( $product ) ),
+				'billing_frequency_total'    => wp_strip_all_tags( wgc_get_subscription_price_string( $product, $qty ) ),
 			);
 		}
 
@@ -125,7 +130,7 @@ class WC_Gateway_Converge_Extend_Store_Endpoint {
 		$recurring_totals_elements = wgc_get_recurring_totals_for_blocks();
 
 		return array(
-			'totals' => $recurring_totals_elements
+			'totals' => $recurring_totals_elements,
 		);
 	}
 

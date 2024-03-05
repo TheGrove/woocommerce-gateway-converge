@@ -22,7 +22,7 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 
 	/**
 	 * Payment Gateway instance.
-	 * 
+	 *
 	 * @var WC_Gateway_Converge $gateway
 	 */
 	protected $gateway = null;
@@ -35,7 +35,7 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 
 		add_action(
 			'woocommerce_blocks_enqueue_checkout_block_scripts_before',
-			function() {
+			function () {
 				add_filter( 'woocommerce_saved_payment_methods_list', array( $this, 'add_saved_payment_methods' ), 10, 2 );
 			}
 		);
@@ -120,7 +120,7 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 	 * @return string[]
 	 */
 	public function get_supported_features() {
-		return $this->get_gateway()->supports ?? [];
+		return $this->get_gateway()->supports ?? array();
 	}
 
 	/**
@@ -159,13 +159,14 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 
 	/**
 	 * Manually add Elavon Converge tokens to the saved payment methods list.
-	 * 
+	 *
 	 * Elavon Converge tokens use the `gateway_converge_storedcard` token type instead of the `cc` token type.
 	 * WooCommerce Blocks doesn't know how to display the `gateway_converge_storedcard` token type,
 	 * so this converts all Elavon Converge saved cards to the standard `cc` token type
 	 * and unsets the custom `gateway_converge_storedcard` token type.
 	 *
 	 * @param array $saved_methods The saved payment methods.
+	 * @param int   $customer_id   The customer ID.
 	 * @return array $saved_methods Modified saved payment methods.
 	 */
 	public function add_saved_payment_methods( $saved_methods, $customer_id ) {
@@ -192,7 +193,7 @@ final class WC_Gateway_Converge_Blocks_Support extends AbstractPaymentMethodType
 				'actions'    => array(),
 				'tokenId'    => $token->get_id(),
 			);
-			
+
 			$saved_methods['cc'][] = $saved_token;
 		}
 
