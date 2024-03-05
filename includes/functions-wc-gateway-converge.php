@@ -6,6 +6,7 @@ use Elavon\Converge2\Request\Payload\ContactDataBuilder;
 use Elavon\Converge2\Request\Payload\OrderItemDataBuilder;
 use Elavon\Converge2\Request\Payload\ShopperDataBuilder;
 use Elavon\Converge2\Request\Payload\AddressDataBuilder;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
  * Functions used by plugins
@@ -1013,28 +1014,40 @@ function wgc_conditional_payment_gateways( $available_gateways ) {
 }
 
 function wgc_create_subscription( $args ) {
-	$post_args = array(
-		'post_type'   => WGC_SUBSCRIPTION_POST_TYPE,
-		'post_author' => 0,
-		'post_status' => 'wc-pending',
-		'post_parent' => absint( $args['order_id'] ),
-	);
+	$subscription = null;
 
-	$post_id = wp_insert_post( $post_args );
+	if ( ! OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$post_args = array(
+			'post_type'   => WGC_SUBSCRIPTION_POST_TYPE,
+			'post_author' => 0,
+			'post_status' => 'wc-pending',
+			'post_parent' => absint( $args['order_id'] ),
+		);
 
-	if ( is_wp_error( $post_id ) || $post_id === 0 ) {
-		return new WP_Error( 'subscription-error', __( 'There was an error creating the subscription.', 'elavon-converge-gateway' ) );
+		$post_id = wp_insert_post( $post_args );
+
+		if ( is_wp_error( $post_id ) || $post_id === 0 ) {
+			return new WP_Error( 'subscription-error', __( 'There was an error creating the subscription.', 'elavon-converge-gateway' ) );
+		}
+		$subscription = WC()->order_factory->get_order( $post_id );
+		$subscription->set_currency( $args['order_currency'] );
+		$subscription->set_customer_id( $args['customer_user'] );
+		$subscription->save();
+
+		$post_params = array(
+			'ID'           => $post_id,
+			'post_title'   => sprintf( __( 'Subscription #%1$s for the Order #%2$s ', 'elavon-converge-gateway' ), $subscription->get_id(), $args['order_id'] ),
+		);
+		wp_update_post($post_params);
+	} else {
+		$subscription = new WC_Converge_Subscription();
+		$subscription->set_parent_id( $args['order_id'] );
+		$subscription->set_currency( $args['order_currency'] );
+		$subscription->set_customer_id( $args['customer_user'] );
+		$subscription_id = $subscription->save();
+
+		$subscription = WC()->order_factory->get_order( $subscription_id );
 	}
-	$subscription = WC()->order_factory->get_order( $post_id );
-	$subscription->set_currency( $args['order_currency'] );
-	$subscription->set_customer_id( $args['customer_user'] );
-	$subscription->save();
-
-	$post_params = array(
-		'ID'           => $post_id,
-		'post_title'   => sprintf( __( 'Subscription #%1$s for the Order #%2$s ', 'elavon-converge-gateway' ), $subscription->get_id(), $args['order_id'] ),
-	);
-	wp_update_post($post_params);
 
 	return $subscription;
 }
@@ -1086,21 +1099,32 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 		return $subscriptions;
 	}
 
-	$params = array(
-		'post_type'      => WGC_SUBSCRIPTION_POST_TYPE,
-		'posts_per_page' => - 1,
-		'post_parent'    => $order->get_id(),
-		'post_status'    => 'any',
-	);
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$params = array(
+			'type'           => WGC_SUBSCRIPTION_POST_TYPE,
+			'posts_per_page' => -1,
+			'parent'         => $order->get_id(),
+		);
 
-	$posts = get_posts( $params );
+		$orders = wc_get_orders( $params );
+	} else {
+		$params = array(
+			'post_type'      => WGC_SUBSCRIPTION_POST_TYPE,
+			'posts_per_page' => - 1,
+			'post_parent'    => $order->get_id(),
+			'post_status'    => 'any',
+		);
 
-	if ( ! $posts ) {
+		$orders = get_posts( $params );
+	}
+
+	if ( empty( $orders ) ) {
 		return $subscriptions;
 	}
 
-	foreach ( $posts as $post ) {
-		$subscriptions[] = wgc_get_subscription_object_by_id( $post->ID );
+	foreach ( $orders as $current_order ) {
+		$subscription_id = $current_order->save();
+		$subscriptions[] = wgc_get_subscription_object_by_id( $subscription_id );
 	}
 
 	return $subscriptions;
@@ -1172,6 +1196,11 @@ function wgc_force_non_logged_user_wc_session() {
 
 function wgc_get_order_by_transaction_id( $transaction_id ) {
 	global $wpdb;
+
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		return $wpdb->get_var( $wpdb->prepare( "SELECT orders.id FROM {$wpdb->prefix}wc_orders as orders WHERE orders.type = 'shop_order' AND orders.transaction_id = %s", $transaction_id ) );
+	}
+
 	return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts as posts INNER JOIN $wpdb->postmeta as meta ON posts.ID = meta.post_id WHERE post_type = 'shop_order' AND meta.meta_key = '_transaction_id' AND meta.meta_value = %s", $transaction_id ) );
 }
 
