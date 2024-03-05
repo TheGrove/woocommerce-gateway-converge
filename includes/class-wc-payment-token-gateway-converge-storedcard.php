@@ -173,7 +173,7 @@ class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
 				__( 'Payment method cannot be deleted. Reason: there is a subscription associated with this payment method or there is a connection issue.', 'elavon-converge-gateway' ),
 				'error'
 			);
-			wp_redirect( wc_get_account_endpoint_url( 'payment-methods' ) );
+			wp_safe_redirect( wc_get_account_endpoint_url( 'payment-methods' ) );
 			exit();
 		}
 	}
