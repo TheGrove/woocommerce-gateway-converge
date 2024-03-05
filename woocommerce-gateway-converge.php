@@ -13,15 +13,18 @@
  * @package           Woocommerce_Gateway_Converge
  *
  * @wordpress-plugin
- * Plugin Name:       WooCommerce Elavon Converge EU Gateway
- * Plugin URI:        https://developer-eu.elavon.com/docs/plugins
- * Description:       Receive credit card payments using Elavon Converge EU Gateway.
- * Version:           1.16.0
- * Author:            Elavon
- * Author URI:        http://www.elavon.com
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       elavon-converge-gateway
+ * Plugin Name:          WooCommerce Elavon Converge EU Gateway
+ * Plugin URI:           https://developer-eu.elavon.com/docs/plugins
+ * Description:          Receive credit card payments using Elavon Converge EU Gateway.
+ * Version:              1.16.0
+ * Author:               Elavon
+ * Author URI:           http://www.elavon.com
+ * License:              GPL-2.0+
+ * License URI:          http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:          elavon-converge-gateway
+ * WC tested up to:      8.6
+ * WC requires at least: 8.4
+ * Requires PHP:         7.4
  * Domain Path:       /languages
  */
 
