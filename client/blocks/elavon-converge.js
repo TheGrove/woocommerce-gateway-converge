@@ -8,7 +8,7 @@ import { useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { PAYMENT_METHOD_NAME } from './constants';
+import { PAYMENT_METHOD_ID } from './constants';
 import { getElavonConvergeServerData } from './utils';
 
 const {
@@ -34,10 +34,10 @@ const Content = (props) => {
 				paymentMethodData.wgc_save_for_later_use = '1';
 			}
 			if (token) {
-				paymentMethodData[`${PAYMENT_METHOD_NAME}_stored_card`] = token;
+				paymentMethodData[`${PAYMENT_METHOD_ID}_stored_card`] = token;
 			} else {
-				paymentMethodData[`${PAYMENT_METHOD_NAME}_stored_card`] =
-					`${PAYMENT_METHOD_NAME}_new_card`;
+				paymentMethodData[`${PAYMENT_METHOD_ID}_stored_card`] =
+					`${PAYMENT_METHOD_ID}_new_card`;
 			}
 			return {
 				type: emitResponse.responseTypes.SUCCESS,
@@ -85,7 +85,8 @@ const Label = (props) => {
 };
 
 export const elavonConvergePaymentMethod = {
-	name: PAYMENT_METHOD_NAME,
+	name: PAYMENT_METHOD_ID,
+	paymentMethodId: PAYMENT_METHOD_ID,
 	label: <Label />,
 	ariaLabel: __('Elavon Converge payment method', 'elavon-converge-gateway'),
 	canMakePayment: () => true,

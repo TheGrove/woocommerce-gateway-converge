@@ -1,1 +1,1 @@
-export const PAYMENT_METHOD_NAME = 'elavon-converge-gateway';
+export const PAYMENT_METHOD_ID = 'elavon-converge-gateway';

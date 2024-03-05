@@ -6,14 +6,14 @@ import { getSetting } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
-import { PAYMENT_METHOD_NAME } from './constants';
+import { PAYMENT_METHOD_ID } from './constants';
 
 /**
  * Elavon Converge Gateway data comes from the server passed on a global object.
  */
 export const getElavonConvergeServerData = () => {
 	const elavonConvergeServerData = getSetting(
-		`${PAYMENT_METHOD_NAME}_data`,
+		`${PAYMENT_METHOD_ID}_data`,
 		null
 	);
 	if (!elavonConvergeServerData) {
