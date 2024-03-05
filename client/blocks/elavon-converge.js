@@ -34,6 +34,8 @@ const Content = (props) => {
 				paymentMethodData.wgc_save_for_later_use = '1';
 			}
 			if (token) {
+				paymentMethodData.isSavedToken = true;
+				paymentMethodData.token = token;
 				paymentMethodData[`${PAYMENT_METHOD_ID}_stored_card`] = token;
 			} else {
 				paymentMethodData[`${PAYMENT_METHOD_ID}_stored_card`] =
