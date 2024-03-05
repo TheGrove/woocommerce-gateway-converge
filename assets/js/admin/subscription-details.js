@@ -1,22 +1,24 @@
+/* eslint-disable no-alert, eqeqeq */
+/* global ajaxurl, alert, confirm */
 jQuery(function ($) {
 	$('.refund-items').hide();
 
 	$('body').on('click', '.wgc_btn_create_order', function (e) {
 		e.preventDefault();
 
-		const confirm_message =
+		const confirmMessage =
 			'Are you sure you wish to create the order? This action cannot be undone.';
-		if (confirm(confirm_message)) {
+		if (confirm(confirmMessage)) {
 			const $me = $(this),
 				action = 'wgc_create_order_ajax_action',
-				new_order_transaction_id = this.value,
-				subscription_id = $('#wgc_subscription_id').val(),
+				newOrderTransactionId = this.value,
+				subscriptionId = $('#wgc_subscription_id').val(),
 				nonce = $('#wgc_new_order_txn_nonce').val();
 
 			const data = $.extend(true, $me.data(), {
 				action,
-				new_order_transaction_id,
-				subscription_id,
+				new_order_transaction_id: newOrderTransactionId,
+				subscription_id: subscriptionId,
 				nonce,
 			});
 
@@ -35,7 +37,7 @@ jQuery(function ($) {
 		}
 	});
 
-	function update_status(update) {
+	function updateStatus(update) {
 		const $me = $(this),
 			action = 'wgc_sync_subscription_ajax_action';
 		const data = $.extend(true, $me.data(), {
@@ -60,7 +62,7 @@ jQuery(function ($) {
 	}
 	$('body').on('click', '.wgc_sync', function (e) {
 		e.preventDefault();
-		update_status(true);
+		updateStatus(true);
 	});
-	update_status(false);
+	updateStatus(false);
 });

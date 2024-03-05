@@ -1,5 +1,5 @@
 jQuery(function ($) {
-	const change_payment = {
+	const changePayment = {
 		init() {
 			//payment method change.
 			$('input[name="payment_method"]').on(
@@ -10,28 +10,28 @@ jQuery(function ($) {
 			this.init_payment_methods();
 		},
 		init_payment_methods() {
-			const payment_methods = $('input[name="payment_method"]');
+			const paymentMethods = $('input[name="payment_method"]');
 
-			if (payment_methods.length === 1) {
-				$(payment_methods[0]).hide();
+			if (paymentMethods.length === 1) {
+				$(paymentMethods[0]).hide();
 			}
 
-			if (payment_methods.filter(':checked').length === 0) {
+			if (paymentMethods.filter(':checked').length === 0) {
 				//choose the first payment method.
-				$(payment_methods[0]).prop('checked', true);
+				$(paymentMethods[0]).prop('checked', true);
 			}
 
-			payment_methods.filter(':checked').trigger('click');
+			paymentMethods.filter(':checked').trigger('click');
 		},
 		payment_gateway_selected() {
 			if ($('.payment_methods input.input-radio').length > 1) {
-				const target_payment_box = $(
+				const targetPaymentBox = $(
 					'div.payment_box.' + $(this).attr('ID')
 				);
 
 				if (
 					$(this).is(':checked') &&
-					!target_payment_box.is(':visible')
+					!targetPaymentBox.is(':visible')
 				) {
 					$('div.payment_box').filter(':visible').slideUp(250);
 
@@ -52,5 +52,5 @@ jQuery(function ($) {
 			}
 		},
 	};
-	change_payment.init();
+	changePayment.init();
 });

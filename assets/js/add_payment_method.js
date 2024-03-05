@@ -12,16 +12,16 @@ jQuery(function ($) {
 		$('input[type=radio][name=payment_method]').val() ===
 		'elavon-converge-gateway'
 	) {
-		require_elements(true);
+		requireElements(true);
 	} else {
-		require_elements(false);
+		requireElements(false);
 	}
 
-	$('input[type=radio][name=payment_method]').change(function (e) {
+	$('input[type=radio][name=payment_method]').change(function () {
 		if (this.value === 'elavon-converge-gateway') {
-			require_elements(true);
+			requireElements(true);
 		} else {
-			require_elements(false);
+			requireElements(false);
 		}
 	});
 
@@ -31,23 +31,23 @@ jQuery(function ($) {
 				'input[type=radio][name=elavon-converge-gateway_stored_card]'
 			).val() === 'elavon-converge-gateway_new_card'
 		) {
-			require_elements(true);
+			requireElements(true);
 		} else {
-			require_elements(false);
+			requireElements(false);
 		}
 
 		$('input[type=radio][name=elavon-converge-gateway_stored_card]').change(
-			function (e) {
+			function () {
 				if (this.value === 'elavon-converge-gateway_new_card') {
-					require_elements(true);
+					requireElements(true);
 				} else {
-					require_elements(false);
+					requireElements(false);
 				}
 			}
 		);
 	}
 
-	function require_elements(prop) {
+	function requireElements(prop) {
 		$('#elavon-converge-gateway-card-number').prop('required', prop);
 		$('#elavon-converge-gateway-card-expiry').prop('required', prop);
 		$('#elavon-converge-gateway-card-cvc').prop('required', prop);
