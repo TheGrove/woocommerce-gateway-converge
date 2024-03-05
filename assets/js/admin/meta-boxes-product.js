@@ -1,5 +1,6 @@
+/* global elavon_converge_gateway */
 jQuery(function ($) {
-	function initial_check() {
+	function initialCheck() {
 		$('[id^="wgc_plan_introductory_rate_cb"]').each(function () {
 			if (this.checked) {
 				$(this)
@@ -11,58 +12,58 @@ jQuery(function ($) {
 		});
 
 		$('[id^="wgc_plan_billing_frequency_select"]').each(function () {
-			const billing_freq = $(this).val();
-			const converge_options = $(this).parent().parent().parent();
+			const billingFreq = $(this).val();
+			const convergeOptions = $(this).parent().parent().parent();
 
-			if (billing_freq === 'month') {
-				converge_options
+			if (billingFreq === 'month') {
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_fields_week_month"]'
 					)
 					.css('display', 'inline-block');
-				converge_options
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_count_field_month"]'
 					)
 					.css('display', 'inline-block');
 			}
-			if (billing_freq === 'week') {
-				converge_options
+			if (billingFreq === 'week') {
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_fields_week_month"]'
 					)
 					.css('display', 'inline-block');
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_billing_frequency_count_field_week"]')
 					.css('display', 'inline-block');
 			}
 		});
 	}
-	initial_check();
+	initialCheck();
 
 	$('body').on(
 		'change',
 		'[id^="wgc_plan_introductory_rate_cb"]',
 		function () {
-			const converge_options = $(this).parent().parent();
+			const convergeOptions = $(this).parent().parent();
 			if (this.checked) {
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_introductory_rate_fields"]')
 					.css('display', 'inline-block');
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_introductory_rate_amount"]')
 					.prop('required', true);
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_introductory_rate_billing_periods"]')
 					.prop('required', true);
 			} else {
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_introductory_rate_fields"]')
 					.hide();
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_introductory_rate_amount"]')
 					.prop('required', false);
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_introductory_rate_billing_periods"]')
 					.prop('required', false);
 			}
@@ -73,38 +74,38 @@ jQuery(function ($) {
 		'change',
 		'[id^="wgc_plan_billing_frequency_select"]',
 		function () {
-			const converge_options = $(this).parent().parent().parent();
-			const billing_freq = this.value;
-			if (billing_freq === 'month') {
-				converge_options
+			const convergeOptions = $(this).parent().parent().parent();
+			const billingFreq = this.value;
+			if (billingFreq === 'month') {
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_fields_week_month"]'
 					)
 					.css('display', 'inline-block');
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_billing_frequency_count_field_week"]')
 					.hide();
-				converge_options
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_count_field_month"]'
 					)
 					.css('display', 'inline-block');
-			} else if (billing_freq === 'week') {
-				converge_options
+			} else if (billingFreq === 'week') {
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_fields_week_month"]'
 					)
 					.css('display', 'inline-block');
-				converge_options
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_count_field_month"]'
 					)
 					.hide();
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_billing_frequency_count_field_week"]')
 					.css('display', 'inline-block');
 			} else {
-				converge_options
+				convergeOptions
 					.find(
 						'[id^="wgc_plan_billing_frequency_fields_week_month"]'
 					)
@@ -117,13 +118,13 @@ jQuery(function ($) {
 		'change',
 		'input[type=radio][name^="wgc_plan_billing_ending"]',
 		function () {
-			const converge_options = $(this).closest('.wc_wgc_options_group');
+			const convergeOptions = $(this).closest('.wc_wgc_options_group');
 			if (this.value === 'billing_periods') {
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_ending_billing_periods"]')
 					.prop('required', true);
 			} else {
-				converge_options
+				convergeOptions
 					.find('[id^="wgc_plan_ending_billing_periods"]')
 					.prop('required', false);
 			}
@@ -134,25 +135,26 @@ jQuery(function ($) {
 		$('.wgc-notice').remove();
 	});
 
-	const display_variations_checkbox = function () {
+	const displayVariationsCheckbox = function () {
 		if ($('#product-type').val().indexOf('converge-variable') > -1) {
 			$('.enable_variation').show();
 			$('#general_product_data ._tax_status_field').parent().show();
 		}
 	};
 
-	display_variations_checkbox();
+	displayVariationsCheckbox();
 	$(document.body).on(
 		'woocommerce-product-type-change woocommerce_added_attribute reload woocommerce_variations_loaded',
 		function () {
-			display_variations_checkbox();
-			initial_check();
+			displayVariationsCheckbox();
+			initialCheck();
 		}
 	);
 
-	function wgc_show_tax_fields() {
+	function wgcShowTaxFields() {
 		if (
-			$('select#product-type').val() ==
+			$('select#product-type').val() ===
+			// eslint-disable-next-line camelcase
 			elavon_converge_gateway.subscription_name
 		) {
 			$('#general_product_data ._tax_status_field')
@@ -165,14 +167,14 @@ jQuery(function ($) {
 		}
 	}
 
-	wgc_show_tax_fields();
+	wgcShowTaxFields();
 
 	$('input#_downloadable, input#_virtual').change(function () {
-		wgc_show_tax_fields();
+		wgcShowTaxFields();
 	});
 
 	$('body').bind('woocommerce-product-type-change', function () {
-		wgc_show_tax_fields();
+		wgcShowTaxFields();
 	});
 	// Editing a variable product
 	$('#variable_product_options').on(
