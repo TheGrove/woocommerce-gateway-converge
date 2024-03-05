@@ -14,6 +14,7 @@ module.exports = {
 		'import/core-modules': [
 			'@woocommerce/blocks-registry',
 			'@woocommerce/settings',
+			'@woocommerce/blocks-checkout',
 			'@wordpress/i18n',
 			'@wordpress/element',
 			'@wordpress/html-entities',
