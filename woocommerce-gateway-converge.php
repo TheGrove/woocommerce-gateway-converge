@@ -89,7 +89,7 @@ function elavon_converge_gateway_php_version_admin_notice() {
 			printf(
 				/* translators: %s: required PHP version */
 				esc_html__( 'The Woocommerce Elavon Converge EU Gateway plugin requires PHP %s. Please contact your host to update your PHP version.', 'elavon-converge-gateway' ),
-				'7.4 or +'
+				'7.4+'
 			);
 			?>
 		</p>
