@@ -988,12 +988,12 @@ function wgc_get_recurring_totals_for_blocks() {
 
 		$recurring_totals['subtotal'][] = array(
 			'price'     => wp_strip_all_tags( wc_price( $subtotal ) ),
-			'frequency' => trim( wp_strip_all_tags( wgc_get_subscription_price_string( $cart_element['data'], $quantity ) ) ),
+			'frequency' => wp_strip_all_tags( wgc_get_subscription_price_string( $cart_element['data'], $quantity ) ),
 		);
 		if ( $discount_total > 0 ) {
 			$recurring_totals['discount'][] = array(
 				'price'     => wp_strip_all_tags( wc_price( $discount_total * - 1 ) ),
-				'frequency' => trim( wp_strip_all_tags( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ) ),
+				'frequency' => wp_strip_all_tags( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ),
 			);
 			$total                         -= $discount_total;
 		}
@@ -1001,7 +1001,7 @@ function wgc_get_recurring_totals_for_blocks() {
 			$shipping_total                 = $cart->get_shipping_total();
 			$recurring_totals['shipping'][] = array(
 				'price'     => wp_strip_all_tags( $cart->get_cart_shipping_total() ),
-				'frequency' => trim( wp_strip_all_tags( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ) ),
+				'frequency' => wp_strip_all_tags( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ),
 			);
 			$total                         += $shipping_total;
 		}
@@ -1014,7 +1014,7 @@ function wgc_get_recurring_totals_for_blocks() {
 				$product_additional_tax      = wgc_calculate_additional_payments_tax( $cart_element['data'] );
 				$recurring_totals['taxes'][] = array(
 					'price'     => wp_strip_all_tags( wc_price( $cart_tax ) ),
-					'frequency' => trim( wp_strip_all_tags( wgc_get_subscription_price_string( $product_additional_tax, $quantity, $shipping_tax ) ) ),
+					'frequency' => wp_strip_all_tags( wgc_get_subscription_price_string( $product_additional_tax, $quantity, $shipping_tax ) ),
 				);
 				$total                      += $cart_tax;
 				$total_additional_tax       += $product_additional_tax->get_wgc_plan_price() * $quantity + $shipping_tax;
@@ -1023,7 +1023,7 @@ function wgc_get_recurring_totals_for_blocks() {
 
 		$recurring_totals['total'][] = array(
 			'price'     => wp_strip_all_tags( wc_price( $total ) ),
-			'frequency' => trim( wp_strip_all_tags( wgc_get_subscription_price_string( $cart_element['data'], $quantity, $shipping_total - $discount_total + $total_additional_tax ) ) ),
+			'frequency' => wp_strip_all_tags( wgc_get_subscription_price_string( $cart_element['data'], $quantity, $shipping_total - $discount_total + $total_additional_tax ) ),
 		);
 	}
 

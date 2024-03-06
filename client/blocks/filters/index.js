@@ -9,7 +9,7 @@ const modifySubtotalPriceFormat = (defaultValue, extensions) => {
 		extensions['woocommerce-gateway-converge']
 			?.billing_frequency_subtotal || '';
 	if (billingFrequencyString) {
-		return defaultValue + decodeEntities(billingFrequencyString);
+		return `${defaultValue} ${decodeEntities(billingFrequencyString)}`;
 	}
 	return defaultValue;
 };
@@ -19,7 +19,7 @@ const modifyCartItemPrice = (pricePlaceholder, extensions) => {
 		extensions['woocommerce-gateway-converge']?.billing_frequency_total ||
 		'';
 	if (billingFrequencyString) {
-		return pricePlaceholder + decodeEntities(billingFrequencyString);
+		return `${pricePlaceholder} ${decodeEntities(billingFrequencyString)}`;
 	}
 	return pricePlaceholder;
 };
