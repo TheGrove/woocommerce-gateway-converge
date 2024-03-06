@@ -1,6 +1,6 @@
 !.eslintrc.js
 build
-assets
+!assets
 includes
 languages
 templates
