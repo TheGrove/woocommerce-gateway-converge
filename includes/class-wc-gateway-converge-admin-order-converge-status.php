@@ -37,6 +37,7 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 				<p><?php _e( 'The subscription status is not updated. ', 'elavon-converge-gateway' ); ?>
 					<a class="wgc_sync" href=""><?php _e( 'Sync with Converge now.', 'elavon-converge-gateway' ); ?></a>
 				</p>
+				<input type="hidden" name="wgc_sync_subscription_nonce" id="wgc_sync_subscription_nonce" value="<?php echo esc_attr( wp_create_nonce( 'wgc_sync_subscription_nonce' ) ); ?>"/>
 			</div>
 		</div>
 

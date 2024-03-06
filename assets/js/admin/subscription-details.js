@@ -42,9 +42,11 @@ jQuery(function ($) {
     function update_status(update){
         var $me = $(this),
             action = 'wgc_sync_subscription_ajax_action';
+            nonce = $('#wgc_sync_subscription_nonce').val();
         var data = $.extend(true, $me.data(), {
             action: action,
             dataType: "json",
+            nonce: nonce,
             form_data: {
                 'subscription_id': $('#post_ID').val(),
                 'update': update
