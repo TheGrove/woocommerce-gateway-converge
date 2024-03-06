@@ -1,5 +1,5 @@
 <?php if ( empty( $subscriptions ) ) : ?>
-	<?php printf( __( 'You have no subscriptions.', 'elavon-converge-gateway' ) ); ?>
+	<?php printf( esc_html__( 'You have no subscriptions.', 'elavon-converge-gateway' ) ); ?>
 <?php else : ?>
 	<table class="woocommerce_subscriptions_table">
 		<thead>
@@ -14,22 +14,22 @@
 		<?php foreach ( $subscriptions as $subscription ) : ?>
 			<tr>
 				<td>
-					<a href="<?php echo $subscription->get_view_subscription_url(); ?>">#<?php echo $subscription->get_order_number(); ?></a>
+					<a href="<?php echo esc_url( $subscription->get_view_subscription_url() ); ?>">#<?php echo esc_html( $subscription->get_order_number() ); ?></a>
 				</td>
 				<td>
 					<?php foreach ( $subscription->get_items( 'line_item' ) as $item_id => $item ) : ?>
-						<?php echo $item->get_name(); ?>
+						<?php echo esc_html( $item->get_name() ); ?>
 						<br>
 					<?php endforeach; ?>
 				</td>
 				<td>
-					<?php echo wc_price( $subscription->get_total() ); ?>
+					<?php echo wp_kses_post( wc_price( $subscription->get_total() ) ); ?>
 				</td>
 				<td>
 					<a class="button"
-						href="<?php echo $subscription->get_view_subscription_url(); ?>">
+						href="<?php echo esc_url( $subscription->get_view_subscription_url() ); ?>">
 										<?php
-										echo __(
+										echo esc_html__(
 											'View',
 											'elavon-converge-gateway'
 										)
