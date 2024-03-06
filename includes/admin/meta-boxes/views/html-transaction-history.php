@@ -34,7 +34,7 @@
 					<td><?php echo esc_html( wgc_format_datetime( $transaction->getCreatedAt() ) ); ?></td>
 					<td><?php printf( '%s - %s', esc_html( $transaction->getCard()->getScheme() ), esc_html( $transaction->getCard()->getLast4() ) ); ?></td>
 					<td><?php echo esc_html( $transaction->getState() ); ?></td>
-					<td><?php echo esc_html( wc_price( $transaction->getTotalAmount() ) ); ?></td>
+					<td><?php echo wp_kses_post( wc_price( $transaction->getTotalAmount() ) ); ?></td>
 					<td class="text_left">
 						<?php if ( ! empty( $_order_id ) ) : ?>
 							<a href="<?php echo esc_url( get_edit_post_link( $_order_id ) ); ?>">#<?php echo esc_html( $_order_id ); ?></a>

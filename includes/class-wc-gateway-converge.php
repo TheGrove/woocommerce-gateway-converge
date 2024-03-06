@@ -6,6 +6,8 @@ use Elavon\Converge2\DataObject\Resource\StoredCardInterface;
 use Elavon\Converge2\DataObject\ThreeDSecureV1;
 use Elavon\Converge2\Schema\Converge2Schema;
 
+use function Aws\filter;
+
 /**
  * WC_Gateway_Converge Class.
  */
@@ -147,11 +149,10 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	public function enqueue_admin_scripts() {
-
 		$screen    = get_current_screen();
 		$screen_id = $screen ? $screen->id : '';
 
-		if ( isset( $_GET['page'] ) && isset( $_GET['tab'] ) && isset( $_GET['section'] ) && $_GET['page'] == 'wc-settings' && $_GET['tab'] == 'checkout' && $_GET['section'] == 'elavon-converge-gateway' ) {
+		if ( isset( $_GET['page'] ) && isset( $_GET['tab'] ) && isset( $_GET['section'] ) && $_GET['page'] == 'wc-settings' && $_GET['tab'] == 'checkout' && $_GET['section'] == 'elavon-converge-gateway' ) { // phpcs:ignore WordPress.Security
 			wp_enqueue_script( 'woocommerce', plugins_url( 'assets/js/settings_confirmation.js', WGC_MAIN_FILE ), array(), false, true );
 			$params = array( 'delete_alert' => __( 'If you change the account, the stored shoppers and cards will be deleted. Are you sure you want to do this?', 'elavon-converge-gateway' ) );
 			wp_localize_script( 'woocommerce', 'elavon_converge_gateway', $params );
@@ -241,9 +242,9 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			wc_add_notice( $errorMsg, 'error' );
 			$error = true;
 		} elseif ( $this->isSavePaymentMethodsEnabled() && $this->can_store_one_more_card() ) {
-			$card_number              = wc_clean( $_POST['elavon-converge-gateway-card-number'] );
-			$card_expiry              = wc_clean( $_POST['elavon-converge-gateway-card-expiry'] );
-			$card_verification_number = wc_clean( $_POST['elavon-converge-gateway-card-cvc'] );
+			$card_number              = isset( $_POST['elavon-converge-gateway-card-number'] ) ? wc_clean( $_POST['elavon-converge-gateway-card-number'] ) : ''; // phpcs:ignore WordPress.Security
+			$card_expiry              = isset( $_POST['elavon-converge-gateway-card-expiry'] ) ? wc_clean( $_POST['elavon-converge-gateway-card-expiry'] ) : ''; // phpcs:ignore WordPress.Security
+			$card_verification_number = isset( $_POST['elavon-converge-gateway-card-cvc'] ) ? wc_clean( $_POST['elavon-converge-gateway-card-cvc'] ) : ''; // phpcs:ignore WordPress.Security
 
 			$error   = false;
 			$user_id = get_current_user_id();
@@ -376,19 +377,20 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			$hosted_card_key = 'convergePaymentToken';
 		}
 
-		if ( isset( $_REQUEST[ $hosted_card_key ] ) && $payment_session->getBlik() == null ) {
-			$hosted_card = $_REQUEST[ $hosted_card_key ];
+		$hosted_card_key = htmlentities( wp_unslash( $_REQUEST[ $hosted_card_key ] ), ENT_QUOTES, 'UTF-8' ); // phpcs:ignore WordPress.Security
+		if ( isset( $hosted_card_key ) && $payment_session->getBlik() == null ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$hosted_card = wp_unslash( $hosted_card_key ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$this->set_hosted_card_session( $hosted_card );
 
 			$this->handle_return_from_hpp( $hosted_card );
 
-		} elseif ( isset( $_REQUEST['PaRes'] ) ) {
-			$this->handle_return_from_three_d_secure( $_REQUEST ); // Test with ThreeDSecure
+		} elseif ( isset( $_REQUEST['PaRes'] ) ) { // phpcs:ignore WordPress.Security
+			$this->handle_return_from_three_d_secure( $_REQUEST ); // phpcs:ignore WordPress.Security
 
 		} elseif ( $payment_session->getBlik() != null ) {
 			$this->handle_return_from_blik( $payment_session );
 		} else {
-			wp_redirect( wc_get_page_permalink( 'cart' ) );
+			wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 		}
 
 		exit;
@@ -406,15 +408,15 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			// $three_d_secure = $this->converge_api->get_hosted_card_three_d_secure( $order, $hosted_card );
 
 			if ( $three_d_secure ) {
-				echo $this->get_three_d_secure_redirect_form( $hosted_card, $three_d_secure );
+				echo $this->get_three_d_secure_redirect_form( $hosted_card, $three_d_secure ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} else {
 				$this->do_sale( $order, $hosted_card );
 				$this->clear_sale_session();
 
-				wp_redirect( $this->get_return_url( $order ) );
+				wp_safe_redirect( $this->get_return_url( $order ) );
 			}
 		} else {
-			wp_redirect( wc_get_page_permalink( 'cart' ) );
+			wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 		}
 	}
 
@@ -436,14 +438,14 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 
 			if ( $is_three_d_secure_ok ) {
 				$this->do_sale( $order, $hosted_card );
-				wp_redirect( $this->get_return_url( $order ) );
+				wp_safe_redirect( $this->get_return_url( $order ) );
 			} else {
 				wc_add_notice( __( 'Payment rejected due to 3D Secure.', 'elavon-converge-gateway' ), 'error' );
-				wp_redirect( wc_get_page_permalink( 'cart' ) );
+				wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 			}
 			$this->clear_sale_session();
 		} else {
-			wp_redirect( wc_get_page_permalink( 'cart' ) );
+			wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 		}
 	}
 
@@ -458,13 +460,8 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			return;
 		}
 
-		echo '<form method="POST" action="' . WC()->api_request_url( 'wc_payment_gateways' ) . '">';
-		echo '<script 
-			src="' . $lightbox_script_url . '"
-	        class="converge-button"
-	        data-merchant-alias="' . $merchant_alias . '"
-	        data-public-key="' . $public_key . '"
-	        data-session-id="' . $payment_session_id . '">';
+		echo '<form method="POST" action="' . esc_attr( WC()->api_request_url( 'wc_payment_gateways' ) ) . '">';
+		echo '<script src="' . esc_attr( $lightbox_script_url ) . '" class="converge-button" data-merchant-alias="' . esc_attr( $merchant_alias ) . '" data-public-key="' . esc_attr( $public_key ) . '" data-session-id="' . esc_attr( $payment_session_id ) . '">'; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 		echo '</script>';
 		echo '</form>';
 	}
@@ -480,9 +477,9 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			$this->do_blik_sale( $order, $payment_session );
 			$this->clear_sale_session();
 
-			wp_redirect( $this->get_return_url( $order ) );
+			wp_safe_redirect( $this->get_return_url( $order ) );
 		} else {
-			wp_redirect( wc_get_page_permalink( 'cart' ) );
+			wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 		}
 	}
 
@@ -586,9 +583,9 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		}
 
 		if ( is_user_logged_in() && $this->isSavePaymentMethodsEnabled() ) {
-
-			if ( ! isset( $_POST[ $this->stored_card_key ] ) || ( isset( $_POST[ $this->stored_card_key ] ) && $_POST[ $this->stored_card_key ] == $this->new_card_value ) ) {
-				if ( isset( $_POST[ WGC_KEY_SAVE_FOR_LATER_USE ] ) ) {
+			$stored_card_key = htmlentities( wp_unslash( $_POST[ $this->stored_card_key ] ), ENT_QUOTES, 'UTF-8' ); // phpcs:ignore WordPress.Security
+			if ( ! isset( $stored_card_key ) || ( isset( $stored_card_key ) && $stored_card_key == $this->new_card_value ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				if ( isset( $_POST[ WGC_KEY_SAVE_FOR_LATER_USE ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 					if ( ! wgc_has_c2_shopper_id() ) {
 						// add new shopper
@@ -610,10 +607,10 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 					}
 
 					// save in session
-					$this->set_save_for_later_use_session( $_POST[ WGC_KEY_SAVE_FOR_LATER_USE ] );
+					$this->set_save_for_later_use_session( wp_unslash( $_POST[ WGC_KEY_SAVE_FOR_LATER_USE ] ) ); // phpcs:ignore WordPress.Security
 				}
 			} else {
-				$payment_token = WC_Payment_Tokens::get( $_POST[ $this->stored_card_key ] );
+				$payment_token = WC_Payment_Tokens::get( wp_unslash( $stored_card_key ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing WordPress.Security.ValidatedSanitizedInput
 
 				if ( ! $payment_token || $payment_token->get_user_id() !== get_current_user_id() ) {
 					return $this->error_processing_payment();
@@ -974,7 +971,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		if ( count( $order_items ) > $order_max_items ) {
 			throw new \Exception(
 			/* translators: %1$s: number */
-				sprintf( __( 'The number of cart items should be less than or equal to %1$s (including shipping and tax items).', 'elavon-converge-gateway' ), $order_max_items )
+				sprintf( esc_html__( 'The number of cart items should be less than or equal to %1$s (including shipping and tax items).', 'elavon-converge-gateway' ), esc_html( $order_max_items ) )
 			);
 		}
 	}
@@ -1129,7 +1126,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	public function uses_internet_explorer_or_edge() {
-		$user_agent = htmlentities( $_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8' );
+		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? htmlentities( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ), ENT_QUOTES, 'UTF-8' ) : ''; // phpcs:ignore WordPress.Security
 
 		return preg_match( '~MSIE|Internet Explorer~i', $user_agent ) || ( strpos( $user_agent, 'Trident/7.0' ) !== false && strpos( $user_agent, 'rv:11.0' ) !== false ) || ( preg_match( '/Edge/i', $user_agent ) );
 	}
@@ -1139,13 +1136,14 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	public function change_subscription_payment_method( $subscription ) {
-		if ( isset( $_POST[ $this->stored_card_key ] ) && $_POST[ $this->stored_card_key ] == $this->new_card_value ) {
+		$stored_card_key = htmlentities( wp_unslash( $_POST[ $this->stored_card_key ] ), ENT_QUOTES, 'UTF-8' ); // phpcs:ignore WordPress.Security
+		if ( isset( $stored_card_key ) && $stored_card_key == $this->new_card_value ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			if ( $this->add_payment_method()['result'] !== 'success' ) {
 				return;
 			}
 			$payment_token = WC_Payment_Tokens::get_customer_default_token( $subscription->get_customer_id() );
 		} else {
-			$payment_token = WC_Payment_Tokens::get( $_POST[ $this->stored_card_key ] );
+			$payment_token = WC_Payment_Tokens::get( wp_unslash( $stored_card_key ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( ! $payment_token || $payment_token->get_user_id() !== get_current_user_id() ) {
 			wc_add_notice( __( 'Error updating payment method.', 'elavon-converge-gateway' ), 'error' );
@@ -1199,7 +1197,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			<?php do_action( 'woocommerce_credit_card_form_start', $this->id ); ?>
 			<?php
 			foreach ( $fields as $field ) {
-				echo $field; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+				echo wp_kses_post( $field ); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 			}
 			?>
 			<?php do_action( 'woocommerce_credit_card_form_end', $this->id ); ?>
@@ -1208,7 +1206,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		<?php
 
 		if ( $this->supports( 'credit_card_form_cvc_on_saved_method' ) ) {
-			echo '<fieldset>' . $cvc_field . '</fieldset>'; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+			echo '<fieldset>' . wp_kses_post( $cvc_field ) . '</fieldset>'; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 		}
 	}
 

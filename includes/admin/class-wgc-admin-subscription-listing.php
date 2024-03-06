@@ -62,7 +62,7 @@ class WGC_Admin_Subscription_Listing {
 				}
 				break;
 			case 'total':
-				echo esc_html( wc_price( $subscription->get_total() ) );
+				echo wp_kses_post( wc_price( $subscription->get_total() ) );
 
 				break;
 		}
