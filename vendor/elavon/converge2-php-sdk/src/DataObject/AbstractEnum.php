@@ -14,6 +14,7 @@ abstract class AbstractEnum implements \JsonSerializable {
         return $this->value;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->getValue();
