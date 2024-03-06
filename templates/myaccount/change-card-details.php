@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 					<?php
 					if ( $gateway->has_fields() || $gateway->get_description() ) {
 						echo '<div class="woocommerce-PaymentBox woocommerce-PaymentBox--' . esc_attr( $gateway->id ) . ' payment_box payment_method_' . esc_attr( $gateway->id ) . '" >';
-						echo $payment_token->get_display_name();
+						echo esc_html( $payment_token->get_display_name() );
 						$gateway->change_card_details_fields();
 						echo '</div>';
 					}
