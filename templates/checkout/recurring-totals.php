@@ -46,7 +46,7 @@ endif;
 					?>
 				</td>
 				<td class="product-total">
-					<?php echo $label; ?>
+					<?php echo esc_html( $label ); ?>
 				</td>
 			</tr>
 			<?php ++$index; ?>
