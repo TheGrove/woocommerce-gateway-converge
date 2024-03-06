@@ -767,14 +767,25 @@ function wgc_get_subscription_related_orders( $subscription ) {
 		$subscription = wgc_get_subscription_object_by_id( $subscription );
 	}
 
-	$results = $wpdb->get_results(
-		$wpdb->prepare(
-			"SELECT ID FROM $wpdb->posts AS posts LEFT JOIN $wpdb->postmeta AS postmeta
-			ON  posts.ID = postmeta.post_id WHERE posts.post_type = 'shop_order' AND postmeta.meta_key = '_wgc_subscription_id'
-			AND postmeta.meta_value = %s",
-			$subscription->get_id()
-		)
-	);
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT ordermeta.order_id AS ID FROM wp_wc_orders_meta AS ordermeta
+				WHERE ordermeta.meta_key = '_wgc_subscription_id' AND ordermeta.meta_value = %s",
+				$subscription->get_id()
+			)
+		);
+	} else {
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT ID FROM $wpdb->posts AS posts LEFT JOIN $wpdb->postmeta AS postmeta
+				ON  posts.ID = postmeta.post_id WHERE posts.post_type = 'shop_order' AND postmeta.meta_key = '_wgc_subscription_id'
+				AND postmeta.meta_value = %s",
+				$subscription->get_id()
+			)
+		);
+	}
+
 	$orders  = array();
 	if ( $subscription->get_parent_id() ) {
 		$orders[] = $subscription->get_order( $subscription->get_parent_id() );
@@ -996,7 +1007,7 @@ function wgc_conditional_payment_gateways( $available_gateways ) {
 
 	if ( wgc_order_from_merchant_view_has_subscription_elements() ) {
 		$hide_other_methods = true;
-	} else {
+	} elseif ( WC()->cart ) {
 		foreach ( WC()->cart->get_cart() as $cart_key => $cart_item ) {
 			if ( wgc_product_is_subscription( $cart_item['data'] ) ) {
 				$hide_other_methods = true;
@@ -1202,7 +1213,7 @@ function wgc_get_order_by_transaction_id( $transaction_id ) {
 	global $wpdb;
 
 	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-		return $wpdb->get_var( $wpdb->prepare( "SELECT orders.id FROM {$wpdb->prefix}wc_orders as orders WHERE orders.type = 'shop_order' AND orders.transaction_id = %s", $transaction_id ) );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT orders.id AS ID FROM {$wpdb->prefix}wc_orders as orders WHERE orders.type = 'shop_order' AND orders.transaction_id = %s", $transaction_id ) );
 	}
 
 	return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts as posts INNER JOIN $wpdb->postmeta as meta ON posts.ID = meta.post_id WHERE post_type = 'shop_order' AND meta.meta_key = '_transaction_id' AND meta.meta_value = %s", $transaction_id ) );
@@ -1211,11 +1222,20 @@ function wgc_get_order_by_transaction_id( $transaction_id ) {
 
 function wgc_copy_order_meta( $from, $to ) {
 	global $wpdb;
-	$query   = $wpdb->prepare(
-		"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d
-			AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
-		$from->get_id()
-	);
+
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$query = $wpdb->prepare(
+			"SELECT meta_key, meta_value FROM {$wpdb->prefix}wc_orders_meta AS ordermeta WHERE ordermeta.order_id = %d
+				AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
+			$from->get_id()
+		);
+	} else {
+		$query = $wpdb->prepare(
+			"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d
+				AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
+			$from->get_id()
+		);
+	}
 	$results = $wpdb->get_results( $query );
 
 	foreach ( $results as $result ) {

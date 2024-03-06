@@ -309,8 +309,8 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		}
 
 		if (is_admin()){
-			add_action('wp_ajax_wgc_create_order_ajax_action', 'wgc_create_order_ajax_action');
-			add_action('wp_ajax_wgc_sync_subscription_ajax_action', 'wgc_sync_subscription_ajax_action');
+			add_action('wp_ajax_wgc_create_order_ajax_action', array( __CLASS__, 'wgc_create_order_ajax_action' ) );
+			add_action('wp_ajax_wgc_sync_subscription_ajax_action', array( __CLASS__, 'wgc_sync_subscription_ajax_action' ) );
 		}
 
 		if (isset($_POST['action'])) {
@@ -379,6 +379,10 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		$display = false;
 
 		if ( isset( $_POST['form_data'] ) ) {
+
+			if ( ! isset( $_POST['form_data']['subscription_id'] ) ) {
+				return;
+			}
 
 			/** @var WC_Converge_Subscription $subscription */
 			if ( ! $subscription = wc_get_order( $_POST['form_data']['subscription_id'] ) ) {
