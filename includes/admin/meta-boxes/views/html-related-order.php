@@ -13,7 +13,7 @@
 		<?php foreach ( (array) $orders as $order ) : ?>
 			<tr>
 				<td>
-					<a href="<?php echo get_edit_post_link( $order->get_id() ); ?>">#<?php echo $order->get_order_number(); ?></a>
+					<a href="<?php echo esc_url( get_edit_post_link( $order->get_id() ) ); ?>">#<?php echo esc_html( $order->get_order_number() ); ?></a>
 				</td>
 				<td>
 					<?php if ( get_post_meta( $order->get_id(), '_renewal_order', true ) ) : ?>
@@ -21,8 +21,8 @@
 				<?php else : ?>
 					<?php _e( 'Parent Order', 'elavon-converge-gateway' ); ?></td>
 				<?php endif; ?>
-				<td><?php echo $order->get_status(); ?></td>
-				<td><?php echo wc_price( $order->get_total() ); ?></td>
+				<td><?php echo esc_html( $order->get_status() ); ?></td>
+				<td><?php echo wp_kses_post( wc_price( $order->get_total() ) ); ?></td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>
