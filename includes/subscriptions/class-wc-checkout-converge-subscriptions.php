@@ -17,7 +17,7 @@ class WC_Checkout_Converge_Subscriptions {
 			return;
 		}
 
-		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] );
+		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( $order_from_merchant_view ) {
 			if ( ! wgc_has_subscription_elements_in_order( $order ) ) {
@@ -81,7 +81,7 @@ class WC_Checkout_Converge_Subscriptions {
 		$subscription         = wgc_create_subscription( $subscription_data );
 
 		if ( is_wp_error( $subscription ) ) {
-			throw new Exception( $subscription->get_error_message() );
+			throw new Exception( $subscription->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$subscription = wgc_assign_billing_and_shipping_to_subscription( $order, $subscription );
@@ -162,9 +162,9 @@ class WC_Checkout_Converge_Subscriptions {
 				$checkout->must_create_account   = true;
 		}
 
-		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] );
+		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $order_from_merchant_view ) {
-			$order_id = wc_get_order_id_by_order_key( wc_clean( $_GET['key'] ) );
+			$order_id = wc_get_order_id_by_order_key( wc_clean( wp_unslash( $_GET['key'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( $order = wc_get_order( $order_id ) ) {
 				$products = $order->get_items();
 			}
@@ -202,7 +202,7 @@ class WC_Checkout_Converge_Subscriptions {
 					);
 
 					wc_add_notice( $notice, 'error' );
-					wp_redirect( wc_get_page_permalink( 'cart' ) );
+					wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 				}
 
 				exit;
@@ -222,7 +222,7 @@ class WC_Checkout_Converge_Subscriptions {
 					if ( $order_from_merchant_view ) {
 						wc_print_notices();
 					} else {
-						wp_redirect( wc_get_page_permalink( 'cart' ) );
+						wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 					}
 					exit;
 				}
@@ -235,7 +235,7 @@ class WC_Checkout_Converge_Subscriptions {
 			return $allcaps;
 		}
 
-		if ( isset( $caps[0], $_GET['key'], $args[2] ) ) {
+		if ( isset( $caps[0], $_GET['key'], $args[2] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( $caps[0] == 'pay_for_order' ) {
 				$order_id = $args[2];
 				if ( wgc_order_id_from_merchant_view_has_subscription_elements( $order_id ) ) {
@@ -247,7 +247,7 @@ class WC_Checkout_Converge_Subscriptions {
 	}
 
 	public function display_recurring_totals_form() {
-		echo get_recurring_totals_form( 'checkout' );
+		echo get_recurring_totals_form( 'checkout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }
 
