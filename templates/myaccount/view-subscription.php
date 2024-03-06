@@ -1,30 +1,30 @@
-<h1><?php echo _e( 'Converge subscription #', 'elavon-converge-gateway' ) . $subscription->get_order_number(); ?></h1>
+<h1><?php echo esc_html_e( 'Converge subscription #', 'elavon-converge-gateway' ) . esc_html( $subscription->get_order_number() ); ?></h1>
 <table>
 	<tbody>
 	<tr>
 		<th><?php _e( 'Status', 'elavon-converge-gateway' ); ?></th>
-		<td><?php echo wgc_format_subscription_state( $converge_subscription->getSubscriptionState()->getValue() ); ?></td>
+		<td><?php echo esc_html( wgc_format_subscription_state( $converge_subscription->getSubscriptionState()->getValue() ) ); ?></td>
 	</tr>
 	<tr>
 		<th><?php _e( 'Start date', 'elavon-converge-gateway' ); ?>
-		<td><?php echo wgc_format_subscription_date( $converge_subscription->getFirstBillAt() ); ?></td>
+		<td><?php echo esc_html( wgc_format_subscription_date( $converge_subscription->getFirstBillAt() ) ); ?></td>
 	</tr>
 	<tr>
 		<th><?php _e( 'End date', 'elavon-converge-gateway' ); ?></th>
-		<td><?php echo wgc_format_subscription_date( $converge_subscription->getFinalBillAt() ); ?></td>
+		<td><?php echo esc_html( wgc_format_subscription_date( $converge_subscription->getFinalBillAt() ) ); ?></td>
 	</tr>
 	<tr>
 		<th><?php _e( 'Next payment date', 'elavon-converge-gateway' ); ?></th>
-		<td><?php echo wgc_format_subscription_date( $converge_subscription->getNextBillAt() ); ?></td>
+		<td><?php echo esc_html( wgc_format_subscription_date( $converge_subscription->getNextBillAt() ) ); ?></td>
 	</tr>
 	<tr>
 		<th><?php _e( 'Payment method', 'elavon-converge-gateway' ); ?></th>
 		<td>
 			<?php
 			if ( $used_card = wgc_get_subscription_used_stored_card( $converge_subscription ) ) :
-				echo $used_card->get_display_name();
+				echo esc_html( $used_card->get_display_name() );
 			else :
-				echo $subscription->get_payment_method_title();
+				echo esc_html( $subscription->get_payment_method_title() );
 			endif;
 			?>
 		</td>
@@ -36,7 +36,7 @@
 		<tr>
 			<th><?php _e( 'Actions', 'elavon-converge-gateway' ); ?></th>
 			<td>
-				<a href="<?php echo $subscription->get_change_subscription_payment_method_url(); ?>"
+				<a href="<?php echo esc_url( $subscription->get_change_subscription_payment_method_url() ); ?>"
 					class="button">
 					<?php
 					_e(
@@ -54,7 +54,7 @@
 					)
 					?>
 					</button>
-					<input type="hidden" name="cancel_wpnonce" value="<?php echo $nonce; ?>">
+					<input type="hidden" name="cancel_wpnonce" value="<?php echo esc_attr( $nonce ); ?>">
 				</form>
 			</td>
 		</tr>
@@ -81,8 +81,8 @@
 	<?php endforeach; ?>
 	<?php foreach ( $subscription->get_order_item_totals() as $key => $total ) : ?>
 		<tr>
-			<th scope="row"><?php echo $total['label']; ?></th>
-			<td><?php echo $total['value']; ?></td>
+			<th scope="row"><?php echo esc_html( $total['label'] ); ?></th>
+			<td><?php echo esc_html( $total['value'] ); ?></td>
 		</tr>
 	<?php endforeach; ?>
 	</tbody>
@@ -93,7 +93,7 @@ $related_orders = wgc_get_subscription_related_orders( $subscription );
 $has_orders     = (bool) $related_orders;
 
 if ( ! $has_orders ) :
-	printf( __( 'There are no orders associated with this subscription.', 'elavon-converge-gateway' ) );
+	printf( esc_html__( 'There are no orders associated with this subscription.', 'elavon-converge-gateway' ) );
 else :
 	?>
 	<table>
@@ -108,17 +108,17 @@ else :
 		<tbody>
 		<?php foreach ( $related_orders as $order ) : ?>
 			<tr>
-				<td><a href="<?php echo $order->get_view_order_url(); ?>">
+				<td><a href="<?php echo esc_url( $order->get_view_order_url() ); ?>">
 										<?php
 										printf(
 											'#%s',
-											$order->get_order_number()
+											esc_attr( $order->get_order_number() )
 										)
 										?>
 							</a></td>
-				<td><?php echo date_i18n( get_option( 'date_format' ), strtotime( $order->get_date_created() ) ); ?></td>
-				<td><?php echo wc_get_order_status_name( $order->get_status() ); ?></td>
-				<td><?php echo $order->get_formatted_order_total(); ?></td>
+				<td><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $order->get_date_created() ) ) ); ?></td>
+				<td><?php echo esc_html( wc_get_order_status_name( $order->get_status() ) ); ?></td>
+				<td><?php echo wp_kses_post( $order->get_formatted_order_total() ); ?></td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>
