@@ -159,7 +159,7 @@ class WC_Gateway_Converge_Api {
 		);
 		$transaction_builder->setShopperLanguageTag( str_replace( '_', '-', get_locale() ) );
 		if ( isset( $_COOKIE['wgc_timezone'] ) ) {
-			$transaction_builder->setShopperTimeZone( $_COOKIE['wgc_timezone'] );
+			$transaction_builder->setShopperTimeZone( wp_unslash( $_COOKIE['wgc_timezone'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		$transaction_builder->setCustomFields( $this->gateway->getConvergeOrderWrapper()->get_custom_fields( $order ) );
@@ -276,7 +276,7 @@ class WC_Gateway_Converge_Api {
 			$order->add_order_note( 'Customer attempted to create subscription with Blik', false );
 			$this->payment_failed( $order );
 			wc_add_notice( 'PLACEHOLDER Error - There was an error. Please contact the merchant.', 'error' );
-			wp_redirect( wc_get_checkout_url() );
+			wp_safe_redirect( wc_get_checkout_url() );
 			exit;
 		}
 
@@ -1069,7 +1069,7 @@ class WC_Gateway_Converge_Api {
 		$subscription_builder->setCustomFields( $this->gateway->getConvergeOrderWrapper()->get_custom_fields() );
 
 		if ( isset( $_COOKIE['wgc_timezone'] ) ) {
-			$subscription_builder->setTimeZoneId( $_COOKIE['wgc_timezone'] );
+			$subscription_builder->setTimeZoneId( wp_unslash( $_COOKIE['wgc_timezone'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		$data = $subscription_builder->getData();
