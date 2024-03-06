@@ -37,7 +37,7 @@ class WC_Cart_Converge_Subscriptions {
 	}
 
 	public function display_recurring_totals_form() {
-		echo get_recurring_totals_form( 'cart' );
+		echo get_recurring_totals_form( 'cart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function cart_needs_payment( $needs_payment, $cart ) {
