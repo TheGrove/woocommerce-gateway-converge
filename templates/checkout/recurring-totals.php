@@ -46,7 +46,7 @@ endif;
 					?>
 				</td>
 				<td class="product-total">
-					<?php echo esc_html( $label ); ?>
+					<?php echo wp_kses_post( $label ); ?>
 				</td>
 			</tr>
 			<?php ++$index; ?>
