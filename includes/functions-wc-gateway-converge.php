@@ -827,7 +827,14 @@ function wgc_format_datetime( $date ) {
 		return $date;
 	}
 
-	return date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $date ) );
+	$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+
+	// Return $date if it's not a string to avoid fatal error.
+	if ( ! is_string( $date ) ) {
+		return $date;
+	}
+
+	return date_i18n( esc_html( $format ), strtotime( esc_html( $date ) ) );	
 }
 
 function wgc_format_subscription_date( $date ) {
