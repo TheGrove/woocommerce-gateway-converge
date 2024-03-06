@@ -208,7 +208,7 @@ class WC_Gateway_Converge_Order_Wrapper {
 	 */
 	protected function get_order_item_name( $order, $item ) {
 		$item_name = $item->get_name();
-		$item_meta = strip_tags(
+		$item_meta = wp_strip_all_tags(
 			wc_display_item_meta(
 				$item,
 				array(
