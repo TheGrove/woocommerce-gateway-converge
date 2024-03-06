@@ -890,9 +890,9 @@ function wgc_has_subscription_elements_in_order( WC_Order $order ) {
 }
 
 function wgc_order_from_merchant_view_has_subscription_elements() {
-	$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] );
+	$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( $order_from_merchant_view ) {
-		$order_id = wc_get_order_id_by_order_key( wc_clean( $_GET['key'] ) );
+		$order_id = wc_get_order_id_by_order_key( wc_clean( wp_unslash( $_GET['key'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $order = wc_get_order( $order_id ) ) {
 			if ( wgc_has_subscription_elements_in_order( $order ) ) {
 				return true;
@@ -904,7 +904,7 @@ function wgc_order_from_merchant_view_has_subscription_elements() {
 }
 
 function wgc_order_id_from_merchant_view_has_subscription_elements( $order_id ) {
-	$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] );
+	$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( $order_from_merchant_view ) {
 		if ( $order = wc_get_order( $order_id ) ) {
 			if ( wgc_has_subscription_elements_in_order( $order ) ) {
@@ -1230,12 +1230,11 @@ function wgc_get_order_by_transaction_id( $transaction_id ) {
 
 function wgc_copy_order_meta( $from, $to ) {
 	global $wpdb;
-	$query   = $wpdb->prepare(
+	$results = $wpdb->get_results( $wpdb->prepare(
 		"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d
 			AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
 		$from->get_id()
-	);
-	$results = $wpdb->get_results( $query );
+	) );
 
 	foreach ( $results as $result ) {
 		update_post_meta( $to->get_id(), $result->meta_key, maybe_unserialize( $result->meta_value ) );
