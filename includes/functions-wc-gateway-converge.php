@@ -830,6 +830,10 @@ function wgc_get_only_subscription_elements_from_cart( $cart = null ) {
 	$subscription_elements = array();
 
 	if ( ! $cart ) {
+		if ( ! WC()->cart ) {
+			return $subscription_elements;
+		}
+
 		$cart = WC()->cart->get_cart();
 	}
 
@@ -945,6 +949,87 @@ function wgc_get_recurring_totals_elements() {
 	return $recurring_totals;
 }
 
+/**
+ * Prepare recurring totals for display in the cart and checkout blocks.
+ *
+ * @since x.x.x
+ * @return array An array of recurring totals.
+ */
+function wgc_get_recurring_totals_for_blocks() {
+	$recurring_totals = array();
+
+	if ( ! wgc_has_subscription_elements_in_cart() ) {
+		return $recurring_totals;
+	}
+	$subscription_elements = wgc_get_only_subscription_elements_from_cart();
+
+	$recurring_totals['subtotal'] = array();
+	$recurring_totals['discount'] = array();
+	$recurring_totals['shipping'] = array();
+	$recurring_totals['taxes']    = array();
+	$recurring_totals['total']    = array();
+	$cart                         = WC()->cart;
+
+	$discount_total = 0;
+
+	$coupon_type = wgc_get_coupon_type( $cart );
+	if ( 'recurring' === $coupon_type && $cart->get_cart_discount_total() > 0 ) {
+		$discount_total = $cart->get_cart_discount_total();
+	}
+
+	foreach ( $subscription_elements as $cart_key => $cart_element ) {
+
+		$price = $cart_element['data']->get_price();
+
+		$quantity       = $cart_element['quantity'];
+		$subtotal       = $price * $quantity;
+		$total          = $subtotal;
+		$shipping_total = 0;
+
+		$recurring_totals['subtotal'][] = array(
+			'price'     => wp_strip_all_tags( wc_price( $subtotal ) ),
+			'frequency' => wp_strip_all_tags( wgc_get_subscription_price_string( $cart_element['data'], $quantity ) ),
+		);
+		if ( $discount_total > 0 ) {
+			$recurring_totals['discount'][] = array(
+				'price'     => wp_strip_all_tags( wc_price( $discount_total * - 1 ) ),
+				'frequency' => wp_strip_all_tags( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ),
+			);
+			$total                         -= $discount_total;
+		}
+		if ( $cart_element['data']->needs_shipping() ) {
+			$shipping_total                 = $cart->get_shipping_total();
+			$recurring_totals['shipping'][] = array(
+				'price'     => wp_strip_all_tags( $cart->get_cart_shipping_total() ),
+				'frequency' => wp_strip_all_tags( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ),
+			);
+			$total                         += $shipping_total;
+		}
+
+		$shipping_tax         = WC()->cart->get_shipping_tax();
+		$total_additional_tax = 0;
+		if ( isset( WC()->cart->wgc_recurring_carts[ $cart_key ] ) ) {
+			$cart_tax = WC()->cart->wgc_recurring_carts[ $cart_key ]->get_taxes_total();
+			if ( $cart_tax > 0 ) {
+				$product_additional_tax      = wgc_calculate_additional_payments_tax( $cart_element['data'] );
+				$recurring_totals['taxes'][] = array(
+					'price'     => wp_strip_all_tags( wc_price( $cart_tax ) ),
+					'frequency' => wp_strip_all_tags( wgc_get_subscription_price_string( $product_additional_tax, $quantity, $shipping_tax ) ),
+				);
+				$total                      += $cart_tax;
+				$total_additional_tax       += $product_additional_tax->get_wgc_plan_price() * $quantity + $shipping_tax;
+			}
+		}
+
+		$recurring_totals['total'][] = array(
+			'price'     => wp_strip_all_tags( wc_price( $total ) ),
+			'frequency' => wp_strip_all_tags( wgc_get_subscription_price_string( $cart_element['data'], $quantity, $shipping_total - $discount_total + $total_additional_tax ) ),
+		);
+	}
+
+	return $recurring_totals;
+}
+
 function get_recurring_totals_form($page = "cart"){
 
 	if ("cart" != $page && "checkout" != $page)
@@ -991,7 +1076,7 @@ function wgc_conditional_payment_gateways( $available_gateways ) {
 
 	if ( wgc_order_from_merchant_view_has_subscription_elements() ) {
 		$hide_other_methods = true;
-	} else {
+	} elseif ( WC()->cart ) {
 		foreach ( WC()->cart->get_cart() as $cart_key => $cart_item ) {
 			if ( wgc_product_is_subscription( $cart_item['data'] ) ) {
 				$hide_other_methods = true;

@@ -118,6 +118,9 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		add_action( 'before_woocommerce_pay', array( $this, 'enqueue_checkout_assets' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
+		// Validate the block checkout input.
+		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'validate_block_checkout' ), 10, 2 );
+
 		if ( ! $this->is_valid_for_use() ) {
 			$this->enabled = WGC_SETTING_ENABLED_NO;
 		}
@@ -943,6 +946,76 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		}
 	}
 
+	/**
+	 * Validate the block checkout inputs.
+	 *
+	 * @param WC_Order        $order The order being placed.
+	 * @param WP_REST_Request $request The API request currently being processed.
+	 *
+	 * @return void
+	 */
+	public function validate_block_checkout( $order, $request ) {
+		if ( ! $order instanceof \WC_Order || $request->get_param( 'payment_method' ) !== wgc_get_payment_name() ) {
+			return;
+		}
+
+		$billing_address  = $request->get_param( 'billing_address' );
+		$shipping_address = $request->get_param( 'shipping_address' );
+
+		// Prepare data for validation.
+		$data   = array();
+		$groups = array( 'billing', 'shipping' );
+		$fields = array(
+			'first_name',
+			'last_name',
+			'company',
+			'address_1',
+			'address_2',
+			'city',
+			'state',
+			'postcode',
+			'phone',
+		);
+
+		foreach ( $groups as $group ) {
+			foreach ( $fields as $field ) {
+				$key          = $group . '_' . $field;
+				$address      = 'billing' === $group ? $billing_address : $shipping_address;
+				$data[ $key ] = isset( $address[ $field ] ) ? wc_clean( wp_unslash( $address[ $field ] ) ) : '';
+			}
+		}
+
+		$data['order_comments']     = sanitize_textarea_field( $request->get_param( 'customer_note' ) ?? '' );
+		$data['billing_full_name']  = $data['billing_first_name'] . ' ' . $data['billing_last_name'];
+		$data['shipping_full_name'] = $data['shipping_first_name'] . ' ' . $data['shipping_last_name'];
+
+		$validator = new WC_Checkout_Input_Validator();
+		$validator->validate( $data );
+
+		// Add errors to the response.
+		$errors = $validator->getErrorMessages();
+		foreach ( $errors as $error_message ) {
+			wc_add_notice( $error_message, 'error' );
+		}
+
+		if ( ! empty( $errors ) ) {
+			return;
+		}
+
+		// Validate Converge connection.
+		if ( ! $this->getC2ApiService()->canConnect() ) {
+			wgc_log( 'Converge is down.' );
+			wc_add_notice( __( 'Your order could not be placed. Please try again later.', 'elavon-converge-gateway' ), 'error' );
+			return;
+		}
+
+		// Validate number of line items.
+		try {
+			$this->validate_number_line_items( $order, null );
+		} catch ( \Exception $e ) {
+			wc_add_notice( $e->getMessage(), 'error' );
+		}
+	}
 
 	/**
 	 * @param $fields
