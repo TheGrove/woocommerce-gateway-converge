@@ -82,7 +82,7 @@ class Wgc_Hooks {
 			}
 
 			$stored_card = $payment_token->get_token( wgc_get_payment_name() );
-			$expiry      = wgc_format_card_expiration_date( wc_clean( $_POST['elavon-converge-gateway-card-expiry'] ) );
+			$expiry      = wgc_format_card_expiration_date( wc_clean( wp_unslash( $_POST['elavon-converge-gateway-card-expiry'] ) ) );
 
 			if ( ! wgc_get_gateway()->getC2ApiService()->canConnect() ) {
 				self::print_error(
@@ -99,7 +99,7 @@ class Wgc_Hooks {
 				$stored_card,
 				$expiry['month'],
 				$expiry['year'],
-				wc_clean( $_POST['elavon-converge-gateway-card-cvc'] )
+				wc_clean( wp_unslash( $_POST['elavon-converge-gateway-card-cvc'] ) )
 			);
 
 			if ( $response ) {
@@ -202,10 +202,10 @@ class Wgc_Hooks {
 		}
 
 		if ( isset( $_POST['cancel'] ) && isset( $_POST['cancel_wpnonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['cancel_wpnonce'], 'cancel-subscription-' . $subscription->get_transaction_id() )
+			if ( wp_verify_nonce( wp_unslash( $_POST['cancel_wpnonce'] ), 'cancel-subscription-' . $subscription->get_transaction_id() ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 					&& $_POST['cancel_wpnonce'] != WC()->session->get( 'cancel_wpnonce' ) ) {
 
-				WC()->session->set( 'cancel_wpnonce', $_POST['cancel_wpnonce'] );
+				WC()->session->set( 'cancel_wpnonce', wp_unslash( $_POST['cancel_wpnonce'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				if ( wgc_get_gateway()->get_converge_api()->cancel_subscription( $subscription )->isSuccess() ) {
 					self::print_notice( __( 'Your subscription has been cancelled.', 'elavon-converge-gateway' ) );
 				} else {
