@@ -343,6 +343,7 @@ class WC_Gateway_Converge_Order_Wrapper {
 			if ( ! $unique_transaction_id ) {
 				$unique_transaction_id = wgc_generate_unique_transaction_id();
 				$order->update_meta_data( '_unique_transaction_id', $unique_transaction_id );
+				$order->save();
 			}
 			$custom_fields[ WGC_KEY_WOOCOMMERCE_ID ] = $unique_transaction_id;
 		}

@@ -1241,6 +1241,8 @@ function wgc_copy_order_meta( $from, $to ) {
 	foreach ( $results as $result ) {
 		$to->update_meta_data( $result->meta_key, maybe_unserialize( $result->meta_value ) );
 	}
+
+	$to->save();
 }
 
 function wgc_create_order_from_subscription( $subscription, $new_order_transaction_id ) {
