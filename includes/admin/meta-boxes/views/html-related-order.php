@@ -15,17 +15,7 @@ use Automattic\WooCommerce\Utilities\OrderUtil;
 		<?php foreach ( (array) $orders as $order ): ?>
 			<tr>
 				<td>
-					<?php if ( OrderUtil::custom_orders_table_usage_is_enabled() ) :
-						$order_edit_url = add_query_arg( array(
-							'page'   => 'wc-orders',
-							'action' => 'edit',
-							'id'     => $order->get_id(),
-						), admin_url( 'admin.php' ) );
-					?>
-						<a href="<?php echo esc_url( $order_edit_url ); ?>">#<?php echo esc_html( $order->get_id() ); ?></a>
-					<?php else : ?>
-						<a href="<?php echo get_edit_post_link( $order->get_id() ); ?>">#<?php echo $order->get_order_number(); ?></a>
-					<?php endif; ?>
+					<a href="<?php echo esc_url( $order->get_edit_order_url() ); ?>">#<?php echo $order->get_order_number(); ?></a>
 				</td>
 				<td>
 					<?php if ( $order->get_meta( '_renewal_order', true ) ) : ?>

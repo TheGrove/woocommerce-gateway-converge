@@ -31,7 +31,10 @@ use Automattic\WooCommerce\Utilities\OrderUtil;
 			</thead>
 			<tbody>
 			<?php foreach ( (array) $transactions as $transaction ) : ?>
-				<?php $_order_id = wgc_get_order_by_transaction_id( $transaction->getId() ); ?>
+				<?php
+					$_order_id = wgc_get_order_by_transaction_id( $transaction->getId() );
+					$_order    = wc_get_order( $_order_id );
+				?>
 				<tr>
 					<td><?php echo $transaction->getId(); ?></td>
 					<td><?php echo wgc_format_datetime( $transaction->getCreatedAt() ); ?></td>
@@ -39,18 +42,8 @@ use Automattic\WooCommerce\Utilities\OrderUtil;
 					<td><?php echo $transaction->getState(); ?></td>
 					<td><?php echo wc_price( $transaction->getTotalAmount() ); ?></td>
 					<td class="text_left">
-						<?php if ( ! empty( $_order_id ) ): ?>
-							<?php if ( OrderUtil::custom_orders_table_usage_is_enabled() ) :
-								$order_edit_url = add_query_arg( array(
-									'page'   => 'wc-orders',
-									'action' => 'edit',
-									'id'     => $_order_id,
-								), admin_url( 'admin.php' ) );
-							?>
-								<a href="<?php echo esc_url( $order_edit_url ); ?>">#<?php echo esc_html( $_order_id ) ?></a>
-							<?php else : ?>
-								<a href="<?php echo get_edit_post_link( $_order_id ); ?>">#<?php echo $_order_id; ?></a>
-							<?php endif; ?>
+						<?php if ( ! empty( $_order_id ) && $_order instanceof \WC_Order ): ?>
+							<a href="<?php echo esc_url( $_order->get_edit_order_url() ) ?>">#<?php echo $_order_id; ?></a>
 						<?php else: ?>
 							<?php _e( 'N/A', 'elavon-converge-gateway' ); ?>
 						<?php endif; ?>
