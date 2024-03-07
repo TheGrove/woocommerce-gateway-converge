@@ -25,14 +25,20 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v42
         with:
           files: |
             **/*.php
+
+      - name: Remove vendor folder
+        run: rm -rf vendor
       
       - name: Install dependencies
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        run: composer install
+        run: |
+          composer require --dev sirbrillig/phpcs-changed -n
+          composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer require --dev woocommerce/woocommerce-sniffs -n
 
       - name: Run PHP_CodeSniffer
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
