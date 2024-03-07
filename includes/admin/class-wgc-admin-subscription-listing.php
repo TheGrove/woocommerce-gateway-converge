@@ -38,7 +38,7 @@ class WGC_Admin_Subscription_Listing {
 		switch ( $column ) {
 			case 'subscription':
 				if ( empty( $user ) ) {
-					printf( '<a href="%s"><strong>#%s</strong></a>', esc_url( get_edit_post_link( $post->ID ) ), esc_html( post->ID ) );
+					printf( '<a href="%s"><strong>#%s</strong></a>', esc_url( get_edit_post_link( $post->ID ) ), esc_html( $post->ID ) );
 				} else {
 					printf(
 						'<a href="%s"><strong>#%s</strong></a> %s <a href="%s">%s %s</a>',

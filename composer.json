@@ -1,0 +1,19 @@
+{
+  "name": "woocommerce/woocommerce-gateway-converge",
+  "description": "The new V.Zero integration for Braintree/PayPal",
+  "homepage": "https://woo.com/products/elavon-vm-payment-gateway/",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require-dev": {
+    "woocommerce/woocommerce-sniffs": "1.0.0",
+    "sirbrillig/phpcs-changed": "^2.11.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "platform": {
+      "php": "7.4"
+    }
+  }
+}
