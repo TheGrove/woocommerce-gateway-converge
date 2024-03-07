@@ -99,7 +99,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 			$converge_subscription = $response->getData();
 			include 'views/html-converge-subscription-details.php';
 		} else {
-			echo esc_html_e( 'There is no Converge Subscription added for this subscription.', 'elavon-converge-gateway' );
+			esc_html_e( 'There is no Converge Subscription added for this subscription.', 'elavon-converge-gateway' );
 		}
 	}
 
@@ -290,7 +290,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 				update_post_meta( $variation_id, '_regular_price', $subscription_price );
 			}
 
-			if ( $values_to_validate['wgc_plan_introductory_rate_amount'] == 0 ) {
+			if ( 0 === $values_to_validate['wgc_plan_introductory_rate_amount'] ) {
 				$values_to_validate['wgc_plan_introductory_rate_amount'] = null;
 			}
 
@@ -352,11 +352,11 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		}
 
 		if ( isset( $_POST['action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			if ( $_POST['action'] == 'wgc_create_order_ajax_action' ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( $_POST['action'] === 'wgc_create_order_ajax_action' ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				self::wgc_create_order_ajax_action();
 			}
 
-			if ( $_POST['action'] == 'wgc_sync_subscription_ajax_action' ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( $_POST['action'] === 'wgc_sync_subscription_ajax_action' ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				self::wgc_sync_subscription_ajax_action();
 			}
 		}
@@ -397,7 +397,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 
 		if ( $order_id ) {
 			$response['message'] = '';
-			$response['message'] = sprintf( __( 'We already have an Order (#%1$s) for this Transaction Id (%2$s).', 'elavon-converge-gateway' ), $order_id, $new_order_transaction_id );
+			$response['message'] = sprintf( __( 'We already have an Order (#%1$s) for this Transaction Id (%2$s).', 'elavon-converge-gateway' ), esc_html( $order_id ), esc_html( $new_order_transaction_id ) );
 			die( json_encode( $response ) );
 		}
 
@@ -405,14 +405,14 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 
 		if ( ! $new_order ) {
 			$response['message'] = __( 'There was an error creating the order.', 'elavon-converge-gateway' );
-			$subscription->add_order_note( sprintf( __( 'There was an error creating the order. Transaction id: %1$s.', 'elavon-converge-gateway' ), $new_order_transaction_id ) );
+			$subscription->add_order_note( sprintf( __( 'There was an error creating the order. Transaction id: %1$s.', 'elavon-converge-gateway' ), esc_html( $new_order_transaction_id ) ) );
 
 			die( json_encode( $response ) );
 		} else {
 			$response['success'] = true;
-			$response['message'] = sprintf( __( 'The renewal order #%1$s has been added for the Transaction Id %2$s.', 'elavon-converge-gateway' ), $new_order->get_id(), $new_order_transaction_id );
+			$response['message'] = sprintf( __( 'The renewal order #%1$s has been added for the Transaction Id %2$s.', 'elavon-converge-gateway' ), esc_html( $new_order->get_id() ), esc_html( $new_order_transaction_id ) );
 
-			$subscription->add_order_note( sprintf( __( 'Create renewal order requested by admin action. Transaction id: %1$s.', 'elavon-converge-gateway' ), $new_order_transaction_id ) );
+			$subscription->add_order_note( sprintf( __( 'Create renewal order requested by admin action. Transaction id: %1$s.', 'elavon-converge-gateway' ), esc_html( $new_order_transaction_id ) ) );
 
 			die( json_encode( $response ) );
 		}
@@ -465,7 +465,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	public static function display_error( $admin_notice ) {
 		?>
 		<div class="notice is-dismissible notice-error wgc-notice">
-			<p><?php _e( esc_html( $admin_notice ), 'elavon-converge-gateway' ); ?></p>
+			<p><?php echo esc_html( $admin_notice ); ?></p>
 		</div>
 		<?php
 	}
@@ -479,7 +479,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 		$properties['wgc_plan_billing_frequency_count'] = $values_to_validate['wgc_plan_billing_frequency_count'];
 		$properties['wgc_plan_introductory_rate']       = $values_to_validate['wgc_plan_introductory_rate'];
 
-		if ( $values_to_validate['wgc_plan_introductory_rate'] == 'yes' ) {
+		if ( 'yes' === $values_to_validate['wgc_plan_introductory_rate'] ) {
 			$properties['wgc_plan_introductory_rate_amount']          = $values_to_validate['wgc_plan_introductory_rate_amount'];
 			$properties['wgc_plan_introductory_rate_billing_periods'] = $values_to_validate['wgc_plan_introductory_rate_billing_periods'];
 		} else {
@@ -488,7 +488,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 			$properties['wgc_plan_introductory_rate_billing_periods'] = '';
 		}
 
-		if ( $values_to_validate['wgc_plan_billing_ending'] == 'billing_periods' ) {
+		if ( 'billing_periods' === $values_to_validate['wgc_plan_billing_ending'] ) {
 			$properties['wgc_plan_ending_billing_periods'] = $values_to_validate['wgc_plan_ending_billing_periods'];
 		} else {
 			$properties['wgc_plan_ending_billing_periods'] = '';

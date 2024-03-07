@@ -94,8 +94,8 @@ class WC_Converge_Subscription extends WC_Order {
 		if ( wgc_product_is_subscription( $product ) ) {
 			$subtotal = sprintf(
 				'%s %s',
-				$subtotal,
-				wgc_get_subscription_price_string( $product, $quantity, (float) $this->get_shipping_total() )
+				esc_html( $subtotal ),
+				wp_kses_post( wgc_get_subscription_price_string( $product, $quantity, (float) $this->get_shipping_total() ) )
 			);
 		}
 

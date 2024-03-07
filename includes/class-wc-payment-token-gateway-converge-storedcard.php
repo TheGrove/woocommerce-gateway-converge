@@ -60,10 +60,10 @@ class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
 
 		return sprintf(
 			$display_name_format,
-			$this->get_card_scheme(),
-			$this->get_last4(),
-			$this->get_expiry_month(),
-			substr( $this->get_expiry_year(), 2 )
+			esc_html( $this->get_card_scheme() ),
+			esc_html( $this->get_last4() ),
+			esc_html( $this->get_expiry_month() ),
+			esc_html( substr( $this->get_expiry_year(), 2 ) )
 		);
 	}
 
@@ -138,7 +138,7 @@ class WC_Payment_Token_Gateway_Converge_StoredCard extends WC_Payment_Token {
 	public function get_token( $context = 'view' ) {
 		$token = parent::get_token( $context );
 
-		return wgc_get_payment_name() == $context
+		return wgc_get_payment_name() === $context
 				? $this->encryption->decryptCredential( $token )
 				: $token;
 	}

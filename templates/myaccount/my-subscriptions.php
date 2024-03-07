@@ -1,13 +1,13 @@
 <?php if ( empty( $subscriptions ) ) : ?>
-	<?php printf( esc_html__( 'You have no subscriptions.', 'elavon-converge-gateway' ) ); ?>
+	<?php esc_html_e( 'You have no subscriptions.' ); ?>
 <?php else : ?>
 	<table class="woocommerce_subscriptions_table">
 		<thead>
 		<tr>
-			<th><?php _e( 'Subscription', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Product', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Total', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Actions', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Subscription', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Product', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Total', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Actions', 'elavon-converge-gateway' ); ?></th>
 		</tr>
 		</thead>
 		<tbody>

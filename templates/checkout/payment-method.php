@@ -1,6 +1,6 @@
 <div id="wgc-payment-gateway">
 	<?php if ( $gateway->uses_internet_explorer_or_edge() ) : ?>
-		<div class="red"><?php _e( 'Your browser is not supported or the browser version is outdated. In order to enjoy the full shopping experience, we recommend using the latest version of Chrome, Firefox or Safari.', 'elavon-converge-gateway' ); ?></div>
+		<div class="red"><?php esc_html_e( 'Your browser is not supported or the browser version is outdated. In order to enjoy the full shopping experience, we recommend using the latest version of Chrome, Firefox or Safari.', 'elavon-converge-gateway' ); ?></div>
 	<?php endif; ?>
 
 	<?php if ( $description ) : ?>
@@ -22,7 +22,7 @@
 				<?php foreach ( $tokens as $token ) : ?>
 					<?php
 					if ( $gateway->is_subscription_change_method_page() ) :
-						$is_subscription_used_card = $converge_subscription_card_id == $token->get_token( wgc_get_payment_name() );
+						$is_subscription_used_card = $converge_subscription_card_id === $token->get_token( wgc_get_payment_name() );
 					endif;
 					?>
 
@@ -63,7 +63,7 @@
 						?>
 						>
 					</input>
-					<label for="<?php echo esc_attr( $gateway->new_card_key ); ?>"><?php _e( 'Use new card', 'elavon-converge-gateway' ); ?></label>
+					<label for="<?php echo esc_attr( $gateway->new_card_key ); ?>"><?php esc_html_e( 'Use new card', 'elavon-converge-gateway' ); ?></label>
 				</div>
 			<?php endif; ?>
 
@@ -74,15 +74,15 @@
 					?>
 					style="display: none"<?php endif; ?>>
 					<?php if ( ( ! wgc_has_subscription_elements_in_cart() && ! wgc_order_from_merchant_view_has_subscription_elements() ) && ! $gateway->is_subscription_change_method_page() ) : ?>
-						<input type="checkbox" id="<?php echo esc_html( WGC_KEY_SAVE_FOR_LATER_USE ); ?>"
-								name="<?php echo esc_html( WGC_KEY_SAVE_FOR_LATER_USE ); ?>" value="1"/>
-						<label for="<?php echo esc_html( WGC_KEY_SAVE_FOR_LATER_USE ); ?>"><?php esc_html_e( 'Save for later use', 'elavon-converge-gateway' ); ?></label>
+						<input type="checkbox" id="<?php echo esc_attr( WGC_KEY_SAVE_FOR_LATER_USE ); ?>"
+								name="<?php echo esc_attr( WGC_KEY_SAVE_FOR_LATER_USE ); ?>" value="1"/>
+						<label for="<?php echo esc_attr( WGC_KEY_SAVE_FOR_LATER_USE ); ?>"><?php esc_html_e( 'Save for later use', 'elavon-converge-gateway' ); ?></label>
 						<p class="save-for-later-use-message"><?php echo esc_html( $gateway->get_option( WGC_KEY_SAVE_FOR_LATER_USE_MESSAGE ) ); ?></p>
 					<?php else : ?>
 						<input
 						type="hidden" id="<?php echo esc_attr( WGC_KEY_SAVE_FOR_LATER_USE ); ?>" name="<?php echo esc_attr( WGC_KEY_SAVE_FOR_LATER_USE ); ?>" value="1">
 						<p class="save-for-later-use-message">
-							<?php _e( 'Your info and card details will be saved. Subscriptions must be tied to your profile in order to process recurring payments.', 'elavon-converge-gateway' ); ?>
+							<?php esc_html_e( 'Your info and card details will be saved. Subscriptions must be tied to your profile in order to process recurring payments.', 'elavon-converge-gateway' ); ?>
 						</p>
 					<?php endif; ?>
 				</div>

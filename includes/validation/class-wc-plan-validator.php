@@ -30,7 +30,7 @@ class WC_Plan_Validator extends DataValidator {
 			$this->addConstraint( $required_constraint, $field );
 		}
 
-		if ( $values['wgc_plan_billing_ending'] == 'billing_periods' ) {
+		if ( $values['wgc_plan_billing_ending'] === 'billing_periods' ) {
 			$field = 'wgc_plan_ending_billing_periods';
 			$this->addConstraint( $required_constraint, $field );
 

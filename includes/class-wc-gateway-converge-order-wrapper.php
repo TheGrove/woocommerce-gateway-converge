@@ -103,7 +103,7 @@ class WC_Gateway_Converge_Order_Wrapper {
 
 		// Add Shipping to Order Items
 		if ( array_key_exists( 'shipping', $line_itmes ) && $line_itmes['shipping'] > 0 ) {
-			$shipping_name  = sprintf( __( 'Shipping via %s', 'elavon-converge-gateway' ), $order->get_shipping_method() );
+			$shipping_name  = sprintf( __( 'Shipping via %s', 'elavon-converge-gateway' ), esc_html( $order->get_shipping_method() ) );
 			$shipping_price = wgc_number_format( wgc_round( $order->get_shipping_total() + $order->get_shipping_tax() ) );
 			$this->add_order_item( wgc_create_order_item( $shipping_name, $shipping_price, 1, OrderItemType::SHIPPING ) );
 		}
@@ -161,7 +161,7 @@ class WC_Gateway_Converge_Order_Wrapper {
 			$line_item_args['shipping'] = wgc_number_format( $shipping_total );
 		} elseif ( $order->get_shipping_total() > 0 ) {
 			/* translators: %s: order shipping method */
-			$this->add_line_item( sprintf( __( 'Shipping via %s', 'elavon-converge-gateway' ), $order->get_shipping_method() ), 1, wgc_number_format( $shipping_total ) );
+			$this->add_line_item( sprintf( __( 'Shipping via %s', 'elavon-converge-gateway' ), esc_html( $order->get_shipping_method() ) ), 1, esc_html( wgc_number_format( $shipping_total ) ) );
 		}
 
 		return $line_item_args;

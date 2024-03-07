@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <tr>
 	<th colspan="2">
-		<?php _e( 'Recurring Totals', 'elavon-converge-gateway' ); ?>
+		<?php esc_html_e( 'Recurring Totals', 'elavon-converge-gateway' ); ?>
 	</th>
 </tr>
 
@@ -20,28 +20,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<tr>
 				<td class="product-name">
 					<?php
-					if ( 0 == $index && 'subtotal' == $key ) :
-						_e( 'Subtotal', 'elavon-converge-gateway' );
+					if ( 0 === $index && 'subtotal' === $key ) :
+						esc_html_e( 'Subtotal', 'elavon-converge-gateway' );
 endif;
 					?>
 					<?php
-					if ( 0 == $index && 'discount' == $key ) :
-						_e( 'Coupon', 'elavon-converge-gateway' );
+					if ( 0 === $index && 'discount' === $key ) :
+						esc_html_e( 'Coupon', 'elavon-converge-gateway' );
 endif;
 					?>
 					<?php
-					if ( 0 == $index && 'shipping' == $key ) :
-						_e( 'Shipping', 'elavon-converge-gateway' );
+					if ( 0 === $index && 'shipping' === $key ) :
+						esc_html_e( 'Shipping', 'elavon-converge-gateway' );
 endif;
 					?>
 					<?php
-					if ( 0 == $index && 'taxes' == $key ) :
-						_e( 'Taxes', 'elavon-converge-gateway' );
+					if ( 0 === $index && 'taxes' === $key ) :
+						esc_html_e( 'Taxes', 'elavon-converge-gateway' );
 endif;
 					?>
 					<?php
-					if ( 0 == $index && 'total' == $key ) :
-						_e( 'Total', 'elavon-converge-gateway' );
+					if ( 0 === $index && 'total' === $key ) :
+						esc_html_e( 'Total', 'elavon-converge-gateway' );
 endif;
 					?>
 				</td>

@@ -31,7 +31,7 @@ return array(
 		'title'   => __( 'Enable/Disable', 'elavon-converge-gateway' ),
 		'type'    => 'checkbox',
 		/* translators: %1$s: payment gateway title, already translated */
-		'label'   => sprintf( __( 'Enable %1$s', 'elavon-converge-gateway' ), $default_title ),
+		'label'   => sprintf( __( 'Enable %1$s', 'elavon-converge-gateway' ), esc_html( $default_title ) ),
 		'default' => WGC_SETTING_ENABLED_NO,
 	),
 

@@ -7,11 +7,11 @@ wc_print_notices();
 	<table>
 		<tbody>
 			<tr>
-				<th><?php _e( 'Subscription', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Subscription', 'elavon-converge-gateway' ); ?></th>
 				<td><a href="<?php echo esc_url( $subscription->get_view_subscription_url() ); ?>"><?php printf( esc_html__( '#%s', 'elavon-converge-gateway' ), esc_html( $subscription->get_order_number() ) ); ?></a></td>
 			</tr>
 			<tr>
-				<th><?php _e( 'Payment Method', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Payment Method', 'elavon-converge-gateway' ); ?></th>
 				<td>
 					<?php
 					if ( $used_card = wgc_get_subscription_used_stored_card( $converge_subscription ) ) :
@@ -23,7 +23,7 @@ wc_print_notices();
 				</td>
 			</tr>
 			<tr>
-				<th><?php _e( 'Order Total', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Order Total', 'elavon-converge-gateway' ); ?></th>
 				<td><?php echo wp_kses_post( $subscription->get_order()->get_formatted_order_total() ); ?></td>
 			</tr>
 		</tbody>
@@ -41,7 +41,7 @@ wc_print_notices();
 		</ul>
 	</div>
 	<div class="form-row">
-		<input type="submit" id="place_order" class="button alt" value="<?php _e( 'Change Payment Method', 'elavon-converge-gateway' ); ?>" data-value="<?php _e( 'Change Payment Method', 'elavon-converge-gateway' ); ?>">
+		<input type="submit" id="place_order" class="button alt" value="<?php esc_attr_e( 'Change Payment Method', 'elavon-converge-gateway' ); ?>" data-value="<?php esc_attr_e( 'Change Payment Method', 'elavon-converge-gateway' ); ?>">
 	</div>
 		<?php
 	else :

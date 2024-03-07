@@ -8,7 +8,7 @@
 		<?php endif; ?>
 
 	<?php elseif ( empty( $transactions ) ) : ?>
-		<p><?php _e( 'There are no transactions associated with this subscription.', 'elavon-converge-gateway' ); ?></p>
+		<p><?php esc_html_e( 'There are no transactions associated with this subscription.', 'elavon-converge-gateway' ); ?></p>
 	<?php else : ?>
 		<input type="hidden" name="wgc_subscription_id" id="wgc_subscription_id"
 				value="<?php echo esc_attr( $subscription->get_id() ); ?>"/>
@@ -17,13 +17,13 @@
 		<table>
 			<thead>
 			<tr>
-				<th><?php _e( 'Transaction ID', 'elavon-converge-gateway' ); ?></th>
-				<th><?php _e( 'Transaction Date (BST)', 'elavon-converge-gateway' ); ?></th>
-				<th><?php _e( 'Payment', 'elavon-converge-gateway' ); ?></th>
-				<th><?php _e( 'Status', 'elavon-converge-gateway' ); ?></th>
-				<th><?php _e( 'Amount', 'elavon-converge-gateway' ); ?></th>
-				<th class="text_left"><?php _e( 'Order Number', 'elavon-converge-gateway' ); ?></th>
-				<th class="text_left"><?php _e( 'Action', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Transaction ID', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Transaction Date (BST)', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Payment', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Status', 'elavon-converge-gateway' ); ?></th>
+				<th><?php esc_html_e( 'Amount', 'elavon-converge-gateway' ); ?></th>
+				<th class="text_left"><?php esc_html_e( 'Order Number', 'elavon-converge-gateway' ); ?></th>
+				<th class="text_left"><?php esc_html_e( 'Action', 'elavon-converge-gateway' ); ?></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -39,16 +39,16 @@
 						<?php if ( ! empty( $_order_id ) ) : ?>
 							<a href="<?php echo esc_url( get_edit_post_link( $_order_id ) ); ?>">#<?php echo esc_html( $_order_id ); ?></a>
 						<?php else : ?>
-							<?php _e( 'N/A', 'elavon-converge-gateway' ); ?>
+							<?php esc_html_e( 'N/A', 'elavon-converge-gateway' ); ?>
 						<?php endif; ?>
 					<td class="text_left">
 						<?php if ( ! empty( $_order_id ) ) : ?>
-							<?php _e( 'N/A', 'elavon-converge-gateway' ); ?>
+							<?php esc_html_e( 'N/A', 'elavon-converge-gateway' ); ?>
 						<?php else : ?>
 							<button type="submit" name="wgc_btn_create_order[]" class="button wgc_btn_create_order"
 									value="<?php echo esc_attr( $transaction->getId() ); ?>">
 														<?php
-														_e(
+														esc_html_e(
 															'Create Order',
 															'elavon-converge-gateway'
 														)

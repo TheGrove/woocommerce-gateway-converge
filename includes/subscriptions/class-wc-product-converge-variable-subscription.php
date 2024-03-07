@@ -56,7 +56,7 @@ class WC_Product_Converge_Variable_Subscription extends WC_Product_Variable {
 			$low_variation  = $this->get_child( $this->min_subscription_price_variation_id );
 			$high_variation = $this->get_child( $this->max_subscription_price_variation_id );
 
-			$text = sprintf( __( 'From %1$s to %2$s', 'elavon-converge-gateway' ), $low_variation->get_price_html(), $high_variation->get_price_html() );
+			$text = sprintf( __( 'From %1$s to %2$s', 'elavon-converge-gateway' ), wp_kses_post( $low_variation->get_price_html() ), wp_kses_post( $high_variation->get_price_html() ) );
 		} else {
 			$variation = $this->get_child( $this->min_subscription_price_variation_id );
 			$text      = $variation->get_price_html();

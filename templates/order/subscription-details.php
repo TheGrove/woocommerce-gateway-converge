@@ -1,11 +1,11 @@
-<h2><?php _e( 'Related Converge subscriptions', 'elavon-converge-gateway' ); ?></h2>
+<h2><?php esc_html_e( 'Related Converge subscriptions', 'elavon-converge-gateway' ); ?></h2>
 <table class="shop_table order_details">
 	<thead>
 		<tr>
-			<th><?php _e( 'Subscription', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Product', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Total', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Actions', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Subscription', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Product', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Total', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Actions', 'elavon-converge-gateway' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>

@@ -116,7 +116,7 @@ function add_settings_to_plugins_list( $actions, $plugin_file ) {
 	if ( ! isset( $plugin ) ) {
 		$plugin = plugin_basename( __FILE__ );
 	}
-	if ( $plugin == $plugin_file ) {
+	if ( $plugin === $plugin_file ) {
 		$page     = admin_url( sprintf( 'admin.php?page=wc-settings&tab=checkout&section=%s', WGC_PAYMENT_NAME ) );
 		$settings = array( 'settings' => '<a href=' . $page . '>' . __( 'Settings', 'elavon-converge-gateway' ) . '</a>' );
 		$actions  = array_merge( $settings, $actions );
@@ -126,7 +126,7 @@ function add_settings_to_plugins_list( $actions, $plugin_file ) {
 }
 
 function wgc_before_template_part( $template_name, $template_path, $located ) {
-	if ( 'checkout/thankyou.php' == $template_name ) {
+	if ( 'checkout/thankyou.php' === $template_name ) {
 		woocommerce_output_all_notices();
 	}
 }

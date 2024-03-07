@@ -2,9 +2,9 @@
 	<table>
 		<thead>
 		<tr>
-			<th><?php _e( 'Subscription Number', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Status', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Total', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Subscription Number', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Status', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Total', 'elavon-converge-gateway' ); ?></th>
 		</tr>
 		</thead>
 		<tbody>

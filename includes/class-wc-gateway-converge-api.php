@@ -224,8 +224,8 @@ class WC_Gateway_Converge_Api {
 			$order->add_order_note(
 				sprintf(
 					__( 'Authorized %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
-					$total,
-					$transaction_id
+					esc_html( $total ),
+					esc_html( $transaction_id )
 				)
 			);
 
@@ -234,8 +234,8 @@ class WC_Gateway_Converge_Api {
 				$order->add_order_note(
 					sprintf(
 						__( 'Captured %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
-						$total,
-						$transaction_id
+						esc_html( $total ),
+						esc_html( $transaction_id )
 					)
 				);
 			}
@@ -361,7 +361,7 @@ class WC_Gateway_Converge_Api {
 
 	public function create_payment_session( WC_Order $order, $converge_order_id ) {
 
-		if ( $this->gateway->get_option( WGC_KEY_INTEGRATION_OPTION ) == WGC_SETTING_INTEGRATION_HPP_REDIRECT ) {
+		if ( $this->gateway->get_option( WGC_KEY_INTEGRATION_OPTION ) === WGC_SETTING_INTEGRATION_HPP_REDIRECT ) {
 			$return_url = WC()->api_request_url( 'wc_payment_gateways' );
 			$cancel_url = $order->get_cancel_order_url_raw();
 			$hppType    = 'fullPageRedirect';
@@ -429,8 +429,8 @@ class WC_Gateway_Converge_Api {
 			$order->add_order_note(
 				sprintf(
 					__( 'Voided %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
-					$total,
-					$order->get_transaction_id()
+					esc_html( $total ),
+					esc_html( $order->get_transaction_id() )
 				)
 			);
 
@@ -461,7 +461,7 @@ class WC_Gateway_Converge_Api {
 						'Cannot refund a transaction that has the %s status.',
 						'elavon-converge-gateway'
 					),
-					$transaction_state->getValue()
+					esc_html( $transaction_state->getValue() )
 				)
 			);
 		}
@@ -486,8 +486,8 @@ class WC_Gateway_Converge_Api {
 						'Order was successfully refunded in the amount of %1$s%2$s.',
 						'elavon-converge-gateway'
 					),
-					$order->get_currency(),
-					$amount
+					esc_html( $order->get_currency() ),
+					esc_html( $amount )
 				)
 			);
 
@@ -513,7 +513,7 @@ class WC_Gateway_Converge_Api {
 						'There was an error processing the refund. %s.',
 						'elavon-converge-gateway'
 					),
-					$response->getShortErrorMessage()
+					esc_html( $response->getShortErrorMessage() )
 				)
 			);
 
@@ -540,8 +540,8 @@ class WC_Gateway_Converge_Api {
 			$order->add_order_note(
 				sprintf(
 					__( 'Captured %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
-					$total,
-					$transaction_id
+					esc_html( $total ),
+					esc_html( $transaction_id )
 				)
 			);
 
@@ -753,9 +753,13 @@ class WC_Gateway_Converge_Api {
 		$card_verification_number
 	) {
 		$user_info = get_userdata( $user_id );
-		$full_name = sprintf( '%s %s', $user_info->first_name, $user_info->last_name );
+		$full_name = sprintf(
+			'%s %s',
+			esc_html( $user_info->first_name ),
+			esc_html( $user_info->last_name )
+		);
 
-		if ( strlen( $exp_year ) == 2 ) {
+		if ( 2 === strlen( $exp_year ) ) {
 			$exp_year = DateTime::createFromFormat( 'y', $exp_year )->format( 'Y' );
 		}
 
@@ -833,7 +837,7 @@ class WC_Gateway_Converge_Api {
 		$card_verification_number
 	) {
 
-		if ( strlen( $exp_year ) == 2 ) {
+		if ( 2 === strlen( $exp_year ) ) {
 			$exp_year = DateTime::createFromFormat( 'y', $exp_year )->format( 'Y' );
 		}
 
@@ -865,14 +869,14 @@ class WC_Gateway_Converge_Api {
 	public function create_product_plan( $product_id, $properties ) {
 
 		$plan_builder = new PlanDataBuilder();
-		$plan_builder->setName( sprintf( 'Plan #%s', $product_id ) );
+		$plan_builder->setName( sprintf( 'Plan #%s', esc_html( $product_id ) ) );
 
 		$total = new TotalDataBuilder();
 		$total->setAmount( $properties['wgc_plan_price'] );
 		$total->setCurrencyCode( get_woocommerce_currency() );
 		$plan_builder->setTotal( $total->getData() );
 
-		if ( $properties['wgc_plan_introductory_rate'] == 'yes' ) {
+		if ( 'yes' === $properties['wgc_plan_introductory_rate'] ) {
 			$initial_total = new TotalDataBuilder();
 			$initial_total->setAmount( $properties['wgc_plan_introductory_rate_amount'] );
 			$initial_total->setCurrencyCode( get_woocommerce_currency() );
@@ -885,7 +889,7 @@ class WC_Gateway_Converge_Api {
 		$billing_interval->setTimeUnit( $properties['wgc_plan_billing_frequency'] );
 		$plan_builder->setBillingInterval( $billing_interval->getData() );
 
-		if ( $properties['wgc_plan_billing_ending'] == 'billing_periods' ) {
+		if ( 'billing_periods' === $properties['wgc_plan_billing_ending'] ) {
 			$plan_builder->setBillCount( $properties['wgc_plan_ending_billing_periods'] );
 		}
 		$plan_builder->setShopperStatementNamePhoneUrl(
@@ -916,7 +920,7 @@ class WC_Gateway_Converge_Api {
 		}
 
 		$plan_builder = new PlanDataBuilder();
-		$plan_builder->setName( sprintf( '%s - Subscription #%s', $converge_product_plan->getName(), $subscription->get_id() ) );
+		$plan_builder->setName( sprintf( '%s - Subscription #%s', esc_html( $converge_product_plan->getName() ), esc_html( $subscription->get_id() ) ) );
 
 		$shipping_total           = (float) $subscription->get_shipping_total();
 		$initial_total_bill_count = $converge_product_plan->getInitialTotalBillCount();
@@ -925,11 +929,11 @@ class WC_Gateway_Converge_Api {
 		$coupon_type              = get_post_meta( $subscription->get_id(), 'wgc_coupon_type', true );
 		$discount_total           = 0;
 
-		if ( 'recurring' == $coupon_type ) {
+		if ( 'recurring' === $coupon_type ) {
 			$discount_total = (float) $subscription->get_discount_total();
 		}
 
-		if ( ! is_null( $initial_total_bill_count ) && 1 == $initial_total_bill_count ) {
+		if ( ! is_null( $initial_total_bill_count ) && 1 === $initial_total_bill_count ) {
 			$initial_total_bill_count = null;
 			$initial_amount           = null;
 			$total_amount             = ( $subscription_product->get_wgc_plan_price() * $subscription_product_qty ) + $shipping_total - $discount_total;
@@ -1055,7 +1059,7 @@ class WC_Gateway_Converge_Api {
 		$converge_product_plan = $this->get_plan( $plan_id );
 
 		if ( ! $converge_product_plan->isSuccess() ) {
-			$subscription->add_order_note( sprintf( __( 'Invalid plan id: %1$s ', 'elavon-converge-gateway' ), $plan_id ) );
+			$subscription->add_order_note( sprintf( __( 'Invalid plan id: %1$s ', 'elavon-converge-gateway' ), esc_html( $plan_id ) ) );
 			return null;
 		}
 
@@ -1083,7 +1087,7 @@ class WC_Gateway_Converge_Api {
 		if ( $response->isSuccess() ) {
 
 			$subscription_id = $response->getId();
-			$subscription->add_order_note( sprintf( __( 'Subscription id: %1$s ', 'elavon-converge-gateway' ), $subscription_id ) );
+			$subscription->add_order_note( sprintf( __( 'Subscription id: %1$s ', 'elavon-converge-gateway' ), esc_html( $subscription_id ) ) );
 			$subscription->payment_complete( $subscription_id );
 
 		} else {

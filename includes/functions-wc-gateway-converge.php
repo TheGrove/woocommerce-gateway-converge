@@ -57,7 +57,7 @@ if ( ! function_exists( 'wgc_get_order_address' ) ) {
 		$func_get_email      = 'get_billing_email';
 
 		$contact_builder = new ContactDataBuilder();
-		$full_name       = sprintf( '%s %s', $order->{$func_get_first_name}(), $order->{$func_get_last_name}() );
+		$full_name       = sprintf( '%s %s', esc_html( $order->{$func_get_first_name}() ), esc_html( $order->{$func_get_last_name}() ) );
 		$contact_builder->setFullName( $full_name );
 		$company = $order->{$func_get_company}();
 		$contact_builder->setCompany( $company );
@@ -97,7 +97,7 @@ if ( ! function_exists( 'wgc_get_shopper_data_from_order' ) ) {
 		$address_builder->setPostalCode( wc_format_postcode( $order->get_billing_postcode(), $order->get_billing_country() ) );
 		$address_builder->setCountryCode( wgc_convert_countrycode_alpha2_to_alpha3( $order->get_billing_country() ) );
 
-		$full_name = sprintf( '%s %s', $order->get_billing_first_name(), $order->get_billing_last_name() );
+		$full_name = sprintf( '%s %s', esc_html( $order->get_billing_first_name() ), esc_html( $order->get_billing_last_name() ) );
 
 		$shopper_builder = new ShopperDataBuilder();
 		$shopper_builder->setFullName( $full_name );
@@ -138,7 +138,7 @@ if ( ! function_exists( 'wgc_get_shopper_data_from_user' ) ) {
 		);
 
 		$user_info = get_userdata( $user_id );
-		$full_name = sprintf( '%s %s', $user_info->first_name, $user_info->last_name );
+		$full_name = sprintf( '%s %s', esc_html( $user_info->first_name ), esc_html( $user_info->last_name ) );
 
 		$shopper_builder = new ShopperDataBuilder();
 		$shopper_builder->setFullName( $full_name );
@@ -285,7 +285,7 @@ if ( ! function_exists( 'wgc_get_origin_url' ) ) {
 			$host .= ':' . $port;
 		}
 
-		return sprintf( '%s://%s', $scheme, $host );
+		return sprintf( '%s://%s', esc_html( $scheme ), esc_html( $host ) );
 	}
 }
 
@@ -294,24 +294,24 @@ if ( ! function_exists( 'wgc_get_origin_url' ) ) {
  */
 if ( ! function_exists( 'wgc_log_converge_response' ) ) {
 	function wgc_log_converge_response( \Elavon\Converge2\Response\ResponseInterface $response, $request_type, WC_Order $order = null ) {
-		$log_prefix = sprintf( '[tnx-type %s]', $request_type );
+		$log_prefix = sprintf( '[tnx-type %s]', esc_html( $request_type ) );
 		if ( $order ) {
-			$log_prefix = sprintf( '[order-id %s]', $order->get_id() ) . $log_prefix;
+			$log_prefix = sprintf( '[order-id %s]', esc_html( $order->get_id() ) ) . $log_prefix;
 		}
 		if ( $response->isSuccess() ) {
 			wgc_log(
 				sprintf(
 					'%s Received data from Converge: %s',
-					$log_prefix,
-					$response->getRawResponseBody()
+					esc_html( $log_prefix ),
+					esc_html( $response->getRawResponseBody() )
 				)
 			);
 		} elseif ( $response->hasRawResponse() ) {
 				wgc_log(
 					sprintf(
 						'%s Raw response from Converge: %s',
-						$log_prefix,
-						$response->getRawResponseBody()
+						esc_html( $log_prefix ),
+						esc_html( $response->getRawResponseBody() )
 					),
 					WC_Log_Levels::ERROR
 				);
@@ -319,8 +319,8 @@ if ( ! function_exists( 'wgc_log_converge_response' ) ) {
 			wgc_log(
 				sprintf(
 					'%s Converge was not reached. Error: %s',
-					$log_prefix,
-					$response->getRawErrorMessage()
+					esc_html( $log_prefix ),
+					esc_html( $response->getRawErrorMessage() )
 				),
 				WC_Log_Levels::ERROR
 			);
@@ -333,9 +333,9 @@ if ( ! function_exists( 'wgc_log_data_with_intro' ) ) {
 		if ( ! $heading ) {
 			$heading = 'Send data to Converge';
 		}
-		$line = sprintf( '[%s] %s: ', $description, $heading );
+		$line = sprintf( '[%s] %s: ', esc_html( $description ), esc_html( $heading ) );
 		if ( $order ) {
-			$line = sprintf( '[order-id %s]', $order->get_id() ) . $line;
+			$line = sprintf( '[order-id %s]', esc_html( $order->get_id() ) ) . $line;
 		}
 		$masked_data = wgc_data_masking( $data );
 
@@ -353,7 +353,7 @@ if ( ! function_exists( 'wgc_log_data_with_intro' ) ) {
  */
 if ( ! function_exists( 'wgc_get_order_description' ) ) {
 	function wgc_get_order_description( $merchant_name, $processor_account_id ) {
-		return sprintf( 'Purchase from %s - %s', $merchant_name, $processor_account_id );
+		return sprintf( 'Purchase from %s - %s', esc_html( $merchant_name ), esc_html( $processor_account_id ) );
 	}
 }
 
@@ -363,7 +363,7 @@ if ( ! function_exists( 'wgc_get_order_description' ) ) {
 if ( ! function_exists( 'wgc_get_order_error_note' ) ) {
 	function wgc_get_order_error_note( $message, \Elavon\Converge2\Response\Response $response ) {
 		/* translators: %1$s: already translated text, %2$s: non-translatable error message. */
-		return sprintf( __( '%1$s Converge error: %2$s', 'elavon-converge-gateway' ), $message, $response->getShortErrorMessage() );
+		return sprintf( __( '%1$s Converge error: %2$s', 'elavon-converge-gateway' ), esc_html( $message ), esc_html( $response->getShortErrorMessage() ) );
 	}
 }
 
@@ -601,7 +601,7 @@ if ( ! function_exists( 'wgc_get_converge_response_log_handler' ) ) {
 }
 
 function wgc_subscriptions_active() {
-	return wgc_get_option( WGC_KEY_ENABLE_SUBSCRIPTIONS, WGC_KEY_ENABLE_SUBSCRIPTIONS_NO ) == WGC_KEY_ENABLE_SUBSCRIPTIONS_YES;
+	return wgc_get_option( WGC_KEY_ENABLE_SUBSCRIPTIONS, WGC_KEY_ENABLE_SUBSCRIPTIONS_NO ) === WGC_KEY_ENABLE_SUBSCRIPTIONS_YES;
 }
 
 if ( ! function_exists( 'wgc_data_masking' ) ) {
@@ -637,13 +637,13 @@ function wgc_get_subscription_billing_frequency_string( $product ) {
 	$billing_frequency       = $product->get_wgc_plan_billing_frequency();
 	$billing_frequency_count = $product->get_wgc_plan_billing_frequency_count();
 
-	if ( 1 == $billing_frequency_count ) {
-		return sprintf( __( 'every %1$s', 'elavon-converge-gateway' ), $billing_frequency );
+	if ( 1 === $billing_frequency_count ) {
+		return sprintf( __( 'every %1$s', 'elavon-converge-gateway' ), esc_html( $billing_frequency ) );
 	} else {
 		return sprintf(
 			__( 'every %1$s %2$ss', 'elavon-converge-gateway' ),
-			$billing_frequency_count,
-			$billing_frequency
+			esc_html( $billing_frequency_count ),
+			esc_html( $billing_frequency )
 		);
 	}
 }
@@ -657,21 +657,21 @@ function wgc_get_subscription_price_string( $product, $quantity = 1, $extra_amou
 	$price_html .= wgc_get_subscription_billing_frequency_string( $product );
 
 	if ( $product->has_plan_introductory_rate() && (float) $introductory_rate_amount >= 0 && (float) $rate_billing_periods > 0 ) {
-		$payment_text = $rate_billing_periods > 1 ? sprintf( __( '%1$s payments', 'elavon-converge-gateway' ), $rate_billing_periods ) : __( '1 payment', 'elavon-converge-gateway' );
+		$payment_text = $rate_billing_periods > 1 ? sprintf( __( '%1$s payments', 'elavon-converge-gateway' ), esc_html( $rate_billing_periods ) ) : __( '1 payment', 'elavon-converge-gateway' );
 		$price_html  .= sprintf(
 			__( ' for the first %1$s and %2$s %3$s for the following payments', 'elavon-converge-gateway' ),
-			$payment_text,
-			wc_price( ( $product->get_wgc_plan_price() * $quantity ) + $extra_amount_for_introductory_rate ),
-			$price_html
+			esc_html( $payment_text ),
+			wp_kses_post( wc_price( ( $product->get_wgc_plan_price() * $quantity ) + $extra_amount_for_introductory_rate ) ),
+			wp_kses_post( $price_html )
 		);
 	}
 
 	$plan_billing_ending         = $product->get_wgc_plan_billing_ending();
 	$plan_ending_billing_periods = $product->get_wgc_plan_ending_billing_periods();
 
-	if ( 'billing_periods' == $plan_billing_ending && $plan_ending_billing_periods > 0 ) {
-		$payment_text = $plan_ending_billing_periods > 1 ? sprintf( __( '%1$s payments', 'elavon-converge-gateway' ), $plan_ending_billing_periods ) : __( '1 payment', 'elavon-converge-gateway' );
-		$price_html  .= sprintf( __( ' (ending after %1$s)', 'elavon-converge-gateway' ), $payment_text );
+	if ( 'billing_periods' === $plan_billing_ending && $plan_ending_billing_periods > 0 ) {
+		$payment_text = $plan_ending_billing_periods > 1 ? sprintf( __( '%1$s payments', 'elavon-converge-gateway' ), esc_html( $plan_ending_billing_periods ) ) : __( '1 payment', 'elavon-converge-gateway' );
+		$price_html  .= sprintf( __( ' (ending after %1$s)', 'elavon-converge-gateway' ), esc_html( $payment_text ) );
 	}
 
 	return $price_html;
@@ -940,7 +940,7 @@ function wgc_get_recurring_totals_elements() {
 	$discount_total = 0;
 
 	$coupon_type = wgc_get_coupon_type( $cart );
-	if ( 'recurring' == $coupon_type && $cart->get_cart_discount_total() > 0 ) {
+	if ( 'recurring' === $coupon_type && $cart->get_cart_discount_total() > 0 ) {
 		$discount_total = $cart->get_cart_discount_total();
 	}
 
@@ -953,15 +953,15 @@ function wgc_get_recurring_totals_elements() {
 		$total          = $subtotal;
 		$shipping_total = 0;
 
-		$recurring_totals['subtotal'][] = sprintf( '%s %s', wc_price( $subtotal ), wgc_get_subscription_price_string( $cart_element['data'], $quantity ) );
+		$recurring_totals['subtotal'][] = sprintf( '%s %s', wp_kses_post( wc_price( $subtotal ) ), wp_kses_post( wgc_get_subscription_price_string( $cart_element['data'], $quantity ) ) );
 
 		if ( $discount_total > 0 ) {
-			$recurring_totals['discount'][] = sprintf( '%s %s', wc_price( $discount_total * - 1 ), wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) );
+			$recurring_totals['discount'][] = sprintf( '%s %s', wp_kses_post( wc_price( $discount_total * - 1 ) ), wp_kses_post( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ) );
 			$total                         -= $discount_total;
 		}
 		if ( $cart_element['data']->needs_shipping() ) {
 			$shipping_total                 = $cart->get_shipping_total();
-			$recurring_totals['shipping'][] = sprintf( '%s %s', $cart->get_cart_shipping_total(), wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) );
+			$recurring_totals['shipping'][] = sprintf( '%s %s', esc_html( $cart->get_cart_shipping_total() ), wp_kses_post( wgc_get_subscription_billing_frequency_string( $cart_element['data'] ) ) );
 			$total                         += $shipping_total;
 		}
 
@@ -973,15 +973,15 @@ function wgc_get_recurring_totals_elements() {
 				$product_additional_tax      = wgc_calculate_additional_payments_tax( $cart_element['data'] );
 				$recurring_totals['taxes'][] = sprintf(
 					'<strong>%s</strong> %s',
-					wc_price( $cart_tax ),
-					wgc_get_subscription_price_string( $product_additional_tax, $quantity, $shipping_tax )
+					wp_kses_post( wc_price( $cart_tax ) ),
+					wp_kses_post( wgc_get_subscription_price_string( $product_additional_tax, $quantity, $shipping_tax ) )
 				);
 				$total                      += $cart_tax;
 				$total_additional_tax       += $product_additional_tax->get_wgc_plan_price() * $quantity + $shipping_tax;
 			}
 		}
 
-		$recurring_totals['total'][] = sprintf( '<strong>%s</strong> %s', wc_price( $total ), wgc_get_subscription_price_string( $cart_element['data'], $quantity, $shipping_total - $discount_total + $total_additional_tax ) );
+		$recurring_totals['total'][] = sprintf( '<strong>%s</strong> %s', wp_kses_post( wc_price( $total ) ), wp_kses_post( wgc_get_subscription_price_string( $cart_element['data'], $quantity, $shipping_total - $discount_total + $total_additional_tax ) ) );
 	}
 
 	return $recurring_totals;
@@ -1077,7 +1077,7 @@ function wgc_create_subscription( $args ) {
 
 	$post_params = array(
 		'ID'         => $post_id,
-		'post_title' => sprintf( __( 'Subscription #%1$s for the Order #%2$s ', 'elavon-converge-gateway' ), $subscription->get_id(), $args['order_id'] ),
+		'post_title' => sprintf( __( 'Subscription #%1$s for the Order #%2$s ', 'elavon-converge-gateway' ), esc_html( $subscription->get_id() ), esc_html( $args['order_id'] ) ),
 	);
 	wp_update_post( $post_params );
 
@@ -1104,7 +1104,7 @@ function wgc_assign_billing_and_shipping_to_subscription( $order, $subscription 
 	foreach ( array( 'billing', 'shipping' ) as $type ) {
 
 		foreach ( $address_fields as $field_key ) {
-			$field_var = sprintf( '%1$s_%2$s', $type, $field_key );
+			$field_var = sprintf( '%1$s_%2$s', esc_html( $type ), esc_html( $field_key ) );
 			if ( method_exists( $order, 'get_' . $field_var ) ) {
 				$address[ $field_key ] = $order->{'get_' . $field_var}();
 			}
@@ -1153,7 +1153,7 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 
 function wgc_get_subscription_start_date( \Elavon\Converge2\DataObject\BillingInterval $billing_interval ) {
 	$date = new \DateTime( 'NOW' );
-	$date->modify( sprintf( '+%s %s', $billing_interval->getCount(), $billing_interval->getTimeUnit() ) );
+	$date->modify( sprintf( '+%s %s', esc_html( $billing_interval->getCount() ), esc_html( $billing_interval->getTimeUnit() ) ) );
 
 	return $date->format( 'Y-m-d' );
 }
@@ -1173,7 +1173,7 @@ function wgc_get_subscription_used_stored_card( $converge_subscription ) {
 		wgc_get_gateway()->get_gateway_id()
 	);
 	foreach ( $customer_tokens as $customer_token ) {
-		if ( $customer_token->get_token( wgc_get_payment_name() ) == $converge_card_id ) {
+		if ( $customer_token->get_token( wgc_get_payment_name() ) === $converge_card_id ) {
 			$used_stored_card = $customer_token;
 			break;
 		}
@@ -1264,7 +1264,7 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 		$converge_product_plan = wgc_get_gateway()->get_converge_api()->get_plan( $plan_id );
 
 		if ( ! $converge_product_plan->isSuccess() ) {
-			$subscription->add_order_note( sprintf( __( 'Invalid Plan Id: %1$s ', 'elavon-converge-gateway' ), $plan_id ) );
+			$subscription->add_order_note( sprintf( __( 'Invalid Plan Id: %1$s ', 'elavon-converge-gateway' ), esc_html( $plan_id ) ) );
 
 			return false;
 		}
@@ -1272,7 +1272,7 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 		$converge_transaction = wgc_get_gateway()->get_converge_api()->get_transaction( $new_order_transaction_id );
 
 		if ( ! $converge_transaction->isSuccess() ) {
-			$subscription->add_order_note( sprintf( __( 'Invalid Transaction Id: %1$s ', 'elavon-converge-gateway' ), $new_order_transaction_id ) );
+			$subscription->add_order_note( sprintf( __( 'Invalid Transaction Id: %1$s ', 'elavon-converge-gateway' ), esc_html( $new_order_transaction_id ) ) );
 
 			return false;
 		}
@@ -1281,13 +1281,13 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 		$transaction_total_amount  = (float) $converge_transaction->getTotal()->getAmount(); // new total
 		$plan_total_amount         = (float) $converge_product_plan->getTotal()->getAmount();
 
-		if ( $subscription_total_amount != $transaction_total_amount && $plan_total_amount == $transaction_total_amount ) {
+		if ( $subscription_total_amount != $transaction_total_amount && $plan_total_amount === $transaction_total_amount ) {
 			$should_update_totals = true;
 		}
 
 		foreach ( $items as $item_id => $item ) {
 
-			if ( $item->get_type() == 'line_item' ) {
+			if ( $item->get_type() === 'line_item' ) {
 				$subscription_product = $item->get_product();
 			}
 
@@ -1328,7 +1328,7 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 			$new_line_item_price = $price_excluding_tax * $subscription_product_qty;
 
 			foreach ( $renewal_order->get_items() as $item_id => $item ) {
-				if ( $item->get_type() == 'line_item' ) {
+				if ( $item->get_type() === 'line_item' ) {
 					$item->set_subtotal( $price_excluding_tax );
 					$item->set_total( $new_line_item_price );
 					$item->save();

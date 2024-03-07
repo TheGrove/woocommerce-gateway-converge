@@ -7,7 +7,7 @@ class WC_Subscription_Validation_Message extends WC_Validation_Message {
 	public function toString( ViolationInterface $violation ) {
 		$constraint = $violation->getConstraintId();
 
-		if ( $constraint == IntroductoryRateBillingPeriods::ID ) {
+		if ( $constraint === IntroductoryRateBillingPeriods::ID ) {
 			return $this->error_messages[ $constraint ];
 		}
 

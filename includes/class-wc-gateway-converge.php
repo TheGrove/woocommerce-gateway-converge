@@ -55,7 +55,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 				'Receive credit card payments using %1$s.',
 				'elavon-converge-gateway'
 			),
-			$this->method_title
+			esc_html( $this->method_title )
 		) . '</br>' . $this->get_plugin_versions();
 		$this->encryption         = new \Elavon\Converge2\Util\Encryption( wp_salt() );
 		$this->stored_card_key    = $this->id . '_stored_card';
@@ -152,13 +152,13 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		$screen    = get_current_screen();
 		$screen_id = $screen ? $screen->id : '';
 
-		if ( isset( $_GET['page'] ) && isset( $_GET['tab'] ) && isset( $_GET['section'] ) && $_GET['page'] == 'wc-settings' && $_GET['tab'] == 'checkout' && $_GET['section'] == 'elavon-converge-gateway' ) { // phpcs:ignore WordPress.Security
+		if ( isset( $_GET['page'] ) && isset( $_GET['tab'] ) && isset( $_GET['section'] ) && $_GET['page'] === 'wc-settings' && $_GET['tab'] === 'checkout' && $_GET['section'] === 'elavon-converge-gateway' ) { // phpcs:ignore WordPress.Security
 			wp_enqueue_script( 'woocommerce', plugins_url( 'assets/js/settings_confirmation.js', WGC_MAIN_FILE ), array(), false, true );
 			$params = array( 'delete_alert' => __( 'If you change the account, the stored shoppers and cards will be deleted. Are you sure you want to do this?', 'elavon-converge-gateway' ) );
 			wp_localize_script( 'woocommerce', 'elavon_converge_gateway', $params );
 		}
 
-		if ( WGC_SUBSCRIPTION_POST_TYPE == $screen_id || 'shop_order' == $screen_id ) {
+		if ( WGC_SUBSCRIPTION_POST_TYPE === $screen_id || 'shop_order' === $screen_id ) {
 			wp_enqueue_style( 'wgc_admin_subscription', plugins_url( 'assets/css/admin/subscription.css', WGC_MAIN_FILE ) );
 		}
 	}
@@ -373,12 +373,12 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		@ob_clean();
 		header( 'HTTP/1.1 200 OK' );
 		$hosted_card_key = 'hostedCard';
-		if ( $this->isHppPopup() && $payment_session->getBlik() == null ) {
+		if ( $this->isHppPopup() && null === $payment_session->getBlik() ) {
 			$hosted_card_key = 'convergePaymentToken';
 		}
 
 		$hosted_card_key = htmlentities( wp_unslash( $_REQUEST[ $hosted_card_key ] ), ENT_QUOTES, 'UTF-8' ); // phpcs:ignore WordPress.Security
-		if ( isset( $hosted_card_key ) && $payment_session->getBlik() == null ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( isset( $hosted_card_key ) && null === $payment_session->getBlik() ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$hosted_card = wp_unslash( $hosted_card_key ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$this->set_hosted_card_session( $hosted_card );
 
@@ -573,7 +573,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		$order = wc_get_order( $order_id );
 		do_action( 'wgc_checkout_process_payment', $order );
 
-		wgc_log( sprintf( '[order-id %s][customer user agent] %s', $order_id, $order->get_customer_user_agent() ) );
+		wgc_log( sprintf( '[order-id %s][customer user agent] %s', esc_html( $order_id ), esc_html( $order->get_customer_user_agent() ) ) );
 
 		// create order on Converge
 		$converge_order_id = $this->converge_api->create_order( $order );
@@ -584,7 +584,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 
 		if ( is_user_logged_in() && $this->isSavePaymentMethodsEnabled() ) {
 			$stored_card_key = htmlentities( wp_unslash( $_POST[ $this->stored_card_key ] ), ENT_QUOTES, 'UTF-8' ); // phpcs:ignore WordPress.Security
-			if ( ! isset( $stored_card_key ) || ( isset( $stored_card_key ) && $stored_card_key == $this->new_card_value ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( ! isset( $stored_card_key ) || ( isset( $stored_card_key ) && $stored_card_key === $this->new_card_value ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				if ( isset( $_POST[ WGC_KEY_SAVE_FOR_LATER_USE ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 					if ( ! wgc_has_c2_shopper_id() ) {
@@ -651,7 +651,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	protected function error_processing_payment() {
-		wc_add_notice( sprintf( __( 'There was an error processing your payment.', 'elavon-converge-gateway' ) ), 'error' );
+		wc_add_notice( __( 'There was an error processing your payment.', 'elavon-converge-gateway' ), 'error' );
 
 		return array( 'result' => 'failure' );
 	}
@@ -674,7 +674,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 				/* translators: %s: order id */
 				sprintf(
 					__( 'Order %s does not contain a transaction id.', 'elavon-converge-gateway' ),
-					$order_id
+					esc_html( $order_id )
 				)
 			);
 		}
@@ -800,7 +800,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			$this->settings[ $field_name ] = $current_settings[ $field_name ];
 		}
 
-		if ( $this->get_field_value( WGC_KEY_ENABLE_SUBSCRIPTIONS, $form_fields[ WGC_KEY_ENABLE_SUBSCRIPTIONS ], $post_data ) == WGC_KEY_ENABLE_SUBSCRIPTIONS_YES ) {
+		if ( $this->get_field_value( WGC_KEY_ENABLE_SUBSCRIPTIONS, $form_fields[ WGC_KEY_ENABLE_SUBSCRIPTIONS ], $post_data ) === WGC_KEY_ENABLE_SUBSCRIPTIONS_YES ) {
 			$this->settings[ WGC_KEY_ENABLE_SAVE_PAYMENT_METHODS ] = WGC_KEY_ENABLE_SAVE_PAYMENT_METHODS_YES;
 		}
 
@@ -1063,11 +1063,11 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	protected function isHppRedirect() {
-		return $this->get_option( WGC_KEY_INTEGRATION_OPTION ) == WGC_SETTING_INTEGRATION_HPP_REDIRECT;
+		return $this->get_option( WGC_KEY_INTEGRATION_OPTION ) === WGC_SETTING_INTEGRATION_HPP_REDIRECT;
 	}
 
 	protected function isHppPopup() {
-		return $this->get_option( WGC_KEY_INTEGRATION_OPTION ) == WGC_SETTING_INTEGRATION_HPP_POPUP;
+		return $this->get_option( WGC_KEY_INTEGRATION_OPTION ) === WGC_SETTING_INTEGRATION_HPP_POPUP;
 	}
 
 	public function get_converge_api() {
@@ -1075,7 +1075,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	public function isSavePaymentMethodsEnabled() {
-		return $this->get_option( WGC_KEY_ENABLE_SAVE_PAYMENT_METHODS ) == WGC_KEY_ENABLE_SAVE_PAYMENT_METHODS_YES;
+		return $this->get_option( WGC_KEY_ENABLE_SAVE_PAYMENT_METHODS ) === WGC_KEY_ENABLE_SAVE_PAYMENT_METHODS_YES;
 	}
 
 	public function can_store_one_more_card() {
@@ -1132,12 +1132,12 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	public function get_plugin_versions() {
-		return sprintf( __( 'Plugin version: %1$s', 'elavon-converge-gateway' ), WGC_VERSION ) . ' | ' . sprintf( __( 'API SDK version: %1$s', 'elavon-converge-gateway' ), Converge2::getSdkVersion() );
+		return sprintf( __( 'Plugin version: %1$s', 'elavon-converge-gateway' ), WGC_VERSION ) . ' | ' . sprintf( __( 'API SDK version: %1$s', 'elavon-converge-gateway' ), esc_html( Converge2::getSdkVersion() ) );
 	}
 
 	public function change_subscription_payment_method( $subscription ) {
 		$stored_card_key = htmlentities( wp_unslash( $_POST[ $this->stored_card_key ] ), ENT_QUOTES, 'UTF-8' ); // phpcs:ignore WordPress.Security
-		if ( isset( $stored_card_key ) && $stored_card_key == $this->new_card_value ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( isset( $stored_card_key ) && $stored_card_key === $this->new_card_value ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			if ( $this->add_payment_method()['result'] !== 'success' ) {
 				return;
 			}
@@ -1211,7 +1211,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	}
 
 	public function wgc_account_saved_payment_methods_list_add_edit_action( $item, $token ) {
-		if ( $token->get_type() == WGC_PAYMENT_TOKEN_TYPE ) {
+		if ( $token->get_type() === WGC_PAYMENT_TOKEN_TYPE ) {
 			$url = wc_get_endpoint_url( 'converge-change-card-details', $token->get_id() );
 
 			$item['actions']['wgc_edit'] = array(

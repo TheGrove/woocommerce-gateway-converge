@@ -89,7 +89,7 @@ class WC_Checkout_Converge_Subscriptions {
 		$coupon_type = wgc_get_coupon_type( $recurring_cart );
 		$subscription->update_meta_data( 'wgc_coupon_type', $coupon_type );
 
-		if ( 'single' == $coupon_type ) {
+		if ( 'single' === $coupon_type ) {
 			$recurring_cart->remove_coupons();
 		} else {
 			WC()->checkout()->create_order_coupon_lines( $subscription, $recurring_cart );
@@ -188,7 +188,7 @@ class WC_Checkout_Converge_Subscriptions {
 							'%1$s is not compatible with the other subscription products from your order. Please contact the merchant before trying again.',
 							'elavon-converge-gateway'
 						),
-						$product->get_name()
+						esc_html( $product->get_name() )
 					);
 					wc_add_notice( $notice, 'error' );
 					wc_print_notices();
@@ -198,7 +198,7 @@ class WC_Checkout_Converge_Subscriptions {
 							'%1$s is not compatible with the other subscription products from your cart. Please edit your cart and try again.',
 							'elavon-converge-gateway'
 						),
-						$product->get_name()
+						esc_html( $product->get_name() )
 					);
 
 					wc_add_notice( $notice, 'error' );
@@ -236,7 +236,7 @@ class WC_Checkout_Converge_Subscriptions {
 		}
 
 		if ( isset( $caps[0], $_GET['key'], $args[2] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( $caps[0] == 'pay_for_order' ) {
+			if ( $caps[0] === 'pay_for_order' ) {
 				$order_id = $args[2];
 				if ( wgc_order_id_from_merchant_view_has_subscription_elements( $order_id ) ) {
 					unset( $allcaps['pay_for_order'] );

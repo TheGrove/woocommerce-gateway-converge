@@ -211,7 +211,7 @@ class Wgc_Hooks {
 				} else {
 					self::print_error( __( 'Your subscription could not be cancelled.', 'elavon-converge-gateway' ) );
 				}
-			} elseif ( $_POST['cancel_wpnonce'] == WC()->session->get( 'cancel_wpnonce' ) ) {
+			} elseif ( $_POST['cancel_wpnonce'] === WC()->session->get( 'cancel_wpnonce' ) ) {
 				self::print_error( __( 'There has been an error. Please reload the page.', 'elavon-converge-gateway' ) );
 			} else {
 				self::print_error( __( 'Your session has expired. Please reload the page.', 'elavon-converge-gateway' ) );
@@ -297,7 +297,7 @@ class Wgc_Hooks {
 	public static function cancel_subscription_handler( $order ) {
 		$cancel_response = wgc_get_gateway()->get_converge_api()->cancel_subscription( $order );
 		if ( $cancel_response->isSuccess() ) {
-			$order->add_order_note( sprintf( __( 'Subscription was cancelled.', 'elavon-converge-gateway' ) ) );
+			$order->add_order_note( __( 'Subscription was cancelled.' ) );
 			$order->update_status( 'cancelled' );
 		} else {
 			$order->add_order_note(
@@ -314,7 +314,7 @@ class Wgc_Hooks {
 
 	public static function wgc_subscription_email( $recipients, $order_object ) {
 
-		if ( $order_object && $order_object->get_type() == WGC_SUBSCRIPTION_POST_TYPE ) {
+		if ( $order_object && $order_object->get_type() === WGC_SUBSCRIPTION_POST_TYPE ) {
 			return null;
 		}
 

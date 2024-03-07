@@ -1,24 +1,24 @@
-<h1><?php echo esc_html_e( 'Converge subscription #', 'elavon-converge-gateway' ) . esc_html( $subscription->get_order_number() ); ?></h1>
+<h1><?php esc_html_e( 'Converge subscription #', 'elavon-converge-gateway' ) . esc_html( $subscription->get_order_number() ); ?></h1>
 <table>
 	<tbody>
 	<tr>
-		<th><?php _e( 'Status', 'elavon-converge-gateway' ); ?></th>
+		<th><?php esc_html_e( 'Status', 'elavon-converge-gateway' ); ?></th>
 		<td><?php echo esc_html( wgc_format_subscription_state( $converge_subscription->getSubscriptionState()->getValue() ) ); ?></td>
 	</tr>
 	<tr>
-		<th><?php _e( 'Start date', 'elavon-converge-gateway' ); ?>
+		<th><?php esc_html_e( 'Start date', 'elavon-converge-gateway' ); ?>
 		<td><?php echo esc_html( wgc_format_subscription_date( $converge_subscription->getFirstBillAt() ) ); ?></td>
 	</tr>
 	<tr>
-		<th><?php _e( 'End date', 'elavon-converge-gateway' ); ?></th>
+		<th><?php esc_html_e( 'End date', 'elavon-converge-gateway' ); ?></th>
 		<td><?php echo esc_html( wgc_format_subscription_date( $converge_subscription->getFinalBillAt() ) ); ?></td>
 	</tr>
 	<tr>
-		<th><?php _e( 'Next payment date', 'elavon-converge-gateway' ); ?></th>
+		<th><?php esc_html_e( 'Next payment date', 'elavon-converge-gateway' ); ?></th>
 		<td><?php echo esc_html( wgc_format_subscription_date( $converge_subscription->getNextBillAt() ) ); ?></td>
 	</tr>
 	<tr>
-		<th><?php _e( 'Payment method', 'elavon-converge-gateway' ); ?></th>
+		<th><?php esc_html_e( 'Payment method', 'elavon-converge-gateway' ); ?></th>
 		<td>
 			<?php
 			if ( $used_card = wgc_get_subscription_used_stored_card( $converge_subscription ) ) :
@@ -34,7 +34,7 @@
 		$nonce = wp_create_nonce( 'cancel-subscription-' . $subscription->get_transaction_id() );
 		?>
 		<tr>
-			<th><?php _e( 'Actions', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Actions', 'elavon-converge-gateway' ); ?></th>
 			<td>
 				<a href="<?php echo esc_url( $subscription->get_change_subscription_payment_method_url() ); ?>"
 					class="button">
@@ -61,7 +61,7 @@
 	<?php endif; ?>
 	</tbody>
 </table>
-<h2><?php _e( 'Subscription totals', 'elavon-converge-gateway' ); ?></h2>
+<h2><?php esc_html_e( 'Subscription totals', 'elavon-converge-gateway' ); ?></h2>
 <table>
 	<tbody>
 	<?php foreach ( $subscription->get_items( 'line_item' ) as $item_id => $item ) : ?>
@@ -87,22 +87,22 @@
 	<?php endforeach; ?>
 	</tbody>
 </table>
-<h2><?php _e( 'Related orders', 'elavon-converge-gateway' ); ?></h2>
+<h2><?php esc_html_e( 'Related orders', 'elavon-converge-gateway' ); ?></h2>
 <?php
 $related_orders = wgc_get_subscription_related_orders( $subscription );
 $has_orders     = (bool) $related_orders;
 
 if ( ! $has_orders ) :
-	printf( esc_html__( 'There are no orders associated with this subscription.', 'elavon-converge-gateway' ) );
+	esc_html_e( 'There are no orders associated with this subscription.', 'elavon-converge-gateway' );
 else :
 	?>
 	<table>
 		<thead>
 		<tr>
-			<th><?php _e( 'Order', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Date', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Status', 'elavon-converge-gateway' ); ?></th>
-			<th><?php _e( 'Total', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Order', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Date', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Status', 'elavon-converge-gateway' ); ?></th>
+			<th><?php esc_html_e( 'Total', 'elavon-converge-gateway' ); ?></th>
 		</tr>
 		</thead>
 		<tbody>
