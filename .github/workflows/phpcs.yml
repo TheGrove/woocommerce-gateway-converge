@@ -10,7 +10,7 @@ on:
 
 jobs:
   phpcs:
-    name: WPCS
+    name: changed-files
     runs-on: ubuntu-latest
 
     steps:
