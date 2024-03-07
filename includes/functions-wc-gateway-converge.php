@@ -1314,6 +1314,53 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 
 		wgc_copy_order_meta( $subscription, $renewal_order );
 
+		// If HPOS is enabled, we need to update the order data as it is not available in the meta data.
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			// Billing address.
+			$renewal_order->set_billing_address(
+				array(
+					'first_name' => $subscription->get_billing_first_name( 'edit' ),
+					'last_name'  => $subscription->get_billing_last_name( 'edit' ),
+					'company'    => $subscription->get_billing_company( 'edit' ),
+					'address_1'  => $subscription->get_billing_address_1( 'edit' ),
+					'address_2'  => $subscription->get_billing_address_2( 'edit' ),
+					'city'       => $subscription->get_billing_city( 'edit' ),
+					'state'      => $subscription->get_billing_state( 'edit' ),
+					'postcode'   => $subscription->get_billing_postcode( 'edit' ),
+					'country'    => $subscription->get_billing_country( 'edit' ),
+					'email'      => $subscription->get_billing_email( 'edit' ),
+					'phone'      => $subscription->get_billing_phone( 'edit' ),
+				)
+			);
+
+			// Shipping address.
+			$renewal_order->set_shipping_address(
+				array(
+					'first_name' => $subscription->get_shipping_first_name( 'edit' ),
+					'last_name'  => $subscription->get_shipping_last_name( 'edit' ),
+					'company'    => $subscription->get_shipping_company( 'edit' ),
+					'address_1'  => $subscription->get_shipping_address_1( 'edit' ),
+					'address_2'  => $subscription->get_shipping_address_2( 'edit' ),
+					'city'       => $subscription->get_shipping_city( 'edit' ),
+					'state'      => $subscription->get_shipping_state( 'edit' ),
+					'postcode'   => $subscription->get_shipping_postcode( 'edit' ),
+					'country'    => $subscription->get_shipping_country( 'edit' ),
+					'phone'      => $subscription->get_shipping_phone( 'edit' ),
+				)
+			);
+
+			// Payment method.
+			$renewal_order->set_payment_method( $subscription->get_payment_method( 'edit' ) );
+			$renewal_order->set_payment_method_title( $subscription->get_payment_method_title( 'edit' ) );
+
+			// Totals
+			$renewal_order->set_discount_total( (float) $subscription->get_discount_total( 'edit' ) );
+			$renewal_order->set_discount_tax( (float)$subscription->get_discount_tax( 'edit' ) );
+			$renewal_order->set_shipping_total( (float) $subscription->get_shipping_total( 'edit' ) );
+			$renewal_order->set_shipping_tax( (float) $subscription->get_shipping_tax( 'edit' ) );
+			$renewal_order->set_total( (float) $subscription->get_total( 'edit' ) );
+		}
+
 		$renewal_order->update_meta_data( '_renewal_order', true );
 		$renewal_order->update_meta_data( '_wgc_subscription_id', $subscription->get_id() );
 		$renewal_order->set_transaction_id( $new_order_transaction_id );
