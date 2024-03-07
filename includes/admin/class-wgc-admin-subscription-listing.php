@@ -97,7 +97,12 @@ class WGC_Admin_Subscription_Listing {
 				}
 				break;
 			case 'order':
-				printf( '<a href="%s"><strong>#%s</strong></a>', get_edit_post_link( $order->get_parent_id() ), $order->get_parent_id() );
+				$parent_order = wc_get_order( $order->get_parent_id() );
+				if ( $parent_order ) {
+					printf( '<a href="%s"><strong>#%s</strong></a>', $parent_order->get_edit_order_url(), $parent_order->get_id() );
+				} else {
+					esc_html_e( 'N/A', 'elavon-converge-gateway' );
+				}
 				break;
 			case 'items':
 				foreach ( $order->get_items() as $item_id => $item ) {
