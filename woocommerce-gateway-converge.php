@@ -13,15 +13,18 @@
  * @package           Woocommerce_Gateway_Converge
  *
  * @wordpress-plugin
- * Plugin Name:       WooCommerce Elavon Converge EU Gateway
- * Plugin URI:        https://developer-eu.elavon.com/docs/plugins
- * Description:       Receive credit card payments using Elavon Converge EU Gateway.
- * Version:           1.16.0
- * Author:            Elavon
- * Author URI:        http://www.elavon.com
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       elavon-converge-gateway
+ * Plugin Name:          WooCommerce Elavon Converge EU Gateway
+ * Plugin URI:           https://developer-eu.elavon.com/docs/plugins
+ * Description:          Receive credit card payments using Elavon Converge EU Gateway.
+ * Version:              1.16.0
+ * Author:               Elavon
+ * Author URI:           http://www.elavon.com
+ * License:              GPL-2.0+
+ * License URI:          http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:          elavon-converge-gateway
+ * WC tested up to:      8.6
+ * WC requires at least: 8.4
+ * Requires PHP:         7.4
  * Domain Path:       /languages
  */
 
@@ -35,6 +38,11 @@ define( 'WGC_DIR_PATH', plugin_dir_path( __FILE__ ) );
 // WC active check
 require_once( WGC_DIR_PATH . 'includes/functions-wc-gateway-converge.php' );
 if ( ! wgc_is_woocommerce_active() ) {
+	return;
+}
+
+if ( version_compare( phpversion(), '7.4', '<' ) ) {
+	add_action( 'admin_notices', 'elavon_converge_gateway_php_version_admin_notice' );
 	return;
 }
 
@@ -53,7 +61,6 @@ include_once 'includes/validation/class-wc-validation-message.php';
 include_once 'includes/validation/class-wc-checkout-input-validator.php';
 include_once 'includes/validation/class-wc-config-validator.php';
 include_once 'includes/class-wc-gateway-converge-response-log-handler.php';
-
 
 add_action( 'plugins_loaded', 'init_woocommerce_gateway_converge' );
 add_filter( 'woocommerce_payment_gateways', 'add_gateway_class_to_payment_methods' );
@@ -76,6 +83,25 @@ function init_woocommerce_gateway_converge() {
 
 	require_once 'includes/class-wc-gateway-converge.php';
 	require_once 'includes/class-wc-payment-token-gateway-converge-storedcard.php';
+}
+
+/**
+ * Show admin notice when PHP version is lower than required.
+ */
+function elavon_converge_gateway_php_version_admin_notice() {
+	?>
+	<div class="notice notice-error">
+		<p>
+			<?php
+			printf(
+				/* translators: %s: required PHP version */
+				esc_html__( 'The Woocommerce Elavon Converge EU Gateway plugin requires PHP %s. Please contact your host to update your PHP version.', 'elavon-converge-gateway' ),
+				'7.4+'
+			);
+			?>
+		</p>
+	</div>
+	<?php
 }
 
 function woocommerce_init(){
