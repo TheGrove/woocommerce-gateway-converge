@@ -1,77 +1,98 @@
 /*global elavon_converge_gateway */
-accountFieldsIds = ['woocommerce_elavon-converge-gateway_processor_account_id', 'woocommerce_elavon-converge-gateway_merchant_alias', 'woocommerce_elavon-converge-gateway_public_key', 'woocommerce_elavon-converge-gateway_secret_key'];
-var initialValues = [];
+const accountFieldsIds = [
+	'woocommerce_elavon-converge-gateway_processor_account_id',
+	'woocommerce_elavon-converge-gateway_merchant_alias',
+	'woocommerce_elavon-converge-gateway_public_key',
+	'woocommerce_elavon-converge-gateway_secret_key',
+];
+const initialValues = [];
 storeInitialValues();
 if (!allFieldsEmpty()) {
-    saveButton = document.getElementsByName('save')[0];
-    saveButton.addEventListener('click', settingsConfirmation);
+	const saveButton = document.getElementsByName('save')[0];
+	saveButton.addEventListener('click', settingsConfirmation);
 }
 
 jQuery(function ($) {
+	const enableSavePaymentMethods = $(
+		'#woocommerce_elavon-converge-gateway_enable_save_payment_methods'
+	);
+	const enableSubscriptions = $(
+		'#woocommerce_elavon-converge-gateway_enable_subscriptions'
+	);
 
-    var enable_save_payment_methods = $('#woocommerce_elavon-converge-gateway_enable_save_payment_methods');
-    var enable_subscriptions = $('#woocommerce_elavon-converge-gateway_enable_subscriptions');
+	enableSubscriptions.change(function () {
+		enableSubscriptionsCheckboxFunctionality(
+			$(this),
+			enableSavePaymentMethods
+		);
+	});
 
-    enable_subscriptions.change(function () {
-        enable_subscriptions_checkbox_functionality($(this), enable_save_payment_methods);
-    });
+	enableSubscriptionsCheckboxFunctionality(
+		enableSubscriptions,
+		enableSavePaymentMethods
+	);
 
-    enable_subscriptions_checkbox_functionality(enable_subscriptions, enable_save_payment_methods);
-
-    enable_save_payment_methods.click(function () {
-        var attr = $(this).attr('readonly');
-        if (typeof attr !== typeof undefined && attr !== false) {
-            return false;
-        }
-    });
+	enableSavePaymentMethods.click(function () {
+		const attr = $(this).attr('readonly');
+		if (typeof attr !== typeof undefined && attr !== false) {
+			return false;
+		}
+	});
 });
 
-function enable_subscriptions_checkbox_functionality(enable_subscriptions_checkbox, enable_save_payment_methods_checkbox){
-    if (enable_subscriptions_checkbox.is(":checked")) {
-        enable_save_payment_methods_checkbox.attr('readonly', 'readonly');
+function enableSubscriptionsCheckboxFunctionality(
+	enableSubscriptionsCheckbox,
+	enableSavePaymentMethodsCheckbox
+) {
+	if (enableSubscriptionsCheckbox.is(':checked')) {
+		enableSavePaymentMethodsCheckbox.attr('readonly', 'readonly');
 
-        if (!enable_save_payment_methods_checkbox.is(':checked')) {
-            enable_save_payment_methods_checkbox.prop('checked', true);
-        }
-    } else {
-        enable_save_payment_methods_checkbox.removeAttr('readonly');
-    }
+		if (!enableSavePaymentMethodsCheckbox.is(':checked')) {
+			enableSavePaymentMethodsCheckbox.prop('checked', true);
+		}
+	} else {
+		enableSavePaymentMethodsCheckbox.removeAttr('readonly');
+	}
 }
 
 function settingsConfirmation(event) {
+	let isAccountChanged = false;
 
-    isAccountChanged = false;
+	for (let index = 0; index < accountFieldsIds.length; index++) {
+		if (
+			initialValues[accountFieldsIds[index]] !==
+			document.getElementById(accountFieldsIds[index]).value
+		) {
+			isAccountChanged = true;
+			break;
+		}
+	}
 
-    for (var index = 0; index < accountFieldsIds.length; index++) {
-        if (initialValues[accountFieldsIds[index]] != document.getElementById(accountFieldsIds[index]).value) {
-            isAccountChanged = true;
-            break;
-        }
-    }
-
-    if (isAccountChanged) {
-        if (confirm(elavon_converge_gateway.delete_alert)) {
-        } else {
-            event.preventDefault()
-            window.location.href = window.location.href;
-        }
-    }
+	if (isAccountChanged) {
+		// eslint-disable-next-line no-alert, camelcase
+		if (window.confirm(elavon_converge_gateway.delete_alert)) {
+		} else {
+			event.preventDefault();
+			window.location.href = window.location.href;
+		}
+	}
 }
 
 function allFieldsEmpty() {
-    allEmpty = true;
-    for (var index = 0; index < accountFieldsIds.length; index++) {
-        if (initialValues[accountFieldsIds[index]] !== '') {
-            allEmpty = false;
-        }
-    }
+	let allEmpty = true;
+	for (let index = 0; index < accountFieldsIds.length; index++) {
+		if (initialValues[accountFieldsIds[index]] !== '') {
+			allEmpty = false;
+		}
+	}
 
-    return allEmpty;
+	return allEmpty;
 }
 
 function storeInitialValues() {
-    for (var index = 0; index < accountFieldsIds.length; index++) {
-        initialValues[accountFieldsIds[index]] = document.getElementById(accountFieldsIds[index]).value;
-    }
-
+	for (let index = 0; index < accountFieldsIds.length; index++) {
+		initialValues[accountFieldsIds[index]] = document.getElementById(
+			accountFieldsIds[index]
+		).value;
+	}
 }
