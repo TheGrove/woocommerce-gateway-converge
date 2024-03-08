@@ -705,27 +705,23 @@ function wgc_product_is_subscription( $product ) {
 
 function wgc_get_subscriptions_for_user( $user_id = 0, $args = array() ) {
 	$user_id       = empty( $user_id ) ? get_current_user_id() : $user_id;
-	$posts         = get_posts(
+	$orders        = wc_get_orders(
 		array_merge(
 			array(
-				'post_type'      => WGC_SUBSCRIPTION_POST_TYPE,
-				'post_status'    => array_keys( wc_get_order_statuses() ),
-				'posts_per_page' => - 1,
-				'orderby'        => 'date',
-				'order'          => 'DESC',
-				'meta_query'     => array(
-					array(
-						'key'   => '_customer_user',
-						'value' => $user_id,
-					),
-				),
+				'type'       => WGC_SUBSCRIPTION_POST_TYPE,
+				'status'     => array_keys( wc_get_order_statuses() ),
+				'limit'      => -1,
+				'orderby'    => 'date',
+				'order'      => 'DESC',
+				'customer_id' => $user_id,
 			),
 			$args
 		)
 	);
+
 	$subscriptions = array();
-	foreach ( $posts as $post ) {
-		$subscriptions[] = wgc_get_subscription_object_by_id( $post->ID );
+	foreach ( $orders as $order ) {
+		$subscriptions[] = wgc_get_subscription_object_by_id( $order->get_id() );
 	}
 
 	return $subscriptions;
