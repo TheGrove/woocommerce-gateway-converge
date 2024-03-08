@@ -1049,7 +1049,7 @@ function wgc_create_subscription( $args ) {
 			'ID'           => $post_id,
 			'post_title'   => sprintf( __( 'Subscription #%1$s for the Order #%2$s ', 'elavon-converge-gateway' ), $subscription->get_id(), $args['order_id'] ),
 		);
-		wp_update_post($post_params);
+		wp_update_post( $post_params );
 	} else {
 		$subscription = new WC_Converge_Subscription();
 		$subscription->set_parent_id( $args['order_id'] );
@@ -1121,7 +1121,7 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 	} else {
 		$params = array(
 			'post_type'      => WGC_SUBSCRIPTION_POST_TYPE,
-			'posts_per_page' => - 1,
+			'posts_per_page' => -1,
 			'post_parent'    => $order->get_id(),
 			'post_status'    => 'any',
 		);

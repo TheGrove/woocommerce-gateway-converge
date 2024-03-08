@@ -77,7 +77,7 @@ class WC_Product_Converge_Variable_Subscription extends WC_Product_Variable {
 		$children = get_posts(
 			array(
 				'post_parent'    => $product->get_id(),
-				'posts_per_page' => - 1,
+				'posts_per_page' => -1,
 				'post_type'      => 'product_variation',
 				'post_status'    => 'publish',
 			)

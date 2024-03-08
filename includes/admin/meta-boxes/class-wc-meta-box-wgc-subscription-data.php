@@ -84,7 +84,7 @@ class WC_Meta_Box_Wgc_Subscription_Data {
 	public static function transaction_history_view($post) {
 		$order_id     = $post instanceof \WC_Order ? $post->get_id() : $post->ID;
 		$subscription = wgc_get_subscription_object_by_id($order_id);
-		$response     = wgc_get_gateway()->get_converge_api()->get_subscription_transactions($subscription);
+		$response     = wgc_get_gateway()->get_converge_api()->get_subscription_transactions( $subscription );
 
 		$has_errors = FALSE;
 		$transactions = array();
