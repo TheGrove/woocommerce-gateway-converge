@@ -6,6 +6,7 @@ use Elavon\Converge2\Request\Payload\ContactDataBuilder;
 use Elavon\Converge2\Request\Payload\OrderItemDataBuilder;
 use Elavon\Converge2\Request\Payload\ShopperDataBuilder;
 use Elavon\Converge2\Request\Payload\AddressDataBuilder;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
  * Functions used by plugins
@@ -704,27 +705,23 @@ function wgc_product_is_subscription( $product ) {
 
 function wgc_get_subscriptions_for_user( $user_id = 0, $args = array() ) {
 	$user_id       = empty( $user_id ) ? get_current_user_id() : $user_id;
-	$posts         = get_posts(
+	$orders        = wc_get_orders(
 		array_merge(
 			array(
-				'post_type'      => WGC_SUBSCRIPTION_POST_TYPE,
-				'post_status'    => array_keys( wc_get_order_statuses() ),
-				'posts_per_page' => - 1,
-				'orderby'        => 'date',
-				'order'          => 'DESC',
-				'meta_query'     => array(
-					array(
-						'key'   => '_customer_user',
-						'value' => $user_id,
-					),
-				),
+				'type'       => WGC_SUBSCRIPTION_POST_TYPE,
+				'status'     => array_keys( wc_get_order_statuses() ),
+				'limit'      => -1,
+				'orderby'    => 'date',
+				'order'      => 'DESC',
+				'customer_id' => $user_id,
 			),
 			$args
 		)
 	);
+
 	$subscriptions = array();
-	foreach ( $posts as $post ) {
-		$subscriptions[] = wgc_get_subscription_object_by_id( $post->ID );
+	foreach ( $orders as $order ) {
+		$subscriptions[] = wgc_get_subscription_object_by_id( $order->get_id() );
 	}
 
 	return $subscriptions;
@@ -766,14 +763,25 @@ function wgc_get_subscription_related_orders( $subscription ) {
 		$subscription = wgc_get_subscription_object_by_id( $subscription );
 	}
 
-	$results = $wpdb->get_results(
-		$wpdb->prepare(
-			"SELECT ID FROM $wpdb->posts AS posts LEFT JOIN $wpdb->postmeta AS postmeta
-			ON  posts.ID = postmeta.post_id WHERE posts.post_type = 'shop_order' AND postmeta.meta_key = '_wgc_subscription_id'
-			AND postmeta.meta_value = %s",
-			$subscription->get_id()
-		)
-	);
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT ordermeta.order_id AS ID FROM wp_wc_orders_meta AS ordermeta
+				WHERE ordermeta.meta_key = '_wgc_subscription_id' AND ordermeta.meta_value = %s",
+				$subscription->get_id()
+			)
+		);
+	} else {
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT ID FROM $wpdb->posts AS posts LEFT JOIN $wpdb->postmeta AS postmeta
+				ON  posts.ID = postmeta.post_id WHERE posts.post_type = 'shop_order' AND postmeta.meta_key = '_wgc_subscription_id'
+				AND postmeta.meta_value = %s",
+				$subscription->get_id()
+			)
+		);
+	}
+
 	$orders  = array();
 	if ( $subscription->get_parent_id() ) {
 		$orders[] = $subscription->get_order( $subscription->get_parent_id() );
@@ -786,6 +794,10 @@ function wgc_get_subscription_related_orders( $subscription ) {
 }
 
 function wgc_get_subscription_object_by_id( $id ) {
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		return new WC_Converge_Subscription( $id );
+	}
+
 	return WC()->order_factory->get_order( $id );
 }
 
@@ -991,7 +1003,7 @@ function wgc_conditional_payment_gateways( $available_gateways ) {
 
 	if ( wgc_order_from_merchant_view_has_subscription_elements() ) {
 		$hide_other_methods = true;
-	} else {
+	} elseif ( WC()->cart ) {
 		foreach ( WC()->cart->get_cart() as $cart_key => $cart_item ) {
 			if ( wgc_product_is_subscription( $cart_item['data'] ) ) {
 				$hide_other_methods = true;
@@ -1013,28 +1025,40 @@ function wgc_conditional_payment_gateways( $available_gateways ) {
 }
 
 function wgc_create_subscription( $args ) {
-	$post_args = array(
-		'post_type'   => WGC_SUBSCRIPTION_POST_TYPE,
-		'post_author' => 0,
-		'post_status' => 'wc-pending',
-		'post_parent' => absint( $args['order_id'] ),
-	);
+	$subscription = null;
 
-	$post_id = wp_insert_post( $post_args );
+	if ( ! OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$post_args = array(
+			'post_type'   => WGC_SUBSCRIPTION_POST_TYPE,
+			'post_author' => 0,
+			'post_status' => 'wc-pending',
+			'post_parent' => absint( $args['order_id'] ),
+		);
 
-	if ( is_wp_error( $post_id ) || $post_id === 0 ) {
-		return new WP_Error( 'subscription-error', __( 'There was an error creating the subscription.', 'elavon-converge-gateway' ) );
+		$post_id = wp_insert_post( $post_args );
+
+		if ( is_wp_error( $post_id ) || $post_id === 0 ) {
+			return new WP_Error( 'subscription-error', __( 'There was an error creating the subscription.', 'elavon-converge-gateway' ) );
+		}
+		$subscription = WC()->order_factory->get_order( $post_id );
+		$subscription->set_currency( $args['order_currency'] );
+		$subscription->set_customer_id( $args['customer_user'] );
+		$subscription->save();
+
+		$post_params = array(
+			'ID'           => $post_id,
+			'post_title'   => sprintf( __( 'Subscription #%1$s for the Order #%2$s ', 'elavon-converge-gateway' ), $subscription->get_id(), $args['order_id'] ),
+		);
+		wp_update_post( $post_params );
+	} else {
+		$subscription = new WC_Converge_Subscription();
+		$subscription->set_parent_id( $args['order_id'] );
+		$subscription->set_currency( $args['order_currency'] );
+		$subscription->set_customer_id( $args['customer_user'] );
+		$subscription_id = $subscription->save();
+
+		$subscription = WC()->order_factory->get_order( $subscription_id );
 	}
-	$subscription = WC()->order_factory->get_order( $post_id );
-	$subscription->set_currency( $args['order_currency'] );
-	$subscription->set_customer_id( $args['customer_user'] );
-	$subscription->save();
-
-	$post_params = array(
-		'ID'           => $post_id,
-		'post_title'   => sprintf( __( 'Subscription #%1$s for the Order #%2$s ', 'elavon-converge-gateway' ), $subscription->get_id(), $args['order_id'] ),
-	);
-	wp_update_post($post_params);
 
 	return $subscription;
 }
@@ -1076,8 +1100,8 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 
 	$subscriptions = array();
 
-	$is_renewal_order = get_post_meta( $order->get_id(), '_renewal_order', true );
-	$subscription_id  = get_post_meta( $order->get_id(), '_wgc_subscription_id', true );
+	$is_renewal_order = $order->get_meta( '_renewal_order', true );
+	$subscription_id  = $order->get_meta( '_wgc_subscription_id', true );
 
 	if ( $is_renewal_order && $subscription_id ) {
 
@@ -1086,21 +1110,32 @@ function wgc_get_subscriptions_for_order( WC_Order $order ) {
 		return $subscriptions;
 	}
 
-	$params = array(
-		'post_type'      => WGC_SUBSCRIPTION_POST_TYPE,
-		'posts_per_page' => - 1,
-		'post_parent'    => $order->get_id(),
-		'post_status'    => 'any',
-	);
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$params = array(
+			'type'           => WGC_SUBSCRIPTION_POST_TYPE,
+			'posts_per_page' => -1,
+			'parent'         => $order->get_id(),
+		);
 
-	$posts = get_posts( $params );
+		$orders = wc_get_orders( $params );
+	} else {
+		$params = array(
+			'post_type'      => WGC_SUBSCRIPTION_POST_TYPE,
+			'posts_per_page' => -1,
+			'post_parent'    => $order->get_id(),
+			'post_status'    => 'any',
+		);
 
-	if ( ! $posts ) {
+		$orders = get_posts( $params );
+	}
+
+	if ( empty( $orders ) ) {
 		return $subscriptions;
 	}
 
-	foreach ( $posts as $post ) {
-		$subscriptions[] = wgc_get_subscription_object_by_id( $post->ID );
+	foreach ( $orders as $current_order ) {
+		$order_id        = $current_order instanceof WC_Order ? $current_order->get_id() : $current_order->ID;
+		$subscriptions[] = wgc_get_subscription_object_by_id( $order_id );
 	}
 
 	return $subscriptions;
@@ -1172,22 +1207,38 @@ function wgc_force_non_logged_user_wc_session() {
 
 function wgc_get_order_by_transaction_id( $transaction_id ) {
 	global $wpdb;
+
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		return $wpdb->get_var( $wpdb->prepare( "SELECT orders.id AS ID FROM {$wpdb->prefix}wc_orders as orders WHERE orders.type = 'shop_order' AND orders.transaction_id = %s", $transaction_id ) );
+	}
+
 	return $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts as posts INNER JOIN $wpdb->postmeta as meta ON posts.ID = meta.post_id WHERE post_type = 'shop_order' AND meta.meta_key = '_transaction_id' AND meta.meta_value = %s", $transaction_id ) );
 }
 
 
 function wgc_copy_order_meta( $from, $to ) {
 	global $wpdb;
-	$query   = $wpdb->prepare(
-		"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d
-			AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
-		$from->get_id()
-	);
+
+	if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+		$query = $wpdb->prepare(
+			"SELECT meta_key, meta_value FROM {$wpdb->prefix}wc_orders_meta AS ordermeta WHERE ordermeta.order_id = %d
+				AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
+			$from->get_id()
+		);
+	} else {
+		$query = $wpdb->prepare(
+			"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d
+				AND meta_key NOT LIKE 'wgc_%%' AND meta_key NOT LIKE '%%_date' AND meta_key NOT IN ('_transaction_id', '_order_key')",
+			$from->get_id()
+		);
+	}
 	$results = $wpdb->get_results( $query );
 
 	foreach ( $results as $result ) {
-		update_post_meta( $to->get_id(), $result->meta_key, maybe_unserialize( $result->meta_value ) );
+		$to->update_meta_data( $result->meta_key, maybe_unserialize( $result->meta_value ) );
 	}
+
+	$to->save();
 }
 
 function wgc_create_order_from_subscription( $subscription, $new_order_transaction_id ) {
@@ -1202,8 +1253,8 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 			'coupon'
 		) );
 		$renewal_order            = wc_create_order( array( 'customer_id' => $subscription->get_user_id() ) );
-		$plan_id                  = get_post_meta( $subscription->get_id(), 'wgc_plan_id', true );
-		$subscription_product_qty = get_post_meta( $subscription->get_id(), 'wgc_subscription_product_qty', true );
+		$plan_id                  = $subscription->get_meta( 'wgc_plan_id', true );
+		$subscription_product_qty = $subscription->get_meta( 'wgc_subscription_product_qty', true );
 		$subscription_product     = null;
 
 		$should_update_totals = false;
@@ -1258,6 +1309,53 @@ function wgc_create_order_from_subscription( $subscription, $new_order_transacti
 		}
 
 		wgc_copy_order_meta( $subscription, $renewal_order );
+
+		// If HPOS is enabled, we need to update the order data as it is not available in the meta data.
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			// Billing address.
+			$renewal_order->set_billing_address(
+				array(
+					'first_name' => $subscription->get_billing_first_name( 'edit' ),
+					'last_name'  => $subscription->get_billing_last_name( 'edit' ),
+					'company'    => $subscription->get_billing_company( 'edit' ),
+					'address_1'  => $subscription->get_billing_address_1( 'edit' ),
+					'address_2'  => $subscription->get_billing_address_2( 'edit' ),
+					'city'       => $subscription->get_billing_city( 'edit' ),
+					'state'      => $subscription->get_billing_state( 'edit' ),
+					'postcode'   => $subscription->get_billing_postcode( 'edit' ),
+					'country'    => $subscription->get_billing_country( 'edit' ),
+					'email'      => $subscription->get_billing_email( 'edit' ),
+					'phone'      => $subscription->get_billing_phone( 'edit' ),
+				)
+			);
+
+			// Shipping address.
+			$renewal_order->set_shipping_address(
+				array(
+					'first_name' => $subscription->get_shipping_first_name( 'edit' ),
+					'last_name'  => $subscription->get_shipping_last_name( 'edit' ),
+					'company'    => $subscription->get_shipping_company( 'edit' ),
+					'address_1'  => $subscription->get_shipping_address_1( 'edit' ),
+					'address_2'  => $subscription->get_shipping_address_2( 'edit' ),
+					'city'       => $subscription->get_shipping_city( 'edit' ),
+					'state'      => $subscription->get_shipping_state( 'edit' ),
+					'postcode'   => $subscription->get_shipping_postcode( 'edit' ),
+					'country'    => $subscription->get_shipping_country( 'edit' ),
+					'phone'      => $subscription->get_shipping_phone( 'edit' ),
+				)
+			);
+
+			// Payment method.
+			$renewal_order->set_payment_method( $subscription->get_payment_method( 'edit' ) );
+			$renewal_order->set_payment_method_title( $subscription->get_payment_method_title( 'edit' ) );
+
+			// Totals
+			$renewal_order->set_discount_total( (float) $subscription->get_discount_total( 'edit' ) );
+			$renewal_order->set_discount_tax( (float)$subscription->get_discount_tax( 'edit' ) );
+			$renewal_order->set_shipping_total( (float) $subscription->get_shipping_total( 'edit' ) );
+			$renewal_order->set_shipping_tax( (float) $subscription->get_shipping_tax( 'edit' ) );
+			$renewal_order->set_total( (float) $subscription->get_total( 'edit' ) );
+		}
 
 		$renewal_order->update_meta_data( '_renewal_order', true );
 		$renewal_order->update_meta_data( '_wgc_subscription_id', $subscription->get_id() );
