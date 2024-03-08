@@ -61,6 +61,9 @@ add_filter( 'plugin_action_links', 'add_settings_to_plugins_list', 10, 5 );
 add_action( 'woocommerce_before_template_part', 'wgc_before_template_part', 10, 3 );
 add_action( 'woocommerce_init', 'woocommerce_init', 10 );
 
+// Add support for WooCommerce Blocks.
+add_action( 'woocommerce_blocks_loaded', 'wgc_woocommerce_blocks_support' );
+
 function init_woocommerce_gateway_converge() {
 	// Set up localisation.
 	$text_domain = wgc_get_payment_name();
@@ -136,3 +139,28 @@ add_action( 'before_woocommerce_init', function() {
 		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 	}
 } );
+
+/**
+ * Add WooCommerce Blocks support to the Elavon Converge payment method.
+ *
+ * @return void
+ */
+function wgc_woocommerce_blocks_support() {
+	// Add support for the subscription product type.
+	if ( class_exists( 'Automattic\WooCommerce\StoreApi\StoreApi' ) && class_exists( 'Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema' ) ) {
+		require_once 'includes/class-wc-gateway-converge-extend-store-endpoint.php';
+		$extend = Automattic\WooCommerce\StoreApi\StoreApi::container()->get( Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema::class );
+		WC_Gateway_Converge_Extend_Store_Endpoint::init( $extend );
+	}
+
+	// Add support for the payment method.
+	if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+		require_once 'includes/class-wc-gateway-converge-blocks-support.php';
+		add_action(
+			'woocommerce_blocks_payment_method_type_registration',
+			function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+				$payment_method_registry->register( new WC_Gateway_Converge_Blocks_Support() );
+			}
+		);
+	}
+}
