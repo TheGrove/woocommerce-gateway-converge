@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress Coding Standards">
 	<rule ref="WooCommerce-Core">
-	    <!-- We do not comply with these right now. -->
+		<!-- We do not comply with these right now. -->
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents" />
@@ -255,7 +255,7 @@
 	<file>.</file>
 
 	<exclude-pattern>vendor/</exclude-pattern>
-    <exclude-pattern>node_modules</exclude-pattern>
+	<exclude-pattern>node_modules</exclude-pattern>
 
 	<!-- ensure we are using language features according to supported PHP versions -->
 	<config name="testVersion" value="7.4-"/>
