@@ -22,6 +22,11 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 	private $converge_order_wrapper;
 
 	/**
+	 * @var League\ISO3166\ISO3166
+	 */
+	private $isoConvertor;
+
+	/**
 	 * Encryption class
 	 *
 	 * @var \Elavon\Converge2\Util\Encryption

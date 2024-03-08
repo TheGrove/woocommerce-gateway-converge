@@ -15,6 +15,7 @@ abstract class AbstractDataObject implements \JsonSerializable
         $this->castObjectFields();
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->data;
