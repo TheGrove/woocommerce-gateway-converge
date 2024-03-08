@@ -61,12 +61,16 @@ class WC_Gateway_Converge_Api {
 
 		if ( $response->isSuccess() ) {
 			return $response->getId();
-		} else {
-			if ( $order ) {
-				$order->add_order_note( wgc_get_order_error_note( __( 'Could not create shopper.',
-					'elavon-converge-gateway' ),
-					$response ) );
-			}
+		} elseif ( $order ) {
+				$order->add_order_note(
+					wgc_get_order_error_note(
+						__(
+							'Could not create shopper.',
+							'elavon-converge-gateway'
+						),
+						$response
+					)
+				);
 		}
 
 		return null;
@@ -90,7 +94,6 @@ class WC_Gateway_Converge_Api {
 	/**
 	 * Create Shopper for user from its account data.
 	 *
-	 *
 	 * @return string|null
 	 */
 	public function create_shopper_using_user_data( $user_id ) {
@@ -112,8 +115,12 @@ class WC_Gateway_Converge_Api {
 		if ( $response->isSuccess() ) {
 			return true;
 		} else {
-			$order->add_order_note( wgc_get_order_error_note( __( 'Failed shopper update.', 'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__( 'Failed shopper update.', 'elavon-converge-gateway' ),
+					$response
+				)
+			);
 		}
 
 		return false;
@@ -144,11 +151,15 @@ class WC_Gateway_Converge_Api {
 			$this->gateway->get_option( WGC_KEY_PHONE ),
 			$this->gateway->get_option( WGC_KEY_URL )
 		);
-		$transaction_builder->setDescription( wgc_get_order_description( $this->gateway->get_option( WGC_KEY_MERCHANT_NAME ),
-			$this->gateway->get_option( WGC_KEY_PROCESSOR_ACCOUNT_ID ) ) );
+		$transaction_builder->setDescription(
+			wgc_get_order_description(
+				$this->gateway->get_option( WGC_KEY_MERCHANT_NAME ),
+				$this->gateway->get_option( WGC_KEY_PROCESSOR_ACCOUNT_ID )
+			)
+		);
 		$transaction_builder->setShopperLanguageTag( str_replace( '_', '-', get_locale() ) );
 		if ( isset( $_COOKIE['wgc_timezone'] ) ) {
-			$transaction_builder->setShopperTimeZone( $_COOKIE['wgc_timezone'] );
+			$transaction_builder->setShopperTimeZone( wp_unslash( $_COOKIE['wgc_timezone'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		$transaction_builder->setCustomFields( $this->gateway->getConvergeOrderWrapper()->get_custom_fields( $order ) );
@@ -162,12 +173,12 @@ class WC_Gateway_Converge_Api {
 	protected function create_sale_transaction( WC_Order $order, TransactionDataBuilder $transaction_builder ) {
 		$data = $transaction_builder->getData();
 
-		$stored_card            = $data->storedCard;
-		$subscriptions          = wgc_get_subscriptions_for_order( $order );
-		$subscription_added     = array();
-		$subscription_has_error = false;
-		$cancelled_subscription_note = __('Cancelled subscription. Reason: failed to create initial order or failed to create other subscriptions for parent order.', 'elavon-converge-gateway');
-		$cancelled_order_note = __('Cancelled order. Reason: failed to create subscriptions for this order.', 'elavon-converge-gateway');
+		$stored_card                 = $data->storedCard;
+		$subscriptions               = wgc_get_subscriptions_for_order( $order );
+		$subscription_added          = array();
+		$subscription_has_error      = false;
+		$cancelled_subscription_note = __( 'Cancelled subscription. Reason: failed to create initial order or failed to create other subscriptions for parent order.', 'elavon-converge-gateway' );
+		$cancelled_order_note        = __( 'Cancelled order. Reason: failed to create subscriptions for this order.', 'elavon-converge-gateway' );
 
 		if ( count( $subscriptions ) > 0 && isset( $stored_card ) && ! empty( $stored_card ) ) {
 
@@ -175,8 +186,8 @@ class WC_Gateway_Converge_Api {
 				$converge_subscription_response = $this->create_subscription( $subscription, $stored_card );
 
 				if ( ! is_null( $converge_subscription_response ) &&
-				     $converge_subscription_response instanceof \Elavon\Converge2\Response\SubscriptionResponse &&
-				     $converge_subscription_response->isSuccess() ) {
+					$converge_subscription_response instanceof \Elavon\Converge2\Response\SubscriptionResponse &&
+					$converge_subscription_response->isSuccess() ) {
 					$subscription_added[] = $subscription;
 				} else {
 					$subscription_has_error = true;
@@ -210,13 +221,23 @@ class WC_Gateway_Converge_Api {
 			$total   = $response->getTotalAmount() . $response->getTotalCurrencyCode();
 
 			/* translators: %1$s: amount, %2$s: transaction id */
-			$order->add_order_note( sprintf( __( 'Authorized %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
-				$total, $transaction_id ) );
+			$order->add_order_note(
+				sprintf(
+					__( 'Authorized %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
+					esc_html( $total ),
+					esc_html( $transaction_id )
+				)
+			);
 
 			if ( $capture ) {
 				/* translators: %1$s: amount, %2$s: transaction id */
-				$order->add_order_note( sprintf( __( 'Captured %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
-					$total, $transaction_id ) );
+				$order->add_order_note(
+					sprintf(
+						__( 'Captured %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
+						esc_html( $total ),
+						esc_html( $transaction_id )
+					)
+				);
 			}
 
 			$this->payment_complete( $order, $transaction_id );
@@ -229,8 +250,12 @@ class WC_Gateway_Converge_Api {
 				$order->set_transaction_id( $transaction_id );
 			}
 
-			$order->add_order_note( wgc_get_order_error_note( __( 'Invalid transaction.', 'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__( 'Invalid transaction.', 'elavon-converge-gateway' ),
+					$response
+				)
+			);
 
 			foreach ( (array) $subscription_added as $subscription ) {
 				$this->cancel_subscription( $subscription );
@@ -245,13 +270,13 @@ class WC_Gateway_Converge_Api {
 
 		$transaction_builder = $this->init_transaction_data_builder( $order, $converge_order_id );
 		$transaction_builder->setPaymentSession( $payment_session->getHref() );
-		$subscriptions       = wgc_get_subscriptions_for_order( $order );
+		$subscriptions = wgc_get_subscriptions_for_order( $order );
 
 		if ( count( $subscriptions ) > 0 ) {
 			$order->add_order_note( 'Customer attempted to create subscription with Blik', false );
 			$this->payment_failed( $order );
-			wc_add_notice('PLACEHOLDER Error - There was an error. Please contact the merchant.', 'error');
-			wp_redirect(wc_get_checkout_url());
+			wc_add_notice( 'PLACEHOLDER Error - There was an error. Please contact the merchant.', 'error' );
+			wp_safe_redirect( wc_get_checkout_url() );
 			exit;
 		}
 
@@ -259,12 +284,11 @@ class WC_Gateway_Converge_Api {
 			$transaction_builder->setThreeDSecure( $payment_session->getThreeDSecure() );
 		} else {
 			$order_note = wgc_get_order_error_note(
-
-				__('Could not retrieve payment session - transaction not created on Converge.', 'elavon-converge-gateway'),
+				__( 'Could not retrieve payment session - transaction not created on Converge.', 'elavon-converge-gateway' ),
 				$payment_session
 			);
-			$order->add_order_note($order_note);
-			$this->payment_failed($order);
+			$order->add_order_note( $order_note );
+			$this->payment_failed( $order );
 			return null;
 		}
 
@@ -302,8 +326,12 @@ class WC_Gateway_Converge_Api {
 
 		$order_builder = new OrderDataBuilder();
 		$order_builder->setTotalAmountCurrencyCode( $order->get_total(), $order->get_currency() );
-		$order_builder->setDescription( wgc_get_order_description( $this->gateway->get_option( WGC_KEY_MERCHANT_NAME ),
-			$this->gateway->get_option( WGC_KEY_PROCESSOR_ACCOUNT_ID ) ) );
+		$order_builder->setDescription(
+			wgc_get_order_description(
+				$this->gateway->get_option( WGC_KEY_MERCHANT_NAME ),
+				$this->gateway->get_option( WGC_KEY_PROCESSOR_ACCOUNT_ID )
+			)
+		);
 		$order_builder->setItems( $items );
 		$order_builder->setShipTo( $ship_to );
 		$order_builder->setShopperEmailAddress( $order->get_billing_email() );
@@ -320,8 +348,12 @@ class WC_Gateway_Converge_Api {
 		if ( $response->isSuccess() ) {
 			return $response->getId();
 		} else {
-			$order->add_order_note( wgc_get_order_error_note( __( 'Could not create order on Converge.', 'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__( 'Could not create order on Converge.', 'elavon-converge-gateway' ),
+					$response
+				)
+			);
 		}
 
 		return null;
@@ -329,17 +361,14 @@ class WC_Gateway_Converge_Api {
 
 	public function create_payment_session( WC_Order $order, $converge_order_id ) {
 
-		if(	$this->gateway->get_option(WGC_KEY_INTEGRATION_OPTION) == WGC_SETTING_INTEGRATION_HPP_REDIRECT)
-		{
+		if ( $this->gateway->get_option( WGC_KEY_INTEGRATION_OPTION ) === WGC_SETTING_INTEGRATION_HPP_REDIRECT ) {
 			$return_url = WC()->api_request_url( 'wc_payment_gateways' );
 			$cancel_url = $order->get_cancel_order_url_raw();
-			$hppType = "fullPageRedirect";
-		}
-		else
-		{
+			$hppType    = 'fullPageRedirect';
+		} else {
 			$return_url = null;
 			$cancel_url = null;
-			$hppType = "lightbox";
+			$hppType    = 'lightbox';
 		}
 
 		$origin_url = wgc_get_origin_url();
@@ -367,8 +396,12 @@ class WC_Gateway_Converge_Api {
 		if ( $response->isSuccess() ) {
 			return $response->getId();
 		} else {
-			$order->add_order_note( wgc_get_order_error_note( __( 'Could not create payment session.', 'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__( 'Could not create payment session.', 'elavon-converge-gateway' ),
+					$response
+				)
+			);
 		}
 
 		return null;
@@ -393,14 +426,25 @@ class WC_Gateway_Converge_Api {
 
 			$total = $response->getTotalAmount() . $response->getTotalCurrencyCode();
 			/* translators: %1$s: amount, %2$s: transaction id */
-			$order->add_order_note( sprintf( __( 'Voided %1$s Transaction id: %2$s', 'elavon-converge-gateway' ), $total,
-				$order->get_transaction_id() ) );
+			$order->add_order_note(
+				sprintf(
+					__( 'Voided %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
+					esc_html( $total ),
+					esc_html( $order->get_transaction_id() )
+				)
+			);
 
 		} else {
 
-			$order->add_order_note( wgc_get_order_error_note( __( 'There was an error processing the void.',
-				'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__(
+						'There was an error processing the void.',
+						'elavon-converge-gateway'
+					),
+					$response
+				)
+			);
 		}
 	}
 
@@ -409,10 +453,17 @@ class WC_Gateway_Converge_Api {
 		$transaction_state = wgc_get_order_transaction_state( $order );
 
 		if ( ! $transaction_state || ! $transaction_state->isRefundable() ) {
-			return new WP_Error ( 'refund-error',
+			return new WP_Error(
+				'refund-error',
 				/* translators: %s: transaction status */
-				sprintf( __( 'Cannot refund a transaction that has the %s status.',
-					'elavon-converge-gateway' ), $transaction_state->getValue() ) );
+				sprintf(
+					__(
+						'Cannot refund a transaction that has the %s status.',
+						'elavon-converge-gateway'
+					),
+					esc_html( $transaction_state->getValue() )
+				)
+			);
 		}
 
 		$transaction_builder = new TransactionDataBuilder();
@@ -429,21 +480,42 @@ class WC_Gateway_Converge_Api {
 
 		if ( $response->isSuccess() ) {
 			/* translators: %1$s: currency code, %2$s: amount */
-			$order->add_order_note( sprintf( __( 'Order was successfully refunded in the amount of %1$s%2$s.',
-				'elavon-converge-gateway' ), $order->get_currency(), $amount ) );
+			$order->add_order_note(
+				sprintf(
+					__(
+						'Order was successfully refunded in the amount of %1$s%2$s.',
+						'elavon-converge-gateway'
+					),
+					esc_html( $order->get_currency() ),
+					esc_html( $amount )
+				)
+			);
 
 			return true;
 
 		} else {
 
-			$order->add_order_note( wgc_get_order_error_note( __( 'There was an error processing the refund.',
-				'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__(
+						'There was an error processing the refund.',
+						'elavon-converge-gateway'
+					),
+					$response
+				)
+			);
 
-			return new WP_Error ( 'refund-error',
+			return new WP_Error(
+				'refund-error',
 				/* translators: %s: error message */
-				sprintf( __( 'There was an error processing the refund. %s.',
-					'elavon-converge-gateway' ), $response->getShortErrorMessage() ) );
+				sprintf(
+					__(
+						'There was an error processing the refund. %s.',
+						'elavon-converge-gateway'
+					),
+					esc_html( $response->getShortErrorMessage() )
+				)
+			);
 
 		}
 	}
@@ -465,19 +537,30 @@ class WC_Gateway_Converge_Api {
 
 			$total = $response->getTotalAmount() . $response->getTotalCurrencyCode();
 			/* translators: %1$s: amount, %2$s: transaction id */
-			$order->add_order_note( sprintf( __( 'Captured %1$s Transaction id: %2$s', 'elavon-converge-gateway' ), $total,
-				$transaction_id ) );
+			$order->add_order_note(
+				sprintf(
+					__( 'Captured %1$s Transaction id: %2$s', 'elavon-converge-gateway' ),
+					esc_html( $total ),
+					esc_html( $transaction_id )
+				)
+			);
 
 		} else {
 
-			$order->add_order_note( wgc_get_order_error_note( __( 'There was an error processing the capture.',
-				'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__(
+						'There was an error processing the capture.',
+						'elavon-converge-gateway'
+					),
+					$response
+				)
+			);
 		}
 	}
 
 	public function get_order_transaction( WC_Order $order, $force_call = false ) {
-		static $cache = [];
+		static $cache = array();
 
 		$order_id = $order->get_id();
 
@@ -499,7 +582,7 @@ class WC_Gateway_Converge_Api {
 	 * Complete order, add transaction ID and note.
 	 *
 	 * @param WC_Order $order Order object.
-	 * @param string $transaction_id Transaction ID.
+	 * @param string   $transaction_id Transaction ID.
 	 */
 	protected function payment_complete( $order, $transaction_id = '' ) {
 		$order->payment_complete( $transaction_id );
@@ -530,8 +613,8 @@ class WC_Gateway_Converge_Api {
 	 *
 	 * @param WC_Order $order Order object.
 	 */
-	protected function payment_failed($order) {
-		$order->update_status('failed');
+	protected function payment_failed( $order ) {
+		$order->update_status( 'failed' );
 	}
 
 
@@ -556,9 +639,15 @@ class WC_Gateway_Converge_Api {
 				return $three_d_secure;
 			}
 		} else {
-			$order->add_order_note( wgc_get_order_error_note( __( 'Failed hosted card retrieval.',
-				'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__(
+						'Failed hosted card retrieval.',
+						'elavon-converge-gateway'
+					),
+					$response
+				)
+			);
 		}
 
 		return null;
@@ -576,15 +665,19 @@ class WC_Gateway_Converge_Api {
 				return true;
 			}
 		} else {
-			$order->add_order_note( wgc_get_order_error_note( __( 'Failed hosted card update.', 'elavon-converge-gateway' ),
-				$response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__( 'Failed hosted card update.', 'elavon-converge-gateway' ),
+					$response
+				)
+			);
 		}
 
 		return false;
 	}
 
 	/**
-	 * @param WC_Order $order
+	 * @param WC_Order    $order
 	 * @param $shopper
 	 * @param $hosted_card
 	 *
@@ -604,39 +697,43 @@ class WC_Gateway_Converge_Api {
 		$response = $this->gateway->getC2ApiService()->createStoredCard( $data );
 		wgc_log_converge_response( $response, 'create stored card', $order );
 
-		if ($response->isSuccess()) {
-			return new StoredCard($response->getData());
+		if ( $response->isSuccess() ) {
+			return new StoredCard( $response->getData() );
 		} else {
-			$this->payment_failed($order);
-			$order_note = wgc_get_order_error_note(__('There was an error creating the stored card.',
-				'elavon-converge-gateway'),
-				$response);
-			$order->add_order_note($order_note);
+			$this->payment_failed( $order );
+			$order_note = wgc_get_order_error_note(
+				__(
+					'There was an error creating the stored card.',
+					'elavon-converge-gateway'
+				),
+				$response
+			);
+			$order->add_order_note( $order_note );
 
-			if ($response->hasFailuresAboutCardAlreadyExists()) {
-				$errorMsg = __('The credit card number could not be saved because the stored card already exists.', 'elavon-converge-gateway');
+			if ( $response->hasFailuresAboutCardAlreadyExists() ) {
+				$errorMsg = __( 'The credit card number could not be saved because the stored card already exists.', 'elavon-converge-gateway' );
 			} else {
-				$errorMsg = __('The credit card number could not be saved.', 'elavon-converge-gateway');
+				$errorMsg = __( 'The credit card number could not be saved.', 'elavon-converge-gateway' );
 			}
-			wc_add_notice($errorMsg, 'error');
+			wc_add_notice( $errorMsg, 'error' );
 
-			$subscriptions = wgc_get_subscriptions_for_order($order);
+			$subscriptions = wgc_get_subscriptions_for_order( $order );
 
-			if (is_array($subscriptions) && count($subscriptions)) {
+			if ( is_array( $subscriptions ) && count( $subscriptions ) ) {
 
-				foreach ($subscriptions as $subscription) {
-					$subscription->update_status('failed');
-					$subscription->add_order_note($order_note);
+				foreach ( $subscriptions as $subscription ) {
+					$subscription->update_status( 'failed' );
+					$subscription->add_order_note( $order_note );
 					$subscription->save();
 				}
 			}
 
-			return NULL;
+			return null;
 		}
 	}
 
 	/**
-	 * @param WC_Order $order
+	 * @param WC_Order                 $order
 	 * @param $shopper
 	 * @param $user_id
 	 * @param $card_number
@@ -656,34 +753,48 @@ class WC_Gateway_Converge_Api {
 		$card_verification_number
 	) {
 		$user_info = get_userdata( $user_id );
-		$full_name = sprintf( "%s %s", $user_info->first_name, $user_info->last_name );
+		$full_name = sprintf(
+			'%s %s',
+			esc_html( $user_info->first_name ),
+			esc_html( $user_info->last_name )
+		);
 
-		if ( strlen( $exp_year ) == 2 ) {
+		if ( 2 === strlen( $exp_year ) ) {
 			$exp_year = DateTime::createFromFormat( 'y', $exp_year )->format( 'Y' );
 		}
 
 		$card_builder = new CardDataBuilder();
-		$card_builder->setHolderName($full_name);
-		$card_builder->setNumber($card_number);
-		$card_builder->setExpirationMonth($exp_month);
-		$card_builder->setExpirationYear($exp_year);
-		$card_builder->setSecurityCode($card_verification_number);
+		$card_builder->setHolderName( $full_name );
+		$card_builder->setNumber( $card_number );
+		$card_builder->setExpirationMonth( $exp_month );
+		$card_builder->setExpirationYear( $exp_year );
+		$card_builder->setSecurityCode( $card_verification_number );
 
 		$bill_to = new ContactDataBuilder();
-		$bill_to->setFullName($full_name);
+		$bill_to->setFullName( $full_name );
 		$bill_to->setStreet1( get_user_meta( $user_id, 'billing_address_1', true ) );
 		$bill_to->setStreet2( get_user_meta( $user_id, 'billing_address_2', true ) );
 		$bill_to->setCity( get_user_meta( $user_id, 'billing_city', true ) );
 		$bill_to->setRegion( get_user_meta( $user_id, 'billing_state', true ) );
-		$bill_to->setPostalCode( wc_format_postcode( get_user_meta( $user_id, 'billing_postcode', true ),
-			get_user_meta( $user_id, 'billing_country', true ) ) );
-		$bill_to->setCountryCode( wgc_convert_countrycode_alpha2_to_alpha3( get_user_meta( $user_id,
-			'billing_country',
-			true ) ) );
+		$bill_to->setPostalCode(
+			wc_format_postcode(
+				get_user_meta( $user_id, 'billing_postcode', true ),
+				get_user_meta( $user_id, 'billing_country', true )
+			)
+		);
+		$bill_to->setCountryCode(
+			wgc_convert_countrycode_alpha2_to_alpha3(
+				get_user_meta(
+					$user_id,
+					'billing_country',
+					true
+				)
+			)
+		);
 		$bill_to->setPrimaryPhone( get_user_meta( $user_id, 'billing_phone', true ) );
 
 		// poate pot folosi wgc_get_order_address()
-		$card_builder->setBillTo($bill_to->getData());
+		$card_builder->setBillTo( $bill_to->getData() );
 		$stored_card_builder = new StoredCardDataBuilder();
 		$stored_card_builder->setShopper( $shopper );
 		$stored_card_builder->setCard( $card_builder->getData() );
@@ -726,15 +837,14 @@ class WC_Gateway_Converge_Api {
 		$card_verification_number
 	) {
 
-		if ( strlen( $exp_year ) == 2 ) {
+		if ( 2 === strlen( $exp_year ) ) {
 			$exp_year = DateTime::createFromFormat( 'y', $exp_year )->format( 'Y' );
 		}
 
-
 		$card_builder = new CardDataBuilder();
-		$card_builder->setExpirationMonth($exp_month);
-		$card_builder->setExpirationYear($exp_year);
-		$card_builder->setSecurityCode($card_verification_number);
+		$card_builder->setExpirationMonth( $exp_month );
+		$card_builder->setExpirationYear( $exp_year );
+		$card_builder->setSecurityCode( $card_verification_number );
 
 		$stored_card_builder = new StoredCardDataBuilder();
 		$stored_card_builder->setCard( $card_builder->getData() );
@@ -759,14 +869,14 @@ class WC_Gateway_Converge_Api {
 	public function create_product_plan( $product_id, $properties ) {
 
 		$plan_builder = new PlanDataBuilder();
-		$plan_builder->setName( sprintf( "Plan #%s", $product_id ) );
+		$plan_builder->setName( sprintf( 'Plan #%s', esc_html( $product_id ) ) );
 
 		$total = new TotalDataBuilder();
 		$total->setAmount( $properties['wgc_plan_price'] );
 		$total->setCurrencyCode( get_woocommerce_currency() );
 		$plan_builder->setTotal( $total->getData() );
 
-		if ( $properties['wgc_plan_introductory_rate'] == 'yes' ) {
+		if ( 'yes' === $properties['wgc_plan_introductory_rate'] ) {
 			$initial_total = new TotalDataBuilder();
 			$initial_total->setAmount( $properties['wgc_plan_introductory_rate_amount'] );
 			$initial_total->setCurrencyCode( get_woocommerce_currency() );
@@ -779,12 +889,14 @@ class WC_Gateway_Converge_Api {
 		$billing_interval->setTimeUnit( $properties['wgc_plan_billing_frequency'] );
 		$plan_builder->setBillingInterval( $billing_interval->getData() );
 
-		if ( $properties['wgc_plan_billing_ending'] == 'billing_periods' ) {
+		if ( 'billing_periods' === $properties['wgc_plan_billing_ending'] ) {
 			$plan_builder->setBillCount( $properties['wgc_plan_ending_billing_periods'] );
 		}
-		$plan_builder->setShopperStatementNamePhoneUrl( $this->gateway->get_option( WGC_KEY_NAME ),
+		$plan_builder->setShopperStatementNamePhoneUrl(
+			$this->gateway->get_option( WGC_KEY_NAME ),
 			$this->gateway->get_option( WGC_KEY_PHONE ),
-			$this->gateway->get_option( WGC_KEY_URL ) );
+			$this->gateway->get_option( WGC_KEY_URL )
+		);
 		$plan_builder->setIsSubscribable( true );
 		$plan_builder->setCustomReference( null );
 		$plan_builder->setCustomFields( $this->gateway->getConvergeOrderWrapper()->get_custom_fields() );
@@ -808,7 +920,7 @@ class WC_Gateway_Converge_Api {
 		}
 
 		$plan_builder = new PlanDataBuilder();
-		$plan_builder->setName( sprintf( "%s - Subscription #%s", $converge_product_plan->getName(), $subscription->get_id() ) );
+		$plan_builder->setName( sprintf( '%s - Subscription #%s', esc_html( $converge_product_plan->getName() ), esc_html( $subscription->get_id() ) ) );
 
 		$shipping_total           = (float) $subscription->get_shipping_total();
 		$initial_total_bill_count = $converge_product_plan->getInitialTotalBillCount();
@@ -817,26 +929,26 @@ class WC_Gateway_Converge_Api {
 		$coupon_type              = $subscription->get_meta( 'wgc_coupon_type' );
 		$discount_total           = 0;
 
-		if ( "recurring" == $coupon_type ) {
+		if ( 'recurring' === $coupon_type ) {
 			$discount_total = (float) $subscription->get_discount_total();
 		}
 
-		if ( ! is_null( $initial_total_bill_count ) && 1 == $initial_total_bill_count ) {
+		if ( ! is_null( $initial_total_bill_count ) && 1 === $initial_total_bill_count ) {
 			$initial_total_bill_count = null;
 			$initial_amount           = null;
 			$total_amount             = ( $subscription_product->get_wgc_plan_price() * $subscription_product_qty ) + $shipping_total - $discount_total;
-			$total_amount = wgc_get_product_price_tax($subscription_product, $total_amount);
-		} else if ( ! is_null( $initial_total_bill_count ) && $initial_total_bill_count > 1 ) {
-			$initial_total_bill_count --;
+			$total_amount             = wgc_get_product_price_tax( $subscription_product, $total_amount );
+		} elseif ( ! is_null( $initial_total_bill_count ) && $initial_total_bill_count > 1 ) {
+			--$initial_total_bill_count;
 			$initial_amount = ( $subscription_product->get_wgc_plan_introductory_rate_amount() * $subscription_product_qty ) + $shipping_total - $discount_total;
-			$plan_price = $subscription_product->get_wgc_plan_price();
+			$plan_price     = $subscription_product->get_wgc_plan_price();
 			$total_amount   = ( $plan_price * $subscription_product_qty ) + $shipping_total - $discount_total;
 
 			$initial_amount = wgc_get_product_price_tax( $subscription_product, $initial_amount );
 			$total_amount   = wgc_get_product_price_tax( $subscription_product, $total_amount );
 
 			if ( $subscription_product->get_tax_status() === 'shipping' && $subscription_product->needs_shipping() ) {
-				$shipping_tax   = wgc_get_product_shipping_tax( $subscription_product, $shipping_total );
+				$shipping_tax    = wgc_get_product_shipping_tax( $subscription_product, $shipping_total );
 				$initial_amount += $shipping_tax;
 				$total_amount   += $shipping_tax;
 			}
@@ -864,19 +976,20 @@ class WC_Gateway_Converge_Api {
 			$bill_count = (int) $converge_product_plan->getBillCount();
 
 			if ( $bill_count > 0 ) {
-				$bill_count --;
+				--$bill_count;
 			}
 
 			$plan_builder->setBillCount( $bill_count );
 		}
 
-		$plan_builder->setShopperStatementNamePhoneUrl( $this->gateway->get_option( WGC_KEY_NAME ),
+		$plan_builder->setShopperStatementNamePhoneUrl(
+			$this->gateway->get_option( WGC_KEY_NAME ),
 			$this->gateway->get_option( WGC_KEY_PHONE ),
-			$this->gateway->get_option( WGC_KEY_URL ) );
+			$this->gateway->get_option( WGC_KEY_URL )
+		);
 		$plan_builder->setIsSubscribable( true );
 		$plan_builder->setCustomReference( null );
 		$plan_builder->setCustomFields( $this->gateway->getConvergeOrderWrapper()->get_custom_fields() );
-
 
 		wgc_log_data_with_intro( $plan_builder->getData(), 'create subscription plan', $subscription, $subscription_product->get_id() );
 
@@ -888,12 +1001,12 @@ class WC_Gateway_Converge_Api {
 		return $response;
 	}
 
-	public function get_plan($plan_id) {
-		wgc_log_data_with_intro(array('id' => $plan_id), 'get plan');
+	public function get_plan( $plan_id ) {
+		wgc_log_data_with_intro( array( 'id' => $plan_id ), 'get plan' );
 
 		/** @var PlanResponse $response */
-		$response = $this->gateway->getC2ApiService()->getPlan($plan_id);
-		wgc_log_converge_response($response, 'get plan');
+		$response = $this->gateway->getC2ApiService()->getPlan( $plan_id );
+		wgc_log_converge_response( $response, 'get plan' );
 
 		return $response;
 	}
@@ -941,45 +1054,49 @@ class WC_Gateway_Converge_Api {
 
 	public function create_subscription( $subscription, $stored_card ) {
 
-		$order = $subscription->get_order();
-		$plan_id = $subscription->get_meta( 'wgc_plan_id' );
-		$converge_product_plan = $this->get_plan($plan_id);
+		$order                 = $subscription->get_order();
+		$plan_id               = $subscription->get_meta( 'wgc_plan_id' );
+		$converge_product_plan = $this->get_plan( $plan_id );
 
 		if ( ! $converge_product_plan->isSuccess() ) {
-			$subscription->add_order_note( sprintf( __( 'Invalid plan id: %1$s ', 'elavon-converge-gateway' ), $plan_id ) );
+			$subscription->add_order_note( sprintf( __( 'Invalid plan id: %1$s ', 'elavon-converge-gateway' ), esc_html( $plan_id ) ) );
 			return null;
 		}
 
-		$subscription_start_date = wgc_get_subscription_start_date($converge_product_plan->getBillingInterval());
+		$subscription_start_date = wgc_get_subscription_start_date( $converge_product_plan->getBillingInterval() );
 
 		$subscription_builder = new SubscriptionDataBuilder();
-		$subscription_builder->setPlan($plan_id);
-		$subscription_builder->setStoredCard($stored_card);
-		$subscription_builder->setFirstBillAt($subscription_start_date);
+		$subscription_builder->setPlan( $plan_id );
+		$subscription_builder->setStoredCard( $stored_card );
+		$subscription_builder->setFirstBillAt( $subscription_start_date );
 		$subscription_builder->setCustomReference( null );
 		$subscription_builder->setCustomFields( $this->gateway->getConvergeOrderWrapper()->get_custom_fields() );
 
 		if ( isset( $_COOKIE['wgc_timezone'] ) ) {
-			$subscription_builder->setTimeZoneId( $_COOKIE['wgc_timezone'] );
+			$subscription_builder->setTimeZoneId( wp_unslash( $_COOKIE['wgc_timezone'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		$data = $subscription_builder->getData();
-		wgc_log_data_with_intro( $data, 'create subscription', $order  );
+		wgc_log_data_with_intro( $data, 'create subscription', $order );
 
 		/** @var \Elavon\Converge2\Response\SubscriptionResponse $response */
-		$response = $this->gateway->getC2ApiService()->createSubscription($subscription_builder->getData());
+		$response = $this->gateway->getC2ApiService()->createSubscription( $subscription_builder->getData() );
 
 		wgc_log_converge_response( $response, 'create subscription', $order );
 
 		if ( $response->isSuccess() ) {
 
 			$subscription_id = $response->getId();
-			$subscription->add_order_note( sprintf( __( 'Subscription id: %1$s ', 'elavon-converge-gateway' ), $subscription_id ) );
-			$subscription->payment_complete($subscription_id);
+			$subscription->add_order_note( sprintf( __( 'Subscription id: %1$s ', 'elavon-converge-gateway' ), esc_html( $subscription_id ) ) );
+			$subscription->payment_complete( $subscription_id );
 
 		} else {
-			$subscription->add_order_note( wgc_get_order_error_note( __( 'Could not create subscription.', 'elavon-converge-gateway' ),
-				$response ) );
+			$subscription->add_order_note(
+				wgc_get_order_error_note(
+					__( 'Could not create subscription.', 'elavon-converge-gateway' ),
+					$response
+				)
+			);
 			$subscription->update_status( 'failed' );
 		}
 
@@ -1023,20 +1140,19 @@ class WC_Gateway_Converge_Api {
 		return $response;
 	}
 
-	public function get_transaction($transaction_id) {
-		wgc_log_data_with_intro(array('id' => $transaction_id), 'get transaction');
+	public function get_transaction( $transaction_id ) {
+		wgc_log_data_with_intro( array( 'id' => $transaction_id ), 'get transaction' );
 
 		/** @var TransactionResponse $response */
-		$response = $this->gateway->getC2ApiService()->getTransaction($transaction_id);
-		wgc_log_converge_response($response, 'get transaction');
+		$response = $this->gateway->getC2ApiService()->getTransaction( $transaction_id );
+		wgc_log_converge_response( $response, 'get transaction' );
 
 		return $response;
 	}
 
-    public function get_payment_session( $payment_session_id ) {
-        $response = $this->gateway->getC2ApiService()->getPaymentSession( $payment_session_id );
-        wgc_log_converge_response($response, 'get payment session');
-        return $response;
-    }
-
+	public function get_payment_session( $payment_session_id ) {
+		$response = $this->gateway->getC2ApiService()->getPaymentSession( $payment_session_id );
+		wgc_log_converge_response( $response, 'get payment session' );
+		return $response;
+	}
 }
