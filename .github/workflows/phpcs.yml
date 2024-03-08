@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - smoke-testing
   pull_request:
     branches:
       - main
+      - smoke-testing
 
 jobs:
   phpcs:
