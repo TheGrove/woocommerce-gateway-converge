@@ -7,7 +7,12 @@ class WC_Cart_Converge_Subscriptions {
 	 * @var bool
 	 */
 	private $wgc_recurring_total_calculation = false;
-	
+
+	/**
+	 * @var string
+	 */
+	private $current_recurring_cart_key = '';
+
 	public function __construct() {
 		add_filter( 'woocommerce_add_to_cart_handler', array( $this, 'add_to_cart_handler' ), 10, 2 );
 		add_filter( 'woocommerce_cart_product_price', array( $this, 'cart_product_price' ), 10, 2 );
