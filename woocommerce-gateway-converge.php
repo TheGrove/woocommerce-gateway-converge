@@ -24,6 +24,7 @@
  * Text Domain:          elavon-converge-gateway
  * WC tested up to:      8.6
  * WC requires at least: 8.4
+ * PHP tested up to:     8.3
  * Requires PHP:         7.4
  * Domain Path:       /languages
  */
