@@ -1273,7 +1273,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 			<?php do_action( 'woocommerce_credit_card_form_start', $this->id ); ?>
 			<?php
 			foreach ( $fields as $field ) {
-				echo wp_kses_post( $field ); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+				echo $field; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			?>
 			<?php do_action( 'woocommerce_credit_card_form_end', $this->id ); ?>
@@ -1282,7 +1282,7 @@ class WC_Gateway_Converge extends WC_Payment_Gateway_CC {
 		<?php
 
 		if ( $this->supports( 'credit_card_form_cvc_on_saved_method' ) ) {
-			echo '<fieldset>' . wp_kses_post( $cvc_field ) . '</fieldset>'; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+			echo '<fieldset>' . $cvc_field . '</fieldset>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
