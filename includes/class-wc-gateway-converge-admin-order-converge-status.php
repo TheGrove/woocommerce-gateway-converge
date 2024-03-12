@@ -4,10 +4,13 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 
 	public function __construct() {
 
-		add_action( 'woocommerce_admin_order_data_after_order_details', array(
-			$this,
-			'output_status'
-		) );
+		add_action(
+			'woocommerce_admin_order_data_after_order_details',
+			array(
+				$this,
+				'output_status',
+			)
+		);
 	}
 
 	/**
@@ -29,11 +32,12 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 
 		?>
 
-        <div class="form-field form-field-wide wgc_sync_container">
+		<div class="form-field form-field-wide wgc_sync_container">
 			<div class="notice inline notice-warning">
-				<p><?php _e( 'The subscription status is not updated. ', 'elavon-converge-gateway' ); ?>
-					<a class="wgc_sync" href=""><?php _e( 'Sync with Converge now.', 'elavon-converge-gateway' ); ?></a>
+				<p><?php esc_html_e( 'The subscription status is not updated. ', 'elavon-converge-gateway' ); ?>
+					<a class="wgc_sync" href=""><?php esc_html_e( 'Sync with Converge now.', 'elavon-converge-gateway' ); ?></a>
 				</p>
+				<input type="hidden" name="wgc_sync_subscription_nonce" id="wgc_sync_subscription_nonce" value="<?php echo esc_attr( wp_create_nonce( 'wgc_sync_subscription_nonce' ) ); ?>"/>
 			</div>
 		</div>
 
@@ -42,17 +46,15 @@ class WC_Gateway_Converge_Admin_Order_Converge_Status {
 		$converge_transaction_status = wgc_get_order_transaction_state( $order );
 
 		if ( ! empty( $converge_transaction_status ) ) {
-			echo '<p class="form-field form-field-wide"><label for=""> ' . __( 'Converge Transaction Status:', 'elavon-converge-gateway' ) . '</label><span>' . $converge_transaction_status->getValue() . '</span></p>';
+			echo wp_kses_post( '<p class="form-field form-field-wide"><label for=""> ' . __( 'Converge Transaction Status:', 'elavon-converge-gateway' ) . '</label><span>' . $converge_transaction_status->getValue() . '</span></p>' );
 		}
 
-		$unique_transaction_id = $order->get_meta( '_unique_transaction_id' );
+		$unique_transaction_id = get_post_meta( $order_id, '_unique_transaction_id', true );
 
 		if ( ! empty( $unique_transaction_id ) ) {
-			echo '<p class="form-field form-field-wide"><label for=""> ' . __( 'Merchant Transaction Code:', 'elavon-converge-gateway' ) . '</label><span>' . $unique_transaction_id . '</span></p>';
+			echo wp_kses_post( '<p class="form-field form-field-wide"><label for=""> ' . __( 'Merchant Transaction Code:', 'elavon-converge-gateway' ) . '</label><span>' . $unique_transaction_id . '</span></p>' );
 		}
-
 	}
-
 }
 
-new WC_Gateway_Converge_Admin_Order_Converge_Status;
+new WC_Gateway_Converge_Admin_Order_Converge_Status();

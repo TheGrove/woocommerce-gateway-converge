@@ -16,8 +16,7 @@ class WC_Meta_Box_Wgc_Coupon {
 	}
 
 	public static function save( $post_id, $coupon ) {
-
-		$props = array( wc_clean( $_POST['converge_subscription_type'] ) );
+		$props = array( isset( $_POST['converge_subscription_type'] ) ? wc_clean( wp_unslash( $_POST['converge_subscription_type'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		foreach ( $props as $key => $value ) {
 			update_post_meta( $post_id, '_converge_subscription_type', $value );

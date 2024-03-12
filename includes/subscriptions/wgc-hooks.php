@@ -5,20 +5,30 @@ defined( 'ABSPATH' ) || exit();
 class Wgc_Hooks {
 
 	public static function init() {
-		add_action( 'woocommerce_account_view-converge-subscription_endpoint',
-			array( __CLASS__, 'wgc_view_subscription_template' ) );
-		add_action( 'woocommerce_account_converge-subscriptions_endpoint',
-			array( __CLASS__, 'wgc_subscriptions_template' ) );
-		add_action( 'woocommerce_account_converge-subscription-change-method_endpoint',
-			array( __CLASS__, 'wgc_subscriptions_change_method_template' ) );
-		add_action( 'woocommerce_account_converge-change-card-details_endpoint',
-			array( __CLASS__, 'wgc_change_card_details_template' ) );
+		add_action(
+			'woocommerce_account_view-converge-subscription_endpoint',
+			array( __CLASS__, 'wgc_view_subscription_template' )
+		);
+		add_action(
+			'woocommerce_account_converge-subscriptions_endpoint',
+			array( __CLASS__, 'wgc_subscriptions_template' )
+		);
+		add_action(
+			'woocommerce_account_converge-subscription-change-method_endpoint',
+			array( __CLASS__, 'wgc_subscriptions_change_method_template' )
+		);
+		add_action(
+			'woocommerce_account_converge-change-card-details_endpoint',
+			array( __CLASS__, 'wgc_change_card_details_template' )
+		);
 		add_filter( 'woocommerce_account_menu_items', array( __CLASS__, 'wgc_account_menu_items' ), 10, 2 );
 		add_action( 'woocommerce_order_details_after_order_table', array( __CLASS__, 'wgc_order_details' ) );
 		add_action( 'init', array( __CLASS__, 'add_subscriptions_endpoint' ) );
 		add_action( 'woocommerce_order_actions', array( __CLASS__, 'add_subscription_actions' ) );
-		add_action( 'woocommerce_order_action_wgc_cancel_subscription',
-			array( __CLASS__, 'cancel_subscription_handler' ) );
+		add_action(
+			'woocommerce_order_action_wgc_cancel_subscription',
+			array( __CLASS__, 'cancel_subscription_handler' )
+		);
 		add_filter( 'woocommerce_email_recipient_customer_processing_order', array( __CLASS__, 'wgc_subscription_email' ), 10, 2 );
 		add_filter( 'request', array( __CLASS__, 'request_query' ) );
 	}
@@ -53,7 +63,7 @@ class Wgc_Hooks {
 		}
 	}
 
-	public static function wgc_change_card_details_template($id) {
+	public static function wgc_change_card_details_template( $id ) {
 
 		$payment_token = WC_Payment_Tokens::get( $id );
 
@@ -72,19 +82,25 @@ class Wgc_Hooks {
 			}
 
 			$stored_card = $payment_token->get_token( wgc_get_payment_name() );
-			$expiry = wgc_format_card_expiration_date( wc_clean( $_POST['elavon-converge-gateway-card-expiry'] ) );
+			$expiry      = wgc_format_card_expiration_date( wc_clean( wp_unslash( $_POST['elavon-converge-gateway-card-expiry'] ) ) );
 
 			if ( ! wgc_get_gateway()->getC2ApiService()->canConnect() ) {
-				self::print_error( __( 'Payment method cannot be updated due to a connection issue.',
-					'elavon-converge-gateway' ) );
+				self::print_error(
+					__(
+						'Payment method cannot be updated due to a connection issue.',
+						'elavon-converge-gateway'
+					)
+				);
 
 				return;
 			}
 
-			$response = wgc_get_gateway()->get_converge_api()->update_stored_card_details( $stored_card,
+			$response = wgc_get_gateway()->get_converge_api()->update_stored_card_details(
+				$stored_card,
 				$expiry['month'],
 				$expiry['year'],
-				wc_clean( $_POST['elavon-converge-gateway-card-cvc'] ) );
+				wc_clean( wp_unslash( $_POST['elavon-converge-gateway-card-cvc'] ) )
+			);
 
 			if ( $response ) {
 				$payment_token->init_from_stored_card( $response );
@@ -95,14 +111,18 @@ class Wgc_Hooks {
 			}
 		}
 
-		wgc_get_template( 'myaccount/change-card-details.php',
-			array( 'payment_token' => $payment_token ) );
+		wgc_get_template(
+			'myaccount/change-card-details.php',
+			array( 'payment_token' => $payment_token )
+		);
 	}
 
 	public static function wgc_subscriptions_template() {
 		$subscriptions = wgc_get_subscriptions_for_user( get_current_user_id() );
-		wgc_get_template( 'myaccount/my-subscriptions.php',
-			array( 'subscriptions' => $subscriptions ) );
+		wgc_get_template(
+			'myaccount/my-subscriptions.php',
+			array( 'subscriptions' => $subscriptions )
+		);
 	}
 
 	public static function wgc_subscriptions_change_method_template( $id ) {
@@ -120,8 +140,12 @@ class Wgc_Hooks {
 		$converge_subscription = wgc_get_gateway()->get_converge_api()->get_subscription( $subscription->get_transaction_id() );
 
 		if ( ! $converge_subscription->isSuccess() ) {
-			self::print_error( __( 'Some of your subscription data is unavailable at this time. Please try again later.',
-				'elavon-converge-gateway' ) );
+			self::print_error(
+				__(
+					'Some of your subscription data is unavailable at this time. Please try again later.',
+					'elavon-converge-gateway'
+				)
+			);
 
 			return;
 		} else {
@@ -135,11 +159,15 @@ class Wgc_Hooks {
 					'available_gateways'    => WC()->payment_gateways()->get_available_payment_gateways(),
 				)
 			);
-			wp_register_script( 'woocommerce_converge_save_timezone',
-				plugins_url( 'assets/js/save_timezone.js', WGC_MAIN_FILE ) );
+			wp_register_script(
+				'woocommerce_converge_save_timezone',
+				plugins_url( 'assets/js/save_timezone.js', WGC_MAIN_FILE )
+			);
 			wp_enqueue_script( 'woocommerce_converge_save_timezone' );
-			wp_enqueue_style( 'woocommerce_converge_checkout_css',
-				plugins_url( 'assets/css/elavon_convergegateway.css', WGC_MAIN_FILE ) );
+			wp_enqueue_style(
+				'woocommerce_converge_checkout_css',
+				plugins_url( 'assets/css/elavon_convergegateway.css', WGC_MAIN_FILE )
+			);
 		}
 	}
 
@@ -149,9 +177,11 @@ class Wgc_Hooks {
 
 		if ( isset( $items['orders'] ) ) {
 			$position = array_search( 'orders', array_keys( $items ) );
-			$items    = array_merge( array_slice( $items, 0, $position + 1 ),
+			$items    = array_merge(
+				array_slice( $items, 0, $position + 1 ),
 				$endpoints,
-				array_slice( $items, $position + 1 ) );
+				array_slice( $items, $position + 1 )
+			);
 		} else {
 			$items = array_merge( $items, $endpoints );
 		}
@@ -172,42 +202,55 @@ class Wgc_Hooks {
 		}
 
 		if ( isset( $_POST['cancel'] ) && isset( $_POST['cancel_wpnonce'] ) ) {
-			if ( wp_verify_nonce( $_POST['cancel_wpnonce'], 'cancel-subscription-' . $subscription->get_transaction_id() )
+			if ( wp_verify_nonce( wp_unslash( $_POST['cancel_wpnonce'] ), 'cancel-subscription-' . $subscription->get_transaction_id() ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 					&& $_POST['cancel_wpnonce'] != WC()->session->get( 'cancel_wpnonce' ) ) {
 
-				WC()->session->set( 'cancel_wpnonce', $_POST['cancel_wpnonce'] );
+				WC()->session->set( 'cancel_wpnonce', wp_unslash( $_POST['cancel_wpnonce'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				if ( wgc_get_gateway()->get_converge_api()->cancel_subscription( $subscription )->isSuccess() ) {
 					self::print_notice( __( 'Your subscription has been cancelled.', 'elavon-converge-gateway' ) );
 				} else {
 					self::print_error( __( 'Your subscription could not be cancelled.', 'elavon-converge-gateway' ) );
 				}
-			} elseif ( $_POST['cancel_wpnonce'] == WC()->session->get( 'cancel_wpnonce' ) ) {
+			} elseif ( $_POST['cancel_wpnonce'] === WC()->session->get( 'cancel_wpnonce' ) ) {
 				self::print_error( __( 'There has been an error. Please reload the page.', 'elavon-converge-gateway' ) );
 			} else {
 				self::print_error( __( 'Your session has expired. Please reload the page.', 'elavon-converge-gateway' ) );
 			}
 		}
 
-		if (empty($subscription->get_transaction_id())) {
-			self::print_error(__('The subscription data is unavailable. Reason: failed to create transaction.',
-				'elavon-converge-gateway'));
+		if ( empty( $subscription->get_transaction_id() ) ) {
+			self::print_error(
+				__(
+					'The subscription data is unavailable. Reason: failed to create transaction.',
+					'elavon-converge-gateway'
+				)
+			);
 
 			return;
 		}
 
 		$converge_subscription = wgc_get_gateway()->get_converge_api()->get_subscription( $subscription->get_transaction_id() );
 		if ( ! $converge_subscription->isSuccess() ) {
-			self::print_error( __( 'Some of your subscription data is unavailable at this time. Please try again later.',
-				'elavon-converge-gateway' ) );
+			self::print_error(
+				__(
+					'Some of your subscription data is unavailable at this time. Please try again later.',
+					'elavon-converge-gateway'
+				)
+			);
 
 			return;
 		} else {
-			wgc_get_template( 'myaccount/view-subscription.php',
-				array( 'subscription' => $subscription, 'converge_subscription' => $converge_subscription ) );
+			wgc_get_template(
+				'myaccount/view-subscription.php',
+				array(
+					'subscription'          => $subscription,
+					'converge_subscription' => $converge_subscription,
+				)
+			);
 		}
 		wp_register_script( 'woocommerce_converge_cancel_subscription', plugins_url( 'assets/js/cancel_subscription.js', WGC_MAIN_FILE ) );
 		wp_enqueue_script( 'woocommerce_converge_cancel_subscription' );
-		$params = [ 'cancel_alert' => __( 'Cancelling this subscription will stop all upcoming scheduled payments from processing.', 'elavon-converge-gateway' ) ];
+		$params = array( 'cancel_alert' => __( 'Cancelling this subscription will stop all upcoming scheduled payments from processing.', 'elavon-converge-gateway' ) );
 		wp_localize_script( 'woocommerce_converge_cancel_subscription', 'elavon_converge_gateway', $params );
 	}
 
@@ -254,18 +297,24 @@ class Wgc_Hooks {
 	public static function cancel_subscription_handler( $order ) {
 		$cancel_response = wgc_get_gateway()->get_converge_api()->cancel_subscription( $order );
 		if ( $cancel_response->isSuccess() ) {
-			$order->add_order_note( sprintf( __( 'Subscription was cancelled.', 'elavon-converge-gateway' ) ) );
+			$order->add_order_note( __( 'Subscription was cancelled.' ) );
 			$order->update_status( 'cancelled' );
 		} else {
-			$order->add_order_note( wgc_get_order_error_note( __( 'There was an error while canceling the subscription.',
-				'elavon-converge-gateway' ),
-				$cancel_response ) );
+			$order->add_order_note(
+				wgc_get_order_error_note(
+					__(
+						'There was an error while canceling the subscription.',
+						'elavon-converge-gateway'
+					),
+					$cancel_response
+				)
+			);
 		}
 	}
 
 	public static function wgc_subscription_email( $recipients, $order_object ) {
 
-		if ( $order_object && $order_object->get_type() == WGC_SUBSCRIPTION_POST_TYPE ) {
+		if ( $order_object && $order_object->get_type() === WGC_SUBSCRIPTION_POST_TYPE ) {
 			return null;
 		}
 

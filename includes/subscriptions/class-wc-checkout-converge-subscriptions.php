@@ -6,8 +6,8 @@ use Automattic\WooCommerce\Utilities\OrderUtil;
 class WC_Checkout_Converge_Subscriptions {
 
 	public function __construct() {
-		add_action( 'wgc_checkout_process_payment', array( __CLASS__, 'process_checkout' ));
-		add_filter( 'user_has_cap', array( __CLASS__, 'restrict_guest_checkout' ), 9999, 3);
+		add_action( 'wgc_checkout_process_payment', array( __CLASS__, 'process_checkout' ) );
+		add_filter( 'user_has_cap', array( __CLASS__, 'restrict_guest_checkout' ), 9999, 3 );
 		add_filter( 'before_woocommerce_pay', array( $this, 'product_types_validator' ), 10, 1 );
 		add_filter( 'woocommerce_before_checkout_form', array( $this, 'product_types_validator' ), 10, 1 );
 		add_action( 'woocommerce_review_order_after_order_total', array( $this, 'display_recurring_totals_form' ) );
@@ -18,7 +18,7 @@ class WC_Checkout_Converge_Subscriptions {
 			return;
 		}
 
-		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] );
+		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( $order_from_merchant_view ) {
 			if ( ! wgc_has_subscription_elements_in_order( $order ) ) {
@@ -71,7 +71,6 @@ class WC_Checkout_Converge_Subscriptions {
 			}
 		}
 
-
 		$order->save();
 	}
 
@@ -87,7 +86,7 @@ class WC_Checkout_Converge_Subscriptions {
 		$subscription         = wgc_create_subscription( $subscription_data );
 
 		if ( is_wp_error( $subscription ) ) {
-			throw new Exception( $subscription->get_error_message() );
+			throw new Exception( $subscription->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$subscription = wgc_assign_billing_and_shipping_to_subscription( $order, $subscription );
@@ -95,7 +94,7 @@ class WC_Checkout_Converge_Subscriptions {
 		$coupon_type = wgc_get_coupon_type( $recurring_cart );
 		$subscription->update_meta_data( 'wgc_coupon_type', $coupon_type );
 
-		if ( 'single' == $coupon_type ) {
+		if ( 'single' === $coupon_type ) {
 			$recurring_cart->remove_coupons();
 		} else {
 			WC()->checkout()->create_order_coupon_lines( $subscription, $recurring_cart );
@@ -111,10 +110,13 @@ class WC_Checkout_Converge_Subscriptions {
 		$original_order_shipping_items = $order->get_items( 'shipping' );
 
 		foreach ( (array) $original_order_shipping_items as $original_order_shipping_item ) {
-			$item_id = wc_add_order_item( $subscription->get_id(), array(
-				'order_item_name' => $original_order_shipping_item['name'],
-				'order_item_type' => 'shipping'
-			) );
+			$item_id = wc_add_order_item(
+				$subscription->get_id(),
+				array(
+					'order_item_name' => $original_order_shipping_item['name'],
+					'order_item_type' => 'shipping',
+				)
+			);
 			if ( $item_id ) {
 				wc_add_order_item_meta( $item_id, 'method_id', $original_order_shipping_item['method_id'] );
 				wc_add_order_item_meta( $item_id, 'cost', wc_format_decimal( $original_order_shipping_item['cost'] ) );
@@ -137,15 +139,18 @@ class WC_Checkout_Converge_Subscriptions {
 		$subscription->save();
 		$subscription->calculate_totals();
 
-
 		/** @var \Elavon\Converge2\Response\OrderResponse $subscription_plan_response */
 		$subscription_plan_response = wgc_get_gateway()->get_converge_api()->create_subscription_plan( $subscription, $subscription_product );
 
 		if ( $subscription_plan_response->isSuccess() ) {
 			$subscription->update_meta_data( 'wgc_plan_id', $subscription_plan_response->getId() );
 		} else {
-			$subscription->add_order_note( wgc_get_order_error_note( __( 'Could not create subscription plan.', 'elavon-converge-gateway' ),
-				$subscription_plan_response ) );
+			$subscription->add_order_note(
+				wgc_get_order_error_note(
+					__( 'Could not create subscription plan.', 'elavon-converge-gateway' ),
+					$subscription_plan_response
+				)
+			);
 			$subscription->update_status( 'failed' );
 		}
 
@@ -154,19 +159,17 @@ class WC_Checkout_Converge_Subscriptions {
 		return $subscription;
 	}
 
-	public function product_types_validator( $checkout = '') {
+	public function product_types_validator( $checkout = '' ) {
 		if ( ! wgc_has_subscription_elements_in_cart() && ! wgc_order_from_merchant_view_has_subscription_elements() ) {
 			return;
-		} else {
-			if ( true === $checkout->enable_guest_checkout ) {
+		} elseif ( true === $checkout->enable_guest_checkout ) {
 				$checkout->enable_guest_checkout = false;
 				$checkout->must_create_account   = true;
-			}
 		}
 
-		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] );
+		$order_from_merchant_view = isset( $_GET['pay_for_order'] ) && isset( $_GET['key'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( $order_from_merchant_view ) {
-			$order_id = wc_get_order_id_by_order_key( wc_clean( $_GET['key'] ) );
+			$order_id = wc_get_order_id_by_order_key( wc_clean( wp_unslash( $_GET['key'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( $order = wc_get_order( $order_id ) ) {
 				$products = $order->get_items();
 			}
@@ -185,18 +188,26 @@ class WC_Checkout_Converge_Subscriptions {
 			if ( ! wgc_is_product_compatible_with_subscription( $product ) ) {
 				$product = wgc_get_product( $product );
 				if ( $order_from_merchant_view ) {
-					$notice = sprintf( __( '%1$s is not compatible with the other subscription products from your order. Please contact the merchant before trying again.',
-						'elavon-converge-gateway' ),
-						$product->get_name() );
+					$notice = sprintf(
+						__(
+							'%1$s is not compatible with the other subscription products from your order. Please contact the merchant before trying again.',
+							'elavon-converge-gateway'
+						),
+						esc_html( $product->get_name() )
+					);
 					wc_add_notice( $notice, 'error' );
 					wc_print_notices();
 				} else {
-					$notice = sprintf( __( '%1$s is not compatible with the other subscription products from your cart. Please edit your cart and try again.',
-						'elavon-converge-gateway' ),
-						$product->get_name() );
+					$notice = sprintf(
+						__(
+							'%1$s is not compatible with the other subscription products from your cart. Please edit your cart and try again.',
+							'elavon-converge-gateway'
+						),
+						esc_html( $product->get_name() )
+					);
 
 					wc_add_notice( $notice, 'error' );
-					wp_redirect( wc_get_page_permalink( 'cart' ) );
+					wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 				}
 
 				exit;
@@ -207,14 +218,16 @@ class WC_Checkout_Converge_Subscriptions {
 				$product               = wgc_get_product( $product );
 				$converge_product_plan = wgc_get_gateway()->get_converge_api()->get_plan( $product->get_wgc_plan_id() );
 				if ( ! $converge_product_plan->isSuccess() ) {
-					$notice = __( 'Some of your subscription data is unavailable at this time. Please try again later.',
-						'elavon-converge-gateway' );
+					$notice = __(
+						'Some of your subscription data is unavailable at this time. Please try again later.',
+						'elavon-converge-gateway'
+					);
 					wc_add_notice( $notice, 'error' );
 
 					if ( $order_from_merchant_view ) {
 						wc_print_notices();
 					} else {
-						wp_redirect( wc_get_page_permalink( 'cart' ) );
+						wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 					}
 					exit;
 				}
@@ -227,11 +240,10 @@ class WC_Checkout_Converge_Subscriptions {
 			return $allcaps;
 		}
 
-		if (isset($caps[0], $_GET['key'], $args[2])) {
-			if($caps[0] == 'pay_for_order') {
+		if ( isset( $caps[0], $_GET['key'], $args[2] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( $caps[0] === 'pay_for_order' ) {
 				$order_id = $args[2];
-				if (wgc_order_id_from_merchant_view_has_subscription_elements($order_id))
-				{
+				if ( wgc_order_id_from_merchant_view_has_subscription_elements( $order_id ) ) {
 					unset( $allcaps['pay_for_order'] );
 				}
 			}
@@ -240,7 +252,7 @@ class WC_Checkout_Converge_Subscriptions {
 	}
 
 	public function display_recurring_totals_form() {
-		echo get_recurring_totals_form('checkout');
+		echo get_recurring_totals_form( 'checkout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }
 

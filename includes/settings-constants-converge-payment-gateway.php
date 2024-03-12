@@ -72,7 +72,7 @@ define( 'WGC_KEY_WC_VERSION', 'woocommerce_version' );
 define( 'WGC_KEY_VENDOR_ID_VALUE', 'Elavon' );
 define( 'WGC_KEY_VENDOR_APP_NAME_VALUE', 'WooCommerce Plugin' );
 define( 'WGC_KEY_VENDOR_APP_VERSION_VALUE', WGC_VERSION );
-define( 'WGC_KEY_VENDOR_CREATED_BY_VALUE', WGC_KEY_VENDOR_APP_NAME_VALUE  . ' v' . WGC_VERSION );
+define( 'WGC_KEY_VENDOR_CREATED_BY_VALUE', WGC_KEY_VENDOR_APP_NAME_VALUE . ' v' . WGC_VERSION );
 
 define( 'WGC_KEY_WOOCOMMERCE_ID', 'WooCommerceID' );
 
@@ -120,38 +120,47 @@ if ( ! defined( 'WGC_PRODUCTION_HPP_LIGHTBOX_SCRIPT_URL' ) ) {
 	define( 'WGC_PRODUCTION_HPP_LIGHTBOX_SCRIPT_URL', 'https://hpp.eu.convergepay.com/client/index.js' );
 }
 
-if ( ! defined( 'WGC_API_URL_MAP' )) {
-	define ( 'WGC_API_URL_MAP', array(
-		'sandbox' => 'https://uat.api.converge.eu.elavonaws.com/',
-		'dev1' => 'https://dev1.api.converge.eu.elavonaws.com/',
-		'qa1' => 'https://qa1.api.converge.eu.elavonaws.com/',
-		'qa2' => 'https://qa2.api.converge.eu.nonprod.elavonaws.com/',
-		'qa3' => 'https://qa3.api.converge.eu.elavonaws.com/',
-		'qa4' => 'https://qa4.api.converge.eu.elavonaws.com/',
-		'production' => 'https://api.eu.convergepay.com/'
-	));
+if ( ! defined( 'WGC_API_URL_MAP' ) ) {
+	define(
+		'WGC_API_URL_MAP',
+		array(
+			'sandbox'    => 'https://uat.api.converge.eu.elavonaws.com/',
+			'dev1'       => 'https://dev1.api.converge.eu.elavonaws.com/',
+			'qa1'        => 'https://qa1.api.converge.eu.elavonaws.com/',
+			'qa2'        => 'https://qa2.api.converge.eu.nonprod.elavonaws.com/',
+			'qa3'        => 'https://qa3.api.converge.eu.elavonaws.com/',
+			'qa4'        => 'https://qa4.api.converge.eu.elavonaws.com/',
+			'production' => 'https://api.eu.convergepay.com/',
+		)
+	);
 }
 
-if ( ! defined( 'WGC_HPP_URL_MAP' )) {
-	define ( 'WGC_HPP_URL_MAP', array(
-		'sandbox' => 'https://uat.hpp.converge.eu.elavonaws.com/',
-		'dev1' => 'https://dev1.hpp.converge.eu.elavonaws.com/',
-		'qa1' => 'https://qa1.hpp.converge.eu.elavonaws.com/',
-		'qa2' => 'https://qa2.hpp.converge.eu.nonprod.elavonaws.com/',
-		'qa3' => 'https://qa3.hpp.converge.eu.elavonaws.com/',
-		'qa4' => 'https://qa4.hpp.converge.eu.elavonaws.com/',
-		'production' => 'https://hpp.eu.convergepay.com/'
-	));
+if ( ! defined( 'WGC_HPP_URL_MAP' ) ) {
+	define(
+		'WGC_HPP_URL_MAP',
+		array(
+			'sandbox'    => 'https://uat.hpp.converge.eu.elavonaws.com/',
+			'dev1'       => 'https://dev1.hpp.converge.eu.elavonaws.com/',
+			'qa1'        => 'https://qa1.hpp.converge.eu.elavonaws.com/',
+			'qa2'        => 'https://qa2.hpp.converge.eu.nonprod.elavonaws.com/',
+			'qa3'        => 'https://qa3.hpp.converge.eu.elavonaws.com/',
+			'qa4'        => 'https://qa4.hpp.converge.eu.elavonaws.com/',
+			'production' => 'https://hpp.eu.convergepay.com/',
+		)
+	);
 }
 
-if ( ! defined( 'WGC_LIGHTBOX_URL_MAP' )) {
-	define ( 'WGC_LIGHTBOX_URL_MAP', array(
-		'sandbox' => 'https://uat.hpp.converge.eu.elavonaws.com/client/index.js',
-		'dev1' => 'https://dev1.hpp.converge.eu.elavonaws.com/client/index.js',
-		'qa1' => 'https://qa1.hpp.converge.eu.elavonaws.com/client/index.js',
-		'qa2' => 'https://qa2.hpp.converge.eu.nonprod.elavonaws.com/client/index.js',
-		'qa3' => 'https://qa3.hpp.converge.eu.elavonaws.com/client/index.js',
-		'qa4' => 'https://qa4.hpp.converge.eu.elavonaws.com/client/index.js',
-		'production' => 'https://hpp.eu.convergepay.com/client/index.js'
-	));
+if ( ! defined( 'WGC_LIGHTBOX_URL_MAP' ) ) {
+	define(
+		'WGC_LIGHTBOX_URL_MAP',
+		array(
+			'sandbox'    => 'https://uat.hpp.converge.eu.elavonaws.com/client/index.js',
+			'dev1'       => 'https://dev1.hpp.converge.eu.elavonaws.com/client/index.js',
+			'qa1'        => 'https://qa1.hpp.converge.eu.elavonaws.com/client/index.js',
+			'qa2'        => 'https://qa2.hpp.converge.eu.nonprod.elavonaws.com/client/index.js',
+			'qa3'        => 'https://qa3.hpp.converge.eu.elavonaws.com/client/index.js',
+			'qa4'        => 'https://qa4.hpp.converge.eu.elavonaws.com/client/index.js',
+			'production' => 'https://hpp.eu.convergepay.com/client/index.js',
+		)
+	);
 }

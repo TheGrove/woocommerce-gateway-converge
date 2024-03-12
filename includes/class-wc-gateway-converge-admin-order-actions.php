@@ -7,10 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Gateway_Converge_Admin_Order_Actions {
 
 	public function __construct() {
-		add_filter( 'woocommerce_order_actions', array(
-			$this,
-			'add_order_actions'
-		) );
+		add_filter(
+			'woocommerce_order_actions',
+			array(
+				$this,
+				'add_order_actions',
+			)
+		);
 	}
 
 	public function add_order_actions( $actions ) {
@@ -30,7 +33,7 @@ class WC_Gateway_Converge_Admin_Order_Actions {
 
 		if (
 			! $order instanceof WC_Order ||
-			in_array( $order->get_status(), [ 'failed' ] ) ||
+			in_array( $order->get_status(), array( 'failed' ) ) ||
 			$order->get_payment_method() != wgc_get_payment_name()
 		) {
 			return false;
@@ -80,7 +83,6 @@ class WC_Gateway_Converge_Admin_Order_Actions {
 
 		return $actions;
 	}
-
 }
 
-new WC_Gateway_Converge_Admin_Order_Actions;
+new WC_Gateway_Converge_Admin_Order_Actions();
